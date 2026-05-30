@@ -3,12 +3,10 @@ import { useReducer } from "react";
 import { validateForm, editExpense } from "../utils/expenseFormState";
 import { normalizedData, isSameData } from "../utils/expenseTransform";
 
-const selectedCategory = "";
-const customCategory = "";
 const initialFormData = {
   title: "",
   amount: "",
-  category: selectedCategory || customCategory,
+  category: "",
   date: "",
 };
 
@@ -89,7 +87,7 @@ function useExpenseForm({
   showToastMessage,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { formData, isFormOpen, mode, editingId, errors } = state;
+  const { formData, isFormOpen, mode, errors } = state;
 
   const openForm = () => {
     dispatch({ type: "OPEN_FORM" });
@@ -118,37 +116,45 @@ function useExpenseForm({
   function handleSubmit(e) {
     e.preventDefault();
 
-    const errors = validateForm(formData);
-    if (Object.keys(errors).length) {
-      dispatch({ type: "SET_ERRORS", payload: errors });
+    const snapshot = {
+      formData: state.formData,
+      mode: state.mode,
+      editingId: state.editingId,
+    };
+
+    const formErrors = validateForm(snapshot.formData);
+
+    if (Object.keys(formErrors).length) {
+      dispatch({ type: "SET_ERRORS", payload: formErrors });
       return;
     }
 
     dispatch({ type: "CLEAR_ERRORS" });
 
-    const dataToSubmit = normalizedData(formData);
+    const data = normalizedData(snapshot.formData);
 
-    if (mode === "add") {
-      handleAddExpense(dataToSubmit);
+    if (snapshot.mode === "add") {
+      handleAddExpense(data);
     } else {
-      const existing = expenses.find((e) => e.id === editingId);
+      const existing = expenses.find((e) => e.id === snapshot.editingId);
 
       if (!existing) {
         showToastMessage("Expense not found", "info");
         return;
       }
 
-      if (isSameData(existing, dataToSubmit)) {
+      if (isSameData(existing, data)) {
         showToastMessage("No changes detected", "info");
         return;
       }
 
-      handleUpdateExpense(editingId, dataToSubmit);
+      handleUpdateExpense(snapshot.editingId, data);
     }
 
     dispatch({ type: "RESET_FORM" });
-    const successMessage = mode === "add" ? "Expense added" : "Expense updated";
-    showToastMessage(successMessage, "success");
+    const succesMessage =
+      snapshot.mode === "Add" ? "Expense added" : "Expense updated";
+    showToastMessage(succesMessage, "success");
   }
 
   return {

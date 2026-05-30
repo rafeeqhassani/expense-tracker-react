@@ -35,21 +35,13 @@ main {
 }
 
 .app-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
   width: 100%;
 }
 
-.summary h3 {
+.summary {
   display: flex;
-  gap: 8px;
-  margin-bottom: 5px;
-}
-
-.app-header button {
-  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
 .filters {
