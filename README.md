@@ -1,8 +1,13 @@
-# Expense Tracker (React Version)
+## Expense Tracker (React Version)
 
-## Live Demo
+# Live Demo
 
 https://creative-seashore-797b70.netlify.app
+git
+
+# Source Code
+
+https://https://github.com/rafeeqhassani/expense-tracker-react
 
 # About the Project
 
