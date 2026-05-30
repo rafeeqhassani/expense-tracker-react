@@ -3,7 +3,6 @@
 # Live Demo
 
 https://creative-seashore-797b70.netlify.app
-git
 
 # Source Code
 
