@@ -2,6 +2,8 @@
 
 ## Live Demo
 
+https://creative-seashore-797b70.netlify.app
+
 # About the Project
 
 A React-based Expense Tracker Application built to manage daily and monthly expenses with dynamic UI updates, filtering, sorting, validation, and persistent LocalStorage storage.
