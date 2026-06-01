@@ -13,9 +13,13 @@ export function validateForm(formData) {
     validationErrors.amount = "Amount must be positive";
   }
 
-  if (!formData.category.trim()) {
-    validationErrors.category = "Category is required";
+    const finalCategory =
+    formData.customCategory.trim() || formData.category.trim();
+
+  if (!finalCategory) {
+    validationErrors.category = "Please select or enter a category";
   }
+
 
   if (!formData.date) {
     validationErrors.date = "Date is required";

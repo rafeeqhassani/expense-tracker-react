@@ -7,6 +7,7 @@ const initialFormData = {
   title: "",
   amount: "",
   category: "",
+  customCategory: "",
   date: "",
 };
 
@@ -52,6 +53,7 @@ function reducer(state, action) {
           title: action.payload.title || "",
           amount: action.payload.amount || "",
           category: action.payload.category || "",
+          customCategory: action.payload.customCategory || "",
           date: action.payload.date || "",
         },
         mode: "edit",
@@ -97,10 +99,31 @@ function useExpenseForm({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     dispatch({
       type: "HANDLE_CHANGE",
       payload: { name, value },
     });
+
+    if (name === "category") {
+      dispatch({
+        type: "HANDLE_CHANGE",
+        payload: {
+          name: "customCategory",
+          value: "",
+        },
+      });
+    }
+
+    if (name === "customCategory") {
+      dispatch({
+        type: "HANDLE_CHANGE",
+        payload: {
+          name: "category",
+          value: "",
+        },
+      });
+    }
   };
 
   const handleEditExpense = (id) => {
@@ -112,6 +135,10 @@ function useExpenseForm({
     }
     dispatch({ type: "EDIT_EXPENSE", payload: expense });
   };
+
+  function resolveCategory(formData) {
+    return formData.customCategory || formData.category;
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -131,7 +158,10 @@ function useExpenseForm({
 
     dispatch({ type: "CLEAR_ERRORS" });
 
-    const data = normalizedData(snapshot.formData);
+    const data = normalizedData({
+      ...snapshot.formData,
+      category: resolveCategory(snapshot.formData),
+    });
 
     if (snapshot.mode === "add") {
       handleAddExpense(data);
@@ -151,10 +181,10 @@ function useExpenseForm({
       handleUpdateExpense(snapshot.editingId, data);
     }
 
-    dispatch({ type: "RESET_FORM" });
     const succesMessage =
       snapshot.mode === "Add" ? "Expense added" : "Expense updated";
     showToastMessage(succesMessage, "success");
+    dispatch({ type: "RESET_FORM" });
   }
 
   return {

@@ -65,8 +65,8 @@ function ExpenseForm({
         <input
           type="text"
           id="categoryInput"
-          name="category"
-          value={formData.category}
+          name="customCategory"
+          value={formData.customCategory}
           onChange={handleChange}
           className="category-input"
           placeholder="Add New Category"

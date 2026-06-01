@@ -6,6 +6,7 @@ function Filters({ filters, handleFilterChange }) {
         <label htmlFor="searchExpenses">Search</label>
         <input
           type="text"
+          id="searchExpenses"
           name="title"
           value={title}
           onChange={handleFilterChange}
@@ -16,6 +17,7 @@ function Filters({ filters, handleFilterChange }) {
       <div className="filter-group">
         <label htmlFor="filterByMonth">Month</label>
         <select
+          id="filterByMonth"
           name="month"
           value={month}
           onChange={handleFilterChange}
@@ -40,6 +42,7 @@ function Filters({ filters, handleFilterChange }) {
       <div className="filter-group">
         <label htmlFor="sortSelection">Sort By</label>
         <select
+          id="sortSelection"
           name="sortBy"
           value={sortBy}
           onChange={handleFilterChange}
