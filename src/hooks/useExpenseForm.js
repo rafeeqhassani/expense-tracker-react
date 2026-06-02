@@ -38,7 +38,6 @@ function reducer(state, action) {
 
       return {
         ...state,
-
         formData: {
           ...state.formData,
           [name]: value,
@@ -50,11 +49,11 @@ function reducer(state, action) {
       return {
         ...state,
         formData: {
-          title: action.payload.title || "",
-          amount: action.payload.amount || "",
-          category: action.payload.category || "",
-          customCategory: action.payload.customCategory || "",
-          date: action.payload.date || "",
+          title: action.payload.title ?? "",
+          amount: action.payload.amount ?? "",
+          category: action.payload.category ?? "",
+          customCategory: action.payload.customCategory ?? "",
+          date: action.payload.date ?? "",
         },
         mode: "edit",
         editingId: action.payload.id,
@@ -71,10 +70,8 @@ function reducer(state, action) {
       return {
         ...state,
         formData: initialFormData,
-        errors: {},
         mode: "add",
         editingId: null,
-        isFormOpen: false,
       };
 
     default:
@@ -89,13 +86,17 @@ function useExpenseForm({
   showToastMessage,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { formData, isFormOpen, mode, errors } = state;
+  const { formData, isFormOpen, mode, errors, editingId } = state;
 
   const openForm = () => {
     dispatch({ type: "OPEN_FORM" });
   };
 
-  const closeForm = () => dispatch({ type: "CLOSE_FORM" });
+  const closeForm = () => {
+    dispatch({ type: "CLEAR_ERRORS" });
+    dispatch({ type: "RESET_FORM" });
+    dispatch({ type: "CLOSE_FORM" });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -108,20 +109,14 @@ function useExpenseForm({
     if (name === "category") {
       dispatch({
         type: "HANDLE_CHANGE",
-        payload: {
-          name: "customCategory",
-          value: "",
-        },
+        payload: { name: "customCategory", value: "" },
       });
     }
 
     if (name === "customCategory") {
       dispatch({
         type: "HANDLE_CHANGE",
-        payload: {
-          name: "category",
-          value: "",
-        },
+        payload: { name: "category", value: "" },
       });
     }
   };
@@ -143,30 +138,23 @@ function useExpenseForm({
   function handleSubmit(e) {
     e.preventDefault();
 
-    const snapshot = {
-      formData: state.formData,
-      mode: state.mode,
-      editingId: state.editingId,
-    };
-
-    const formErrors = validateForm(snapshot.formData);
+    const snapshot = { ...formData };
+    const formErrors = validateForm(snapshot);
 
     if (Object.keys(formErrors).length) {
       dispatch({ type: "SET_ERRORS", payload: formErrors });
       return;
     }
 
-    dispatch({ type: "CLEAR_ERRORS" });
-
     const data = normalizedData({
-      ...snapshot.formData,
-      category: resolveCategory(snapshot.formData),
+      ...snapshot,
+      category: resolveCategory(snapshot),
     });
 
-    if (snapshot.mode === "add") {
+    if (mode === "add") {
       handleAddExpense(data);
     } else {
-      const existing = expenses.find((e) => e.id === snapshot.editingId);
+      const existing = expenses.find((e) => e.id === editingId);
 
       if (!existing) {
         showToastMessage("Expense not found", "info");
@@ -178,13 +166,12 @@ function useExpenseForm({
         return;
       }
 
-      handleUpdateExpense(snapshot.editingId, data);
+      handleUpdateExpense(editingId, data);
     }
-
-    const succesMessage =
-      snapshot.mode === "Add" ? "Expense added" : "Expense updated";
+    const succesMessage = mode === "add" ? "Expense added" : "Expense updated";
     showToastMessage(succesMessage, "success");
-    dispatch({ type: "RESET_FORM" });
+
+    closeForm();
   }
 
   return {
