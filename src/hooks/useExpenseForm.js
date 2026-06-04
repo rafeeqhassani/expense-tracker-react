@@ -94,9 +94,11 @@ function useExpenseForm({
 
   const closeForm = () => {
     dispatch({ type: "CLEAR_ERRORS" });
-    dispatch({ type: "RESET_FORM" });
+    resetForm();
     dispatch({ type: "CLOSE_FORM" });
   };
+
+  const resetForm = () => dispatch({ type: "RESET_FORM" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -184,6 +186,7 @@ function useExpenseForm({
     handleChange,
     handleSubmit,
     handleEditExpense,
+    resetForm,
   };
 }
 

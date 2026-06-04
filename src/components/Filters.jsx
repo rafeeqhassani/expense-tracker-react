@@ -2,7 +2,7 @@ function Filters({ filters, handleFilterChange }) {
   const { title, month, sortBy } = filters || {};
   return (
     <section className="filters">
-      <div className="filter-group">
+      <div className="field">
         <label htmlFor="searchExpenses">Search</label>
         <input
           type="text"
@@ -14,7 +14,7 @@ function Filters({ filters, handleFilterChange }) {
         />
       </div>
 
-      <div className="filter-group">
+      <div className="field">
         <label htmlFor="filterByMonth">Month</label>
         <select
           id="filterByMonth"
@@ -39,7 +39,7 @@ function Filters({ filters, handleFilterChange }) {
         </select>
       </div>
 
-      <div className="filter-group">
+      <div className="field">
         <label htmlFor="sortSelection">Sort By</label>
         <select
           id="sortSelection"
@@ -48,6 +48,7 @@ function Filters({ filters, handleFilterChange }) {
           onChange={handleFilterChange}
           className="sortSelection"
         >
+          <option value="latest">Date: Newest &#9594; Oldest</option>
           <option value="smallest">Amount: Smallest &#8594; Largest</option>
           <option value="largest">Amount: Largest &#8594; Smallest</option>
           <option value="title-ascending">Title: A &#8594; Z</option>

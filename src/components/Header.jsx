@@ -3,15 +3,18 @@ function Header({ total, monthlyTotal, showForm }) {
     <section className="app-header">
       <h1>Expense Tracker</h1>
       <div className="summary">
-        <h3>
-          Total Expenses: <span className="total-amount">{total}</span>
-        </h3>
-        <h3>
-          Monthly Total: <span className="monthly-total">{monthlyTotal}</span>
-        </h3>
+        <div className="row">
+          <span>Total:</span>
+          <span className="total-amount">{total}</span>
+        </div>
+        <div className="row">
+          <span>Monthly: </span>
+          <span className="monthly-total">{monthlyTotal}</span>
+        </div>
       </div>
+
       <button
-        className="add-btn"
+        className="open-form"
         onClick={showForm}
         aria-label="Add new expense"
       >

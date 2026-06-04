@@ -1,14 +1,14 @@
 function ExpenseItems({ expense, onDelete, onEdit, isChecked }) {
   return (
     <div className="expense-card">
+      <input
+        type="checkbox"
+        className="select-expense"
+        checked={expense.selected}
+        onChange={(e) => isChecked(expense.id, e.target.checked)}
+      ></input>
       <div className="info-container">
-        <h3>{expense.title}</h3>
-        <p className="amount">
-          {expense.amount.toLocaleString("en-PK", {
-            style: "currency",
-            currency: "PKR",
-          })}
-        </p>
+        <h4>{expense.title}</h4>
         <p className="meta-info">
           <span className="category">{expense.category}</span>
           <span className="dot">.</span>
@@ -17,28 +17,31 @@ function ExpenseItems({ expense, onDelete, onEdit, isChecked }) {
           </span>
         </p>
       </div>
-      <div className="action-container">
-        <button
-          type="button"
-          className="delete-expense"
-          onClick={() => onDelete(expense.id)}
-        >
-          X
-        </button>
+      <div className="right-container">
+        <span className="amount">
+          {expense.amount.toLocaleString("en-PK", {
+            style: "currency",
+            currency: "PKR",
+          })}
+        </span>
 
-        <button
-          type="button"
-          className="edit-expense"
-          onClick={() => onEdit(expense.id)}
-        >
-          Edit
-        </button>
-        <input
-          type="checkbox"
-          className="select-expense"
-          checked={expense.selected}
-          onChange={(e) => isChecked(expense.id, e.target.checked)}
-        ></input>
+        <div className="action-container">
+          <button
+            type="button"
+            className="delete-btn"
+            onClick={() => onDelete(expense.id)}
+          >
+            X
+          </button>
+
+          <button
+            type="button"
+            className="edit-btn"
+            onClick={() => onEdit(expense.id)}
+          >
+            Edit
+          </button>
+        </div>
       </div>
     </div>
   );

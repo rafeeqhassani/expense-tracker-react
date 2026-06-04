@@ -22,7 +22,9 @@ function ExpenseForm({
           placeholder="Add Expense"
         />
 
-        {errors.title && <small className="error">{errors.title}</small>}
+        {errors.title && (
+          <small className="validate-title">{errors.title}</small>
+        )}
       </div>
 
       <div className="field">
@@ -38,41 +40,51 @@ function ExpenseForm({
           placeholder="e.g. 100.00"
         />
 
-        {errors.amount && <small className="error">{errors.amount}</small>}
+        {errors.amount && (
+          <small className="validate-amount">{errors.amount}</small>
+        )}
       </div>
 
-      <div className="field">
-        <label htmlFor="selectCategory">Select Category</label>
+      <div className="category-field">
+        <div className="input-group">
+          <div className="field">
+            <label htmlFor="selectCategory">Select Category</label>
 
-        <select
-          id="selectCategory"
-          name="category"
-          className="select-category"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          <option value="">Select Category</option>
+            <select
+              id="selectCategory"
+              name="category"
+              className="select-category"
+              value={formData.category}
+              onChange={handleChange}
+            >
+              <option value="">Select Category</option>
 
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <label htmlFor="categoryInput">Category</label>
+          <div className="field">
+            <label htmlFor="categoryInput">Category</label>
 
-        <input
-          type="text"
-          id="categoryInput"
-          name="customCategory"
-          value={formData.customCategory}
-          onChange={handleChange}
-          className="category-input"
-          placeholder="Add New Category"
-        />
+            <input
+              type="text"
+              id="categoryInput"
+              name="customCategory"
+              value={formData.customCategory}
+              onChange={handleChange}
+              className="category-input"
+              placeholder="Add New Category"
+            />
+          </div>
+        </div>
 
-        {errors.category && <small className="error">{errors.category}</small>}
+        {errors.category && (
+          <small className="validate-category">{errors.category}</small>
+        )}
       </div>
 
       <div className="field">
@@ -87,16 +99,16 @@ function ExpenseForm({
           className="date-input"
         />
 
-        {errors.date && <small className="error">{errors.date}</small>}
+        {errors.date && <small className="validate-date">{errors.date}</small>}
       </div>
 
       <div className="form-actions">
-        <button type="submit" className="submitBtn">
+        <button type="submit" className="submit-button">
           {mode === "add" ? "Add Expense" : "Update Expense"}
         </button>
 
-        <button type="button" className="cancelBtn" onClick={closeForm}>
-          Close Form
+        <button type="button" className="close-form" onClick={closeForm}>
+          Close
         </button>
       </div>
     </form>
