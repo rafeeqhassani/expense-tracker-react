@@ -1,6 +1,6 @@
 export function filterByMonth(expenses, month) {
   return expenses.filter((item) => {
-    const d = new Date(item.npm);
+    const d = new Date(item.date);
 
     return d.getMonth() + 1 === month;
   });

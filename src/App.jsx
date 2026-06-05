@@ -33,6 +33,8 @@ function App() {
     closeForm,
     handleEditExpense,
     errors,
+    touched,
+    submitAttempted,
   } = useExpenseForm({
     expenses,
     handleAddExpense,
@@ -48,6 +50,8 @@ function App() {
     filteredTotal,
     limitedExpenses,
     handleLoadMore,
+    resetFilters,
+    hasActiveFilters,
     hasExpenses,
     hasMoreExpenses,
   } = useFilters(expenses);
@@ -74,6 +78,8 @@ function App() {
           onLoadMore={handleLoadMore}
           hasExpenses={hasExpenses}
           hasMoreExpenses={hasMoreExpenses}
+          resetFilters={resetFilters}
+          hasActiveFilters={hasActiveFilters}
           onClearSelected={handleClearSelected}
           onClearAll={handleClearAll}
         />
@@ -88,6 +94,8 @@ function App() {
             formData={formData}
             handleChange={handleChange}
             errors={errors}
+            submitAttempted={submitAttempted}
+            touched={touched}
           />
         </div>
       )}

@@ -8,7 +8,7 @@ function Header({ total, monthlyTotal, showForm }) {
           <span className="total-amount">{total}</span>
         </div>
         <div className="row">
-          <span>Monthly: </span>
+          <span>Monthly:</span>
           <span className="monthly-total">{monthlyTotal}</span>
         </div>
       </div>

@@ -39,9 +39,13 @@ function useFilters(expenses) {
   }, [searchedExpenses, filters.sortBy]);
 
   const filteredExpenses = useMemo(() => {
-    return filters.month === "all"
-      ? sortedExpenses
-      : filterByMonth(sortedExpenses, Number(filters.month));
+    if (filters.month === "all") return sortedExpenses;
+
+    const month = Number(filters.month);
+
+    if (isNaN(month)) return sortedExpenses;
+
+    return filterByMonth(sortedExpenses, month);
   }, [sortedExpenses, filters.month]);
 
   const totalAmount = useMemo(() => {
@@ -68,17 +72,25 @@ function useFilters(expenses) {
     setVisibleCount((prev) => prev + 20);
   };
 
+  const resetFilters = () => {
+    setFilters(initialFilters);
+    setVisibleCount(40);
+  };
+
+  const hasActiveFilters =
+    filters.title !== "" ||
+    filters.month !== "all" ||
+    filters.sortBy !== "smallest";
+
   useEffect(() => {
     saveToLocalStorage("visibleCount", visibleCount);
   }, [visibleCount]);
 
-  useEffect(() => {
-    filteredExpenses;
-  }, [filteredExpenses]);
-
   return {
     filters,
     handleFilterChange,
+    resetFilters,
+    hasActiveFilters,
     totalAmount,
     filteredTotal,
     limitedExpenses,

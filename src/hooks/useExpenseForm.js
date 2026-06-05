@@ -13,8 +13,10 @@ const initialFormData = {
 
 const initialState = {
   formData: initialFormData,
-  isFormOpen: false,
   errors: {},
+  touched: {},
+  submitAttempted: false,
+  isFormOpen: false,
   mode: "add",
   editingId: null,
 };
@@ -55,6 +57,21 @@ function reducer(state, action) {
       };
     }
 
+    case "SET_SUBMIT_ATTEMPTED":
+      return {
+        ...state,
+        submitAttempted: action.payload,
+      };
+
+    case "SET_TOUCHED":
+      return {
+        ...state,
+        touched: {
+          ...state.touched,
+          [action.payload.name]: true,
+        },
+      };
+
     case "SET_ERRORS":
       return { ...state, errors: action.payload };
 
@@ -63,6 +80,8 @@ function reducer(state, action) {
         ...state,
         formData: initialFormData,
         errors: {},
+        touched: {},
+        submitAttempted: false,
         mode: "add",
         editingId: null,
       };
@@ -95,7 +114,15 @@ function useExpenseForm({
   showToastMessage,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { formData, isFormOpen, mode, errors, editingId } = state;
+  const {
+    formData,
+    isFormOpen,
+    mode,
+    errors,
+    editingId,
+    submitAttempted,
+    touched,
+  } = state;
 
   const openForm = () => {
     dispatch({ type: "OPEN_FORM" });
@@ -138,13 +165,19 @@ function useExpenseForm({
       type: "SET_FIELD",
       payload: { name, value },
     });
+
+    dispatch({
+      type: "SET_TOUCHED",
+      payload: { name },
+    });
   };
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    const snapshot = { ...formData };
+    dispatch({ type: "SET_SUBMIT_ATTEMPTED", payload: true });
 
+    const snapshot = { ...formData };
     const formErrors = validateForm(snapshot);
 
     if (Object.keys(formErrors).length) {
@@ -180,14 +213,17 @@ function useExpenseForm({
       "success",
     );
 
-    dispatch({ type: "CLOSE_FORM" });
+    dispatch({ type: "RESET_FORM" });
+    closeForm();
   }
 
   return {
     formData,
     errors,
+    touched,
     mode,
     isFormOpen,
+    submitAttempted,
     openForm,
     closeForm,
     handleChange,

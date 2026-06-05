@@ -6,8 +6,11 @@ function ExpenseForm({
   formData,
   handleChange,
   errors,
+  submitAttempted,
+  touched,
 }) {
-  const hasErrors = errors && Object.keys(errors).length > 0;
+  const showError = (field) =>
+    (submitAttempted || touched[field]) && errors[field];
   return (
     <form className="expenseForm" onSubmit={onSubmit}>
       <div className="field">
@@ -23,7 +26,7 @@ function ExpenseForm({
           placeholder="Add Expense"
         />
 
-        {hasErrors && errors.title && (
+        {showError("title") && (
           <small className="validate-title">{errors.title}</small>
         )}
       </div>
@@ -41,7 +44,7 @@ function ExpenseForm({
           placeholder="e.g. 100.00"
         />
 
-        {hasErrors && errors.amount && (
+        {showError("amount") && (
           <small className="validate-amount">{errors.amount}</small>
         )}
       </div>
@@ -83,7 +86,7 @@ function ExpenseForm({
           </div>
         </div>
 
-        {hasErrors && errors.category && (
+        {showError("category") && (
           <small className="validate-category">{errors.category}</small>
         )}
       </div>
@@ -100,7 +103,7 @@ function ExpenseForm({
           className="date-input"
         />
 
-        {hasErrors && errors.date && (
+        {showError("date") && (
           <small className="validate-date">{errors.date}</small>
         )}
       </div>

@@ -48,11 +48,11 @@ function Filters({ filters, handleFilterChange }) {
           onChange={handleFilterChange}
           className="sortSelection"
         >
-          <option value="latest">Date: Newest &#9594; Oldest</option>
           <option value="smallest">Amount: Smallest &#8594; Largest</option>
           <option value="largest">Amount: Largest &#8594; Smallest</option>
           <option value="title-ascending">Title: A &#8594; Z</option>
           <option value="title-descending">Title: Z &#8594; A</option>
+          <option value="latest">Date: Newest &#8594; Oldest</option>
         </select>
       </div>
     </section>
