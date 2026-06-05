@@ -22,28 +22,50 @@ const initialState = {
 function reducer(state, action) {
   switch (action.type) {
     case "OPEN_FORM":
-      return {
-        ...state,
-        isFormOpen: true,
-      };
+      return { ...state, isFormOpen: true };
 
     case "CLOSE_FORM":
       return {
         ...state,
         isFormOpen: false,
+        formData: initialFormData,
+        errors: {},
+        mode: "add",
+        editingId: null,
       };
 
-    case "HANDLE_CHANGE": {
-      const { name, value } = action.payload;
-
+    case "SET_FIELD": {
       return {
         ...state,
         formData: {
           ...state.formData,
-          [name]: value,
+          [action.payload.name]: action.payload.value,
         },
       };
     }
+
+    case "SET_CATEGORY": {
+      return {
+        ...state,
+        formData: {
+          ...state.formData,
+          category: action.payload.category,
+          customCategory: action.payload.customCategory,
+        },
+      };
+    }
+
+    case "SET_ERRORS":
+      return { ...state, errors: action.payload };
+
+    case "RESET_FORM":
+      return {
+        ...state,
+        formData: initialFormData,
+        errors: {},
+        mode: "add",
+        editingId: null,
+      };
 
     case "EDIT_EXPENSE":
       return {
@@ -58,20 +80,7 @@ function reducer(state, action) {
         mode: "edit",
         editingId: action.payload.id,
         isFormOpen: true,
-      };
-
-    case "SET_ERRORS":
-      return { ...state, errors: action.payload };
-
-    case "CLEAR_ERRORS":
-      return { ...state, errors: {} };
-
-    case "RESET_FORM":
-      return {
-        ...state,
-        formData: initialFormData,
-        mode: "add",
-        editingId: null,
+        errors: {},
       };
 
     default:
@@ -93,54 +102,49 @@ function useExpenseForm({
   };
 
   const closeForm = () => {
-    dispatch({ type: "CLEAR_ERRORS" });
-    resetForm();
     dispatch({ type: "CLOSE_FORM" });
   };
 
-  const resetForm = () => dispatch({ type: "RESET_FORM" });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    dispatch({
-      type: "HANDLE_CHANGE",
-      payload: { name, value },
-    });
-
-    if (name === "category") {
-      dispatch({
-        type: "HANDLE_CHANGE",
-        payload: { name: "customCategory", value: "" },
-      });
-    }
-
-    if (name === "customCategory") {
-      dispatch({
-        type: "HANDLE_CHANGE",
-        payload: { name: "category", value: "" },
-      });
-    }
-  };
-
-  const handleEditExpense = (id) => {
+  function handleEditExpense(id) {
     const expense = editExpense(expenses, id);
-
     if (!expense) {
       showToastMessage("Expense not found", "info");
       return;
     }
-    dispatch({ type: "EDIT_EXPENSE", payload: expense });
-  };
 
-  function resolveCategory(formData) {
-    return formData.customCategory || formData.category;
+    dispatch({ type: "EDIT_EXPENSE", payload: expense });
   }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "category") {
+      dispatch({
+        type: "SET_CATEGORY",
+        payload: { category: value, customCategory: "" },
+      });
+      return;
+    }
+
+    if (name === "customCategory") {
+      dispatch({
+        type: "SET_CATEGORY",
+        payload: { category: "", customCategory: value },
+      });
+      return;
+    }
+
+    dispatch({
+      type: "SET_FIELD",
+      payload: { name, value },
+    });
+  };
 
   function handleSubmit(e) {
     e.preventDefault();
 
     const snapshot = { ...formData };
+
     const formErrors = validateForm(snapshot);
 
     if (Object.keys(formErrors).length) {
@@ -150,7 +154,7 @@ function useExpenseForm({
 
     const data = normalizedData({
       ...snapshot,
-      category: resolveCategory(snapshot),
+      category: snapshot.category || snapshot.customCategory,
     });
 
     if (mode === "add") {
@@ -170,10 +174,13 @@ function useExpenseForm({
 
       handleUpdateExpense(editingId, data);
     }
-    const succesMessage = mode === "add" ? "Expense added" : "Expense updated";
-    showToastMessage(succesMessage, "success");
 
-    closeForm();
+    showToastMessage(
+      mode === "add" ? "Expense added" : "Expense updated",
+      "success",
+    );
+
+    dispatch({ type: "CLOSE_FORM" });
   }
 
   return {
@@ -186,7 +193,6 @@ function useExpenseForm({
     handleChange,
     handleSubmit,
     handleEditExpense,
-    resetForm,
   };
 }
 
