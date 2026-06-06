@@ -11,6 +11,8 @@ import useExpenseForm from "./hooks/useExpenseForm";
 import useToast from "./hooks/useToast";
 
 function App() {
+  const { toast, showToastMessage } = useToast();
+
   const {
     expenses,
     handleAddExpense,
@@ -19,9 +21,7 @@ function App() {
     handleCheckboxChange,
     handleClearSelected,
     handleClearAll,
-  } = useExpenses();
-
-  const { toast, showToastMessage } = useToast();
+  } = useExpenses(showToastMessage);
 
   const {
     formData,

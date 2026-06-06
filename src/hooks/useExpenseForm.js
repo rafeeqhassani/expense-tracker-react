@@ -182,6 +182,7 @@ function useExpenseForm({
 
     if (Object.keys(formErrors).length) {
       dispatch({ type: "SET_ERRORS", payload: formErrors });
+      showToastMessage("Please fix validation errors", "error");
       return;
     }
 

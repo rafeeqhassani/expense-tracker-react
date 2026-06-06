@@ -9,7 +9,7 @@ import {
   clearSelectedExpenses,
 } from "../utils/expenseState";
 
-function useExpenses() {
+function useExpenses(showToastMessage) {
   const [expenses, setExpenses] = useState(() => {
     try {
       const stored = getFromLocalStorage("expenses");
@@ -30,8 +30,10 @@ function useExpenses() {
   const handleUpdateExpense = (editingId, updatedData) =>
     setExpenses((prev) => updateExpense(prev, editingId, updatedData));
 
-  const handleDeleteExpense = (id) =>
+  const handleDeleteExpense = (id) => {
     setExpenses((prev) => deleteExpense(prev, id));
+    showToastMessage("Expense deleted", "success");
+  };
 
   const handleCheckboxChange = (id, onCheckboxChange) => {
     setExpenses((prev) => checkboxChange(prev, id, onCheckboxChange));
