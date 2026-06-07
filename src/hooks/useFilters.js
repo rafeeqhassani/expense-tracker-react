@@ -31,21 +31,26 @@ function useFilters(expenses) {
   };
 
   const searchedExpenses = useMemo(() => {
-    return searchExpenses(expenses, filters.title);
+    return Array.isArray(expenses)
+      ? searchExpenses(expenses, filters.title)
+      : [];
   }, [expenses, filters.title]);
 
   const sortedExpenses = useMemo(() => {
-    return sortExpenses(searchedExpenses, filters.sortBy);
+    return Array.isArray(searchedExpenses)
+      ? sortExpenses(searchedExpenses, filters.sortBy)
+      : [];
   }, [searchedExpenses, filters.sortBy]);
 
   const filteredExpenses = useMemo(() => {
-    if (filters.month === "all") return sortedExpenses;
+    const base = Array.isArray(sortedExpenses) ? sortedExpenses : [];
+
+    if (filters.month === "all") return base;
 
     const month = Number(filters.month);
+    if (isNaN(month)) return base;
 
-    if (isNaN(month)) return sortedExpenses;
-
-    return filterByMonth(sortedExpenses, month);
+    return filterByMonth(base, month) || [];
   }, [sortedExpenses, filters.month]);
 
   const totalAmount = useMemo(() => {
@@ -61,7 +66,7 @@ function useFilters(expenses) {
   }, [expenses]);
 
   const limitedExpenses = useMemo(() => {
-    return filteredExpenses.slice(0, visibleCount);
+    return (filteredExpenses || []).slice(0, visibleCount);
   }, [filteredExpenses, visibleCount]);
 
   const hasExpenses = filteredExpenses.length > 0;
