@@ -16,10 +16,13 @@ const initialFilters = {
 };
 
 function useFilters(expenses) {
+  console.log("useFilters running");
+
   const [filters, setFilters] = useState(initialFilters);
 
   const [visibleCount, setVisibleCount] = useState(() => {
-    return getFromLocalStorage("visibleCount") || 40;
+    const stored = Number(getFromLocalStorage("visibleCount"));
+    return stored > 0 ? stored : 40;
   });
 
   const handleFilterChange = (e) => {
@@ -30,24 +33,21 @@ function useFilters(expenses) {
   };
 
   const searchedExpenses = useMemo(() => {
-    const result = searchExpenses(expenses, filters.title);
-    return Array.isArray(result) ? result : [];
+    return searchExpenses(expenses, filters.title);
   }, [expenses, filters.title]);
 
   const sortedExpenses = useMemo(() => {
-    const result = sortExpenses(searchedExpenses, filters.sortBy);
-    return Array.isArray(result) ? result : [];
+    return sortExpenses(searchedExpenses, filters.sortBy);
   }, [searchedExpenses, filters.sortBy]);
 
-  const processedMonthlyExpenses = useMemo(() => {
-    if (filters.month === "all") return sortedExpenses;
-
-    const result = filterByMonth(sortedExpenses, Number(filters.month));
-    return Array.isArray(result) ? result : [];
+  const monthlyFilteredExpenses = useMemo(() => {
+    return filters.month === "all"
+      ? sortedExpenses
+      : filterByMonth(sortedExpenses, Number(filters.month));
   }, [sortedExpenses, filters.month]);
 
-  const filteredExpenses = processedMonthlyExpenses;
-  const limitedExpenses = filteredExpenses.slice(0, visibleCount);
+  const filteredExpenses = monthlyFilteredExpenses;
+  const limitedExpenses = filteredExpenses.slice(0, Number(visibleCount));
 
   const totalAmount = useMemo(() => {
     return totalCalculate(expenses);
@@ -76,7 +76,7 @@ function useFilters(expenses) {
     filters.sortBy !== "smallest";
 
   useEffect(() => {
-    saveToLocalStorage("visibleCount", visibleCount);
+    saveToLocalStorage("visibleCount", String(visibleCount));
   }, [visibleCount]);
 
   return {

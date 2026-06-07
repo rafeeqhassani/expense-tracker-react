@@ -1,13 +1,6 @@
 import ExpenseItems from "./ExpenseItem";
 
-function ExpenseList({
-  expenses,
-  searchQuery,
-  onDelete,
-  onEdit,
-  isChecked,
-
-}) {
+function ExpenseList({ expenses, searchQuery, onDelete, onEdit, isChecked }) {
   const isSearching = searchQuery.trim() !== "";
   let content;
 
@@ -23,7 +16,6 @@ function ExpenseList({
         onDelete={onDelete}
         onEdit={onEdit}
         isChecked={isChecked}
-      
       />
     ));
   }

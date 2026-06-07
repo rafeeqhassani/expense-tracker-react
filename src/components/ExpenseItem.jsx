@@ -1,6 +1,4 @@
 function ExpenseItems({ expense, onDelete, onEdit, isChecked }) {
-  console.log("RENDER ITEM:", expense);
-  if (!expense) return null;
   return (
     <div className="expense-card">
       <input
@@ -21,7 +19,7 @@ function ExpenseItems({ expense, onDelete, onEdit, isChecked }) {
       </div>
       <div className="right-container">
         <span className="amount">
-          {expense.amount.toLocaleString("en-PK", {
+          {Number(expense.amount || 0).toLocaleString("en-PK", {
             style: "currency",
             currency: "PKR",
           })}

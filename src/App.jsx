@@ -1,3 +1,5 @@
+console.log("BEFORE EVERYTHING");
+
 import Header from "./components/Header";
 import Filters from "./components/Filters";
 import ExpenseList from "./components/ExpenseList";
@@ -58,6 +60,8 @@ function App() {
 
   return (
     <>
+      {console.log("INSIDE RETURN")}
+      <div>APP WORKS</div>
       <main>
         <Header
           total={totalAmount}
