@@ -14,24 +14,36 @@ export function searchExpenses(expenses, searchExpense) {
   });
 }
 
+export const SORT_OPTIONS = {
+  SMALLEST: "smallest",
+  LARGEST: "largest",
+  NEWEST: "newest",
+  OLDEST: "oldest",
+  TITLE_ASC: "title-ascending",
+  TITLE_DESC: "title-descending",
+};
+
 export function sortExpenses(expenses, sortBy) {
   const sorted = [...expenses];
 
   switch (sortBy) {
-    case "smallest":
+    case SORT_OPTIONS.SMALLEST:
       return sorted.sort((a, b) => a.amount - b.amount);
 
-    case "largest":
+    case SORT_OPTIONS.LARGEST:
       return sorted.sort((a, b) => b.amount - a.amount);
 
-    case "title-ascending":
+    case SORT_OPTIONS.TITLE_ASC:
       return sorted.sort((a, b) => a.title.localeCompare(b.title));
 
-    case "title-descending":
+    case SORT_OPTIONS.TITLE_DESC:
       return sorted.sort((a, b) => b.title.localeCompare(a.title));
 
-    case "newest":
+    case SORT_OPTIONS.NEWEST:
       return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    case SORT_OPTIONS.OLDEST:
+      return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     default:
       return sorted;

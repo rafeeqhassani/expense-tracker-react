@@ -30,17 +30,20 @@ function useFilters(expenses) {
   };
 
   const searchedExpenses = useMemo(() => {
-    return searchExpenses(expenses, filters.title);
+    const result = searchExpenses(expenses, filters.title);
+    return Array.isArray(result) ? result : [];
   }, [expenses, filters.title]);
 
   const sortedExpenses = useMemo(() => {
-    return sortExpenses(searchedExpenses, filters.sortBy);
+    const result = sortExpenses(searchedExpenses, filters.sortBy);
+    return Array.isArray(result) ? result : [];
   }, [searchedExpenses, filters.sortBy]);
 
   const processedMonthlyExpenses = useMemo(() => {
     if (filters.month === "all") return sortedExpenses;
 
-    return filterByMonth(sortedExpenses, Number(filters.month));
+    const result = filterByMonth(sortedExpenses, Number(filters.month));
+    return Array.isArray(result) ? result : [];
   }, [sortedExpenses, filters.month]);
 
   const filteredExpenses = processedMonthlyExpenses;

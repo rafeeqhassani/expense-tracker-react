@@ -1,3 +1,5 @@
+import { SORT_OPTIONS } from "../utils/expenseDerive";
+
 function Filters({ filters, handleFilterChange }) {
   const { title, month, sortBy } = filters || {};
   return (
@@ -48,11 +50,25 @@ function Filters({ filters, handleFilterChange }) {
           onChange={handleFilterChange}
           className="sortSelection"
         >
-          <option value="smallest">Amount: Smallest &#8594; Largest</option>
-          <option value="largest">Amount: Largest &#8594; Smallest</option>
-          <option value="title-ascending">Title: A &#8594; Z</option>
-          <option value="title-descending">Title: Z &#8594; A</option>
-          <option value="latest">Date: Newest &#8594; Oldest</option>
+          <option value={SORT_OPTIONS.SMALLEST}>
+            Amount: Smallest &#8594; Largest
+          </option>
+
+          <option value={SORT_OPTIONS.LARGEST}>
+            Amount: Largest &#8594; Smallest
+          </option>
+
+          <option value={SORT_OPTIONS.TITLE_ASC}>Title: A &#8594; Z</option>
+
+          <option value={SORT_OPTIONS.TITLE_DESC}>Title: Z &#8594; A</option>
+
+          <option value={SORT_OPTIONS.NEWEST}>
+            Date: Newest &#8594; Oldest
+          </option>
+
+          <option value={SORT_OPTIONS.OLDEST}>
+            Date: Oldest &#8594; Newest
+          </option>
         </select>
       </div>
     </section>
