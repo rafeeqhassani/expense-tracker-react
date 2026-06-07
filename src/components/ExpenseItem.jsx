@@ -1,4 +1,6 @@
 function ExpenseItems({ expense, onDelete, onEdit, isChecked }) {
+  console.log("RENDER ITEM:", expense);
+  if (!expense) return null;
   return (
     <div className="expense-card">
       <input

@@ -27,26 +27,23 @@ function useFilters(expenses) {
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    setVisibleCount(40);
   };
 
-  const processedExpenses = useMemo(() => {
-    let result = Array.isArray(expenses) ? expenses : [];
+  const searchedExpenses = useMemo(() => {
+    return searchExpenses(expenses, filters.title);
+  }, [expenses, filters.title]);
 
-    result = searchExpenses(result, filters.title);
-    result = sortExpenses(result, filters.sortBy);
+  const sortedExpenses = useMemo(() => {
+    return sortExpenses(searchedExpenses, filters.sortBy);
+  }, [searchedExpenses, filters.sortBy]);
 
-    if (filters.month !== "all") {
-      const month = Number(filters.month);
-      if (!isNaN(month)) {
-        result = filterByMonth(result, month);
-      }
-    }
+  const processedMonthlyExpenses = useMemo(() => {
+    if (filters.month === "all") return sortedExpenses;
 
-    return result;
-  }, [expenses, filters]);
+    return filterByMonth(sortedExpenses, Number(filters.month));
+  }, [sortedExpenses, filters.month]);
 
-  const filteredExpenses = processedExpenses;
+  const filteredExpenses = processedMonthlyExpenses;
   const limitedExpenses = filteredExpenses.slice(0, visibleCount);
 
   const totalAmount = useMemo(() => {
