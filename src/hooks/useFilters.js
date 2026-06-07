@@ -30,28 +30,24 @@ function useFilters(expenses) {
     setVisibleCount(40);
   };
 
-  const searchedExpenses = useMemo(() => {
-    return Array.isArray(expenses)
-      ? searchExpenses(expenses, filters.title)
-      : [];
-  }, [expenses, filters.title]);
+  const processedExpenses = useMemo(() => {
+    let result = Array.isArray(expenses) ? expenses : [];
 
-  const sortedExpenses = useMemo(() => {
-    return Array.isArray(searchedExpenses)
-      ? sortExpenses(searchedExpenses, filters.sortBy)
-      : [];
-  }, [searchedExpenses, filters.sortBy]);
+    result = searchExpenses(result, filters.title);
+    result = sortExpenses(result, filters.sortBy);
 
-  const filteredExpenses = useMemo(() => {
-    const base = Array.isArray(sortedExpenses) ? sortedExpenses : [];
+    if (filters.month !== "all") {
+      const month = Number(filters.month);
+      if (!isNaN(month)) {
+        result = filterByMonth(result, month);
+      }
+    }
 
-    if (filters.month === "all") return base;
+    return result;
+  }, [expenses, filters]);
 
-    const month = Number(filters.month);
-    if (isNaN(month)) return base;
-
-    return filterByMonth(base, month) || [];
-  }, [sortedExpenses, filters.month]);
+  const filteredExpenses = processedExpenses;
+  const limitedExpenses = filteredExpenses.slice(0, visibleCount);
 
   const totalAmount = useMemo(() => {
     return totalCalculate(expenses);
@@ -64,14 +60,6 @@ function useFilters(expenses) {
   const categories = useMemo(() => {
     return getUniqueCategories(expenses);
   }, [expenses]);
-
-  const limitedExpenses = useMemo(() => {
-    return (filteredExpenses || []).slice(0, visibleCount);
-  }, [filteredExpenses, visibleCount]);
-
-  const hasExpenses = filteredExpenses.length > 0;
-
-  const hasMoreExpenses = filteredExpenses.length > visibleCount;
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => prev + 20);
@@ -100,8 +88,8 @@ function useFilters(expenses) {
     filteredTotal,
     limitedExpenses,
     handleLoadMore,
-    hasExpenses,
-    hasMoreExpenses,
+    filteredExpenses,
+    visibleCount,
     categories,
   };
 }

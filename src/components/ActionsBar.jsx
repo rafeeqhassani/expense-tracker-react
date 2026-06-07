@@ -1,7 +1,7 @@
 function ActionsBar({
   onLoadMore,
-  hasMoreExpenses,
-  hasExpenses,
+  filteredExpenses,
+  visibleCount,
   resetFilters,
   hasActiveFilters,
   onClearSelected,
@@ -9,16 +9,23 @@ function ActionsBar({
 }) {
   let result;
 
-  if (!hasExpenses) {
+  const isEmpty = filteredExpenses.length === 0;
+
+  const hasMore = filteredExpenses.length > visibleCount;
+
+  const isFullyLoaded =
+    filteredExpenses.length > 0 && filteredExpenses.length <= visibleCount;
+
+  if (isEmpty) {
     result = <p className="empty-load-message">No expenses to load</p>;
-  } else if (hasMoreExpenses) {
+  } else if (hasMore) {
     result = (
       <button type="button" className="load-more" onClick={onLoadMore}>
         Load more
       </button>
     );
-  } else {
-    result = <p className="empty-load-message">No more data exist</p>;
+  } else if (isFullyLoaded) {
+    result = <p className="empty-load-message">No more expenses exist</p>;
   }
 
   return (

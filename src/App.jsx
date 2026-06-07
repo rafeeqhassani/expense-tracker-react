@@ -52,8 +52,8 @@ function App() {
     handleLoadMore,
     resetFilters,
     hasActiveFilters,
-    hasExpenses,
-    hasMoreExpenses,
+    filteredExpenses,
+    visibleCount,
   } = useFilters(expenses);
 
   return (
@@ -76,8 +76,8 @@ function App() {
         />
         <ActionsBar
           onLoadMore={handleLoadMore}
-          hasExpenses={hasExpenses}
-          hasMoreExpenses={hasMoreExpenses}
+          filteredExpenses={filteredExpenses}
+          visibleCount={visibleCount}
           resetFilters={resetFilters}
           hasActiveFilters={hasActiveFilters}
           onClearSelected={handleClearSelected}
