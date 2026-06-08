@@ -24,8 +24,13 @@ function useExpenses(showToastMessage) {
     saveToLocalStorage("expenses", expenses);
   }, [expenses]);
 
-  const handleAddExpense = (newExpense) =>
-    setExpenses((prev) => addExpense(prev, newExpense));
+  const handleAddExpense = (newExpense) => {
+    setExpenses((prev) => {
+      const added = addExpense(prev, newExpense);
+
+      return added;
+    });
+  };
 
   const handleUpdateExpense = (editingId, updatedData) =>
     setExpenses((prev) => updateExpense(prev, editingId, updatedData));

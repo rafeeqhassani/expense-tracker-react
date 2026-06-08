@@ -19,6 +19,7 @@ function ExpenseList({ expenses, searchQuery, onDelete, onEdit, isChecked }) {
       />
     ));
   }
+
   return <section className="list-container">{content}</section>;
 }
 

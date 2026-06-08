@@ -3,16 +3,16 @@ import { useReducer } from "react";
 import { validateForm, editExpense } from "../utils/expenseFormState";
 import { normalizedData, isSameData } from "../utils/expenseTransform";
 
-const initialFormData = {
+const createInitialFormData = () => ({
   title: "",
   amount: "",
   category: "",
   customCategory: "",
   date: "",
-};
+});
 
 const initialState = {
-  formData: initialFormData,
+  formData: createInitialFormData(),
   errors: {},
   touched: {},
   submitAttempted: false,
@@ -30,13 +30,9 @@ function reducer(state, action) {
       return {
         ...state,
         isFormOpen: false,
-        formData: initialFormData,
-        errors: {},
-        mode: "add",
-        editingId: null,
       };
 
-    case "SET_FIELD": {
+    case "SET_FIELD":
       return {
         ...state,
         formData: {
@@ -44,9 +40,8 @@ function reducer(state, action) {
           [action.payload.name]: action.payload.value,
         },
       };
-    }
 
-    case "SET_CATEGORY": {
+    case "SET_CATEGORY":
       return {
         ...state,
         formData: {
@@ -54,13 +49,6 @@ function reducer(state, action) {
           category: action.payload.category,
           customCategory: action.payload.customCategory,
         },
-      };
-    }
-
-    case "SET_SUBMIT_ATTEMPTED":
-      return {
-        ...state,
-        submitAttempted: action.payload,
       };
 
     case "SET_TOUCHED":
@@ -72,13 +60,37 @@ function reducer(state, action) {
         },
       };
 
+    case "SET_SUBMIT_ATTEMPTED":
+      return {
+        ...state,
+        submitAttempted: action.payload,
+      };
+
     case "SET_ERRORS":
-      return { ...state, errors: action.payload };
+      return {
+        ...state,
+        errors: action.payload,
+      };
+
+    case "CLEAR_ERRORS":
+      return {
+        ...state,
+        errors: {},
+      };
+
+    case "CLEAR_FIELD_ERROR": {
+      const copy = { ...state.errors };
+      delete copy[action.payload];
+      return {
+        ...state,
+        errors: copy,
+      };
+    }
 
     case "RESET_FORM":
       return {
         ...state,
-        formData: initialFormData,
+        formData: createInitialFormData(),
         errors: {},
         touched: {},
         submitAttempted: false,
@@ -100,6 +112,8 @@ function reducer(state, action) {
         editingId: action.payload.id,
         isFormOpen: true,
         errors: {},
+        touched: {},
+        submitAttempted: false,
       };
 
     default:
@@ -114,14 +128,15 @@ function useExpenseForm({
   showToastMessage,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+
   const {
     formData,
+    errors,
+    touched,
+    submitAttempted,
     isFormOpen,
     mode,
-    errors,
     editingId,
-    submitAttempted,
-    touched,
   } = state;
 
   const openForm = () => {
@@ -134,9 +149,9 @@ function useExpenseForm({
 
   function handleEditExpense(id) {
     const expense = editExpense(expenses, id);
+
     if (!expense) {
-      showToastMessage("Expense not found", "info");
-      return;
+      showToastMessage("No expenses found", "info");
     }
 
     dispatch({ type: "EDIT_EXPENSE", payload: expense });
@@ -150,26 +165,29 @@ function useExpenseForm({
         type: "SET_CATEGORY",
         payload: { category: value, customCategory: "" },
       });
-      return;
-    }
-
-    if (name === "customCategory") {
+    } else if (name === "customCategory") {
       dispatch({
         type: "SET_CATEGORY",
         payload: { category: "", customCategory: value },
       });
-      return;
+    } else {
+      dispatch({
+        type: "SET_FIELD",
+        payload: { name, value },
+      });
     }
-
-    dispatch({
-      type: "SET_FIELD",
-      payload: { name, value },
-    });
 
     dispatch({
       type: "SET_TOUCHED",
       payload: { name },
     });
+
+    if (submitAttempted || touched[name]) {
+      dispatch({
+        type: "CLEAR_FIELD_ERROR",
+        payload: name,
+      });
+    }
   };
 
   function handleSubmit(e) {
@@ -180,9 +198,8 @@ function useExpenseForm({
     const snapshot = { ...formData };
     const formErrors = validateForm(snapshot);
 
-    if (Object.keys(formErrors).length) {
+    if (Object.keys(formErrors).length > 0) {
       dispatch({ type: "SET_ERRORS", payload: formErrors });
-      showToastMessage("Please fix validation errors", "error");
       return;
     }
 
@@ -202,17 +219,19 @@ function useExpenseForm({
       }
 
       if (isSameData(existing, data)) {
-        showToastMessage("No changes detected", "info");
+        showToastMessage("No changes detected to update");
         return;
       }
 
       handleUpdateExpense(editingId, data);
     }
 
-    showToastMessage(
-      mode === "add" ? "Expense added" : "Expense updated",
-      "success",
-    );
+    setTimeout(() => {
+      showToastMessage?.(
+        mode === "add" ? "Expense added" : "Expense updated",
+        "success",
+      );
+    }, 0);
 
     dispatch({ type: "RESET_FORM" });
     closeForm();
@@ -222,9 +241,9 @@ function useExpenseForm({
     formData,
     errors,
     touched,
-    mode,
-    isFormOpen,
     submitAttempted,
+    isFormOpen,
+    mode,
     openForm,
     closeForm,
     handleChange,

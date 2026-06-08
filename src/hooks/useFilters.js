@@ -16,8 +16,6 @@ const initialFilters = {
 };
 
 function useFilters(expenses) {
-  console.log("useFilters running");
-
   const [filters, setFilters] = useState(initialFilters);
 
   const [visibleCount, setVisibleCount] = useState(() => {
