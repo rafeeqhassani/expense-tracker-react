@@ -2,8 +2,6 @@ function ActionsBar({
   onLoadMore,
   filteredExpenses,
   visibleCount,
-  resetFilters,
-  hasActiveFilters,
   onClearSelected,
   onClearAll,
 }) {
@@ -30,17 +28,8 @@ function ActionsBar({
 
   return (
     <section className="actions-bar">
-      <div className="left">{result}</div>
-      <div className="right">
-        {hasActiveFilters && (
-          <button
-            type="button"
-            className="clear-filtered"
-            onClick={resetFilters}
-          >
-            Clear filtered
-          </button>
-        )}
+      <div className="left"> {result}</div>
+      <div className="center">
         <button
           type="button"
           className="clear-selected"
@@ -48,7 +37,8 @@ function ActionsBar({
         >
           Clear selected
         </button>
-
+      </div>
+      <div className="right">
         <button type="button" className="clear-all" onClick={onClearAll}>
           Clear all
         </button>

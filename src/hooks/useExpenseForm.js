@@ -219,7 +219,7 @@ function useExpenseForm({
       }
 
       if (isSameData(existing, data)) {
-        showToastMessage("No changes detected to update");
+        showToastMessage("No changes detected", "info");
         return;
       }
 

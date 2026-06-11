@@ -1,0 +1,92 @@
+import { useEffect } from "react";
+
+import Header from "../expenses/Header";
+import Filters from "../expenses/Filters";
+import ExpenseList from "../expenses/ExpenseList";
+import ActionsBar from "../expenses/ActionsBar";
+import ExpenseForm from "../modal/ExpenseForm";
+import Toast from "../ui/Toast";
+import Sidebar from "./Sidebar";
+
+function MainLayout({ data, form, toast, actions }) {
+  const {
+    expenses,
+    filteredExpenses,
+    visibleCount,
+    categories,
+    filters,
+    totals,
+  } = data;
+
+  const { totalAmount, filteredTotal, totalRecords } = totals;
+
+  const { formData, mode, isOpen, errors, touched, submitAttempted } = form;
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+  }, [isOpen]);
+
+  return (
+    <div className="dashboard">
+      <Sidebar
+        openForm={actions.openForm}
+        total={totalAmount}
+        monthlyTotal={filteredTotal}
+        totalRecords={totalRecords}
+      />
+
+      <main className="main">
+        <Header
+          total={totalAmount}
+          monthlyTotal={filteredTotal}
+          totalRecords={totalRecords}
+        />
+
+        <Filters
+          filters={filters}
+          handleFilterChange={actions.handleFilterChange}
+          hasActiveFilters={actions.hasActiveFilters}
+          resetFilters={actions.resetFilters}
+        />
+
+        <ExpenseList
+          expenses={expenses}
+          searchQuery={filters.title}
+          onDelete={actions.handleDeleteExpense}
+          onEdit={actions.handleEditExpense}
+          isChecked={actions.handleCheckboxChange}
+        />
+
+        <ActionsBar
+          onLoadMore={actions.handleLoadMore}
+          filteredExpenses={filteredExpenses}
+          visibleCount={visibleCount}
+          onClearSelected={actions.handleClearSelected}
+          onClearAll={actions.handleClearAll}
+        />
+      </main>
+
+      {isOpen && (
+        <div className="overlay">
+          <div className="modal">
+            <ExpenseForm
+              categories={categories}
+              onSubmit={actions.handleSubmit}
+              mode={mode}
+              closeForm={actions.closeForm}
+              formData={formData}
+              handleChange={actions.handleChange}
+              errors={errors}
+              submitAttempted={submitAttempted}
+              touched={touched}
+            />
+          </div>
+        </div>
+      )}
+
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
+    </div>
+  );
+}
+
+export default MainLayout;

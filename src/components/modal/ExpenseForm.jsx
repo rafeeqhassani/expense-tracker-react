@@ -12,7 +12,7 @@ function ExpenseForm({
   const showError = (field) =>
     (submitAttempted || touched[field]) && errors[field];
   return (
-    <form className="expenseForm" onSubmit={onSubmit}>
+    <form className="expense-form" onSubmit={onSubmit}>
       <div className="field">
         <label htmlFor="title">Title</label>
 

@@ -55,6 +55,10 @@ function useFilters(expenses) {
     return totalCalculate(filteredExpenses);
   }, [filteredExpenses]);
 
+  const totalRecords = useMemo(() => {
+    return expenses.length;
+  }, [expenses]);
+
   const categories = useMemo(() => {
     return getUniqueCategories(expenses);
   }, [expenses]);
@@ -84,6 +88,7 @@ function useFilters(expenses) {
     hasActiveFilters,
     totalAmount,
     filteredTotal,
+    totalRecords,
     limitedExpenses,
     handleLoadMore,
     filteredExpenses,

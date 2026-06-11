@@ -1,106 +1,65 @@
-import Header from "./components/Header";
-import Filters from "./components/Filters";
-import ExpenseList from "./components/ExpenseList";
-import ActionsBar from "./components/ActionsBar";
-import ExpenseForm from "./components/ExpenseForm";
-import Toast from "./components/Toast";
 import useExpenses from "./hooks/useExpenses";
 import useFilters from "./hooks/useFilters";
 import useExpenseForm from "./hooks/useExpenseForm";
-
 import useToast from "./hooks/useToast";
+
+import MainLayout from "./components/layout/MainLayout";
 
 function App() {
   const { toast, showToastMessage } = useToast();
 
-  const {
-    expenses,
-    handleAddExpense,
-    handleUpdateExpense,
-    handleDeleteExpense,
-    handleCheckboxChange,
-    handleClearSelected,
-    handleClearAll,
-  } = useExpenses(showToastMessage);
+  const expensesHook = useExpenses(showToastMessage);
 
-  const {
-    formData,
-    mode,
-    handleChange,
-    handleSubmit,
-    isFormOpen,
-    openForm,
-    closeForm,
-    handleEditExpense,
-    errors,
-    touched,
-    submitAttempted,
-  } = useExpenseForm({
-    expenses,
-    handleAddExpense,
-    handleUpdateExpense,
+  const formHook = useExpenseForm({
+    expenses: expensesHook.expenses,
+    handleAddExpense: expensesHook.handleAddExpense,
+    handleUpdateExpense: expensesHook.handleUpdateExpense,
     showToastMessage,
   });
 
-  const {
-    categories,
-    filters,
-    handleFilterChange,
-    totalAmount,
-    filteredTotal,
-    limitedExpenses,
-    handleLoadMore,
-    resetFilters,
-    hasActiveFilters,
-    filteredExpenses,
-    visibleCount,
-  } = useFilters(expenses);
+  const filtersHook = useFilters(expensesHook.expenses);
 
   return (
-    <>
-      <main>
-        <Header
-          total={totalAmount}
-          monthlyTotal={filteredTotal}
-          showForm={openForm}
-        />
+    <MainLayout
+      data={{
+        expenses: filtersHook.limitedExpenses,
+        filteredExpenses: filtersHook.filteredExpenses,
+        visibleCount: filtersHook.visibleCount,
+        categories: filtersHook.categories,
+        filters: filtersHook.filters,
+        totals: {
+          totalAmount: filtersHook.totalAmount,
+          filteredTotal: filtersHook.filteredTotal,
+          totalRecords: filtersHook.totalRecords,
+        },
+      }}
+      form={{
+        formData: formHook.formData,
+        mode: formHook.mode,
+        isOpen: formHook.isFormOpen,
+        errors: formHook.errors,
+        touched: formHook.touched,
+        submitAttempted: formHook.submitAttempted,
+      }}
+      toast={toast}
+      actions={{
+        openForm: formHook.openForm,
+        closeForm: formHook.closeForm,
+        handleEditExpense: formHook.handleEditExpense,
+        handleSubmit: formHook.handleSubmit,
+        handleChange: formHook.handleChange,
 
-        <Filters filters={filters} handleFilterChange={handleFilterChange} />
+        handleDeleteExpense: expensesHook.handleDeleteExpense,
+        handleCheckboxChange: expensesHook.handleCheckboxChange,
+        handleClearSelected: expensesHook.handleClearSelected,
+        handleClearAll: expensesHook.handleClearAll,
 
-        <ExpenseList
-          expenses={limitedExpenses}
-          searchQuery={filters.title}
-          onDelete={handleDeleteExpense}
-          onEdit={handleEditExpense}
-          isChecked={handleCheckboxChange}
-        />
-        <ActionsBar
-          onLoadMore={handleLoadMore}
-          filteredExpenses={filteredExpenses}
-          visibleCount={visibleCount}
-          resetFilters={resetFilters}
-          hasActiveFilters={hasActiveFilters}
-          onClearSelected={handleClearSelected}
-          onClearAll={handleClearAll}
-        />
-      </main>
-      {isFormOpen && (
-        <div className={`modal`}>
-          <ExpenseForm
-            categories={categories}
-            onSubmit={handleSubmit}
-            mode={mode}
-            closeForm={closeForm}
-            formData={formData}
-            handleChange={handleChange}
-            errors={errors}
-            submitAttempted={submitAttempted}
-            touched={touched}
-          />
-        </div>
-      )}
-      <Toast show={toast.show} message={toast.message} type={toast.type} />
-    </>
+        handleFilterChange: filtersHook.handleFilterChange,
+        handleLoadMore: filtersHook.handleLoadMore,
+        resetFilters: filtersHook.resetFilters,
+        hasActiveFilters: filtersHook.hasActiveFilters,
+      }}
+    />
   );
 }
 

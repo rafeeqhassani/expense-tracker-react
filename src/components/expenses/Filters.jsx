@@ -1,10 +1,15 @@
-import { SORT_OPTIONS } from "../utils/expenseDerive";
+import { SORT_OPTIONS } from "../../utils/expenseDerive";
 
-function Filters({ filters, handleFilterChange }) {
+function Filters({
+  filters,
+  handleFilterChange,
+  hasActiveFilters,
+  resetFilters,
+}) {
   const { title, month, sortBy } = filters || {};
   return (
     <section className="filters">
-      <div className="field">
+      <div className="filter-group">
         <label htmlFor="searchExpenses">Search</label>
         <input
           type="text"
@@ -16,7 +21,7 @@ function Filters({ filters, handleFilterChange }) {
         />
       </div>
 
-      <div className="field">
+      <div className="filter-group">
         <label htmlFor="filterByMonth">Month</label>
         <select
           id="filterByMonth"
@@ -41,7 +46,7 @@ function Filters({ filters, handleFilterChange }) {
         </select>
       </div>
 
-      <div className="field">
+      <div className="filter-group">
         <label htmlFor="sortSelection">Sort By</label>
         <select
           id="sortSelection"
@@ -70,6 +75,18 @@ function Filters({ filters, handleFilterChange }) {
             Date: Oldest &#8594; Newest
           </option>
         </select>
+      </div>
+
+      <div className="filter-button-group">
+        {hasActiveFilters && (
+          <button
+            type="button"
+            className="clear-filtered"
+            onClick={resetFilters}
+          >
+            Reset filters
+          </button>
+        )}
       </div>
     </section>
   );
