@@ -6,7 +6,7 @@ import ExpenseList from "../expenses/ExpenseList";
 import ActionsBar from "../expenses/ActionsBar";
 import ExpenseForm from "../modal/ExpenseForm";
 import Toast from "../ui/Toast";
-import Sidebar from "./Sidebar";
+import Sidebar from "./SideBar";
 
 function MainLayout({ data, form, toast, actions }) {
   const {
