@@ -28,6 +28,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  border-radius: 12px;
 }
 
 .nav {
@@ -46,8 +47,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  background: #f1f5f9;
-
+  background: #d9dcd6;
+  border-radius: 12px;
   padding: 24px;
   overflow-y: auto;
 }

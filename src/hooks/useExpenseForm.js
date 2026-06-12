@@ -208,6 +208,9 @@ function useExpenseForm({
       category: snapshot.category || snapshot.customCategory,
     });
 
+    dispatch({ type: "RESET_FORM" });
+    closeForm();
+
     if (mode === "add") {
       handleAddExpense(data);
     } else {
