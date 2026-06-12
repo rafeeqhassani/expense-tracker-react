@@ -27,7 +27,11 @@ function ExpenseItem({ expense, onDelete, onEdit, isChecked }) {
           Edit
         </button>
 
-        <button type="button" onClick={() => onDelete(expense.id)}>
+        <button
+          type="button"
+          className="delete-btn"
+          onClick={() => onDelete(expense.id)}
+        >
           Delete
         </button>
       </td>

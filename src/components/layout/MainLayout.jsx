@@ -80,7 +80,7 @@ function MainLayout({ data, form, toast, actions }) {
       </main>
 
       {isOpen && (
-        <div div className="overlay">
+        <div className="overlay">
           <div className="modal">
             <ExpenseForm
               categories={categories}

@@ -19,7 +19,7 @@ function Header({
 
       <div className="header-top">
         <h1>Expense Tracker</h1>
-        <p>Manage your expenses efficiently </p>
+        <p>Manage your expenses</p>
       </div>
 
       <div className="summary">
