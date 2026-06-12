@@ -27,6 +27,9 @@ function MainLayout({ data, form, toast, actions }) {
   }, [isOpen]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
+  }, [sidebarOpen]);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -77,7 +80,7 @@ function MainLayout({ data, form, toast, actions }) {
       </main>
 
       {isOpen && (
-        <div className="overlay">
+        <div div className="overlay">
           <div className="modal">
             <ExpenseForm
               categories={categories}

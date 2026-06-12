@@ -78,7 +78,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  background: #d9dcd6;
+  background: #ced4da;
   border-radius: 12px;
   padding: 24px;
   overflow-y: auto;
