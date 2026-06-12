@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Header from "../expenses/Header";
 import Filters from "../expenses/Filters";
@@ -26,6 +26,12 @@ function MainLayout({ data, form, toast, actions }) {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
   return (
     <div className="dashboard">
       <Sidebar
@@ -33,6 +39,8 @@ function MainLayout({ data, form, toast, actions }) {
         total={totalAmount}
         monthlyTotal={filteredTotal}
         totalRecords={totalRecords}
+        sidebarOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
       />
 
       <main className="main">
@@ -40,6 +48,8 @@ function MainLayout({ data, form, toast, actions }) {
           total={totalAmount}
           monthlyTotal={filteredTotal}
           totalRecords={totalRecords}
+          toggleSidebar={toggleSidebar}
+          openForm={actions.openForm}
         />
 
         <Filters

@@ -1,6 +1,22 @@
-function Header({ total, monthlyTotal, totalRecords }) {
+function Header({
+  total,
+  monthlyTotal,
+  totalRecords,
+  toggleSidebar,
+  openForm,
+}) {
   return (
     <section className="app-header">
+      <div className="mobile-actions">
+        <button className="menu-btn" onClick={toggleSidebar}>
+          ☰
+        </button>
+
+        <button className="add-btn" onClick={openForm}>
+          +
+        </button>
+      </div>
+
       <div className="header-top">
         <h1>Expense Tracker</h1>
         <p>Manage your expenses efficiently </p>
