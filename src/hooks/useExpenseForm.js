@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
 
 import { validateForm, editExpense } from "../utils/expenseFormState";
 import { normalizedData, isSameData } from "../utils/expenseTransform";
@@ -128,16 +128,8 @@ function useExpenseForm({
   showToastMessage,
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const {
-    formData,
-    errors,
-    touched,
-    submitAttempted,
-    isFormOpen,
-    mode,
-    editingId,
-  } = state;
+  const submitLock = useRef(false);
+  const { formData, touched, submitAttempted, mode, editingId } = state;
 
   const openForm = () => {
     dispatch({ type: "OPEN_FORM" });
@@ -146,16 +138,6 @@ function useExpenseForm({
   const closeForm = () => {
     dispatch({ type: "CLOSE_FORM" });
   };
-
-  function handleEditExpense(id) {
-    const expense = editExpense(expenses, id);
-
-    if (!expense) {
-      showToastMessage("No expenses found", "info");
-    }
-
-    dispatch({ type: "EDIT_EXPENSE", payload: expense });
-  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -191,8 +173,9 @@ function useExpenseForm({
   };
 
   function handleSubmit(e) {
-    e.preventDefault();
-
+    e?.preventDefault();
+    if (submitLock.current) return;
+    submitLock.current = true;
     dispatch({ type: "SET_SUBMIT_ATTEMPTED", payload: true });
 
     const snapshot = { ...formData };
@@ -200,6 +183,7 @@ function useExpenseForm({
 
     if (Object.keys(formErrors).length > 0) {
       dispatch({ type: "SET_ERRORS", payload: formErrors });
+      submitLock.current = false;
       return;
     }
 
@@ -208,9 +192,6 @@ function useExpenseForm({
       category: snapshot.category || snapshot.customCategory,
     });
 
-    dispatch({ type: "RESET_FORM" });
-    closeForm();
-
     if (mode === "add") {
       handleAddExpense(data);
     } else {
@@ -218,35 +199,41 @@ function useExpenseForm({
 
       if (!existing) {
         showToastMessage("Expense not found", "info");
+        submitLock.current = false;
         return;
       }
 
       if (isSameData(existing, data)) {
         showToastMessage("No changes detected", "info");
+        submitLock.current = false;
         return;
       }
 
       handleUpdateExpense(editingId, data);
     }
 
-    setTimeout(() => {
-      showToastMessage?.(
-        mode === "add" ? "Expense added" : "Expense updated",
-        "success",
-      );
-    }, 0);
-
     dispatch({ type: "RESET_FORM" });
     closeForm();
+    showToastMessage(
+      mode === "add" ? "Expense added" : "Expense updated",
+      "success",
+    );
+    submitLock.current = false;
+  }
+
+  function handleEditExpense(id) {
+    const expense = editExpense(expenses, id);
+
+    if (!expense) {
+      showToastMessage("No expenses found", "info");
+      return;
+    }
+
+    dispatch({ type: "EDIT_EXPENSE", payload: expense });
   }
 
   return {
-    formData,
-    errors,
-    touched,
-    submitAttempted,
-    isFormOpen,
-    mode,
+    ...state,
     openForm,
     closeForm,
     handleChange,

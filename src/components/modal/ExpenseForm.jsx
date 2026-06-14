@@ -11,6 +11,7 @@ function ExpenseForm({
 }) {
   const showError = (field) =>
     (submitAttempted || touched[field]) && errors[field];
+
   return (
     <form className="expense-form" onSubmit={onSubmit}>
       <div className="field">
