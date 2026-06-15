@@ -2,13 +2,15 @@
 
 # Live Demo
 
-https://creative-seashore-797b70.netlify.app
+https://rafeeqhassani.github.io/expense-tracker-react/
 
 # Source Code
 
 https://github.com/rafeeqhassani/expense-tracker-react
 
----
+# Screenshot
+
+![My project view](public/expense-dashboard.png)
 
 # About the Project
 
@@ -17,8 +19,6 @@ A React-based Expense Tracker Application built to manage daily and monthly expe
 This project focuses not only on building features but also on understanding frontend architecture, React state management, UI behavior, rendering flow, debugging, and real-world application structure.
 
 The project was originally built in Vanilla JavaScript and later refactored into React to better understand component-based architecture and state-driven UI design.
-
----
 
 # Features
 
@@ -35,8 +35,6 @@ The project was originally built in Vanilla JavaScript and later refactored into
 - State-driven UI rendering
 - Responsive behavior
 
----
-
 # Technologies Used
 
 - React
@@ -44,8 +42,6 @@ The project was originally built in Vanilla JavaScript and later refactored into
 - CSS3
 - HTML5
 - React Hooks (useState, useReducer, useEffect)
-
----
 
 # Project Architecture & Learning
 
@@ -59,8 +55,6 @@ This project helped me deeply understand:
 - When abstraction is actually needed
 
 Complex form logic was handled using `useReducer`, while simpler logic (filtering, pagination, totals) was kept modular without over-engineering.
-
----
 
 # State Management Understanding
 
@@ -81,8 +75,6 @@ Complex form logic was handled using `useReducer`, while simpler logic (filterin
 ## App Flow
 
 Understanding how UI changes based on user actions, reducer transitions, and rendering conditions.
-
----
 
 # Form Complexity & Reducer Logic
 
@@ -108,8 +100,6 @@ A key principle learned:
 During debugging, inconsistent validation and success messages were caused by overlapping UI states rather than data issues.
 
 Closing the form after successful submission ensures a clean UI state and prevents conflicting feedback.
-
----
 
 # UI State Debugging & Form Lifecycle Decisions
 
@@ -139,8 +129,6 @@ This reinforced an important principle:
 
 > UI bugs are not always logic bugs — they are often state flow and rendering lifecycle issues.
 
----
-
 # Problem Solving & Debugging
 
 This project involved deep debugging and architectural decisions:
@@ -151,8 +139,6 @@ This project involved deep debugging and architectural decisions:
 - Fixing UI conflicts
 - Using DevTools effectively
 - Finding root causes, not just symptoms
-
----
 
 # What I Learned
 
@@ -172,8 +158,6 @@ This project involved deep debugging and architectural decisions:
 - UI lifecycle management
 - Scalable project structure
 
----
-
 # Future Improvements
 
 - UI/UX redesign
@@ -183,8 +167,6 @@ This project involved deep debugging and architectural decisions:
 - Backend integration
 - Authentication
 - Database support
-
----
 
 # Project Status
 
@@ -196,8 +178,6 @@ Current focus:
 - Architecture refinement
 - Scalability
 - Advanced React patterns
-
----
 
 # Note
 

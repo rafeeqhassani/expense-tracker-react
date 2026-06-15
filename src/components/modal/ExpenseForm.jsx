@@ -9,6 +9,7 @@ function ExpenseForm({
   submitAttempted,
   touched,
 }) {
+
   const showError = (field) =>
     (submitAttempted || touched[field]) && errors[field];
 
