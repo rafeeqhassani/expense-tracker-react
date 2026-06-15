@@ -35,6 +35,18 @@ function MainLayout({ data, form, toast, actions }) {
     setSidebarOpen((prev) => !prev);
   };
 
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        actions.closeForm();
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [actions]);
+
   return (
     <div className="dashboard">
       <Sidebar
@@ -80,8 +92,8 @@ function MainLayout({ data, form, toast, actions }) {
       </main>
 
       {isOpen && (
-        <div className="overlay">
-          <div className="modal">
+        <div className="overlay" onClick={actions.closeForm}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
             <ExpenseForm
               categories={categories}
               onSubmit={actions.handleSubmit}

@@ -25,11 +25,11 @@ function Header({
       <div className="summary">
         <div className="summary-card">
           <span>Total</span>
-          <h3 className="total-amount">{total}</h3>
+          <h3 className="total">{total}</h3>
         </div>
         <div className="summary-card">
           <span>Monthly</span>
-          <h3 className="monthly-total">{monthlyTotal}</h3>
+          <h3 className="monthly">{monthlyTotal}</h3>
         </div>
         <div className="summary-card">
           <span>Records</span>

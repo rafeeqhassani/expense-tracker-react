@@ -174,6 +174,7 @@ function useExpenseForm({
 
   function handleSubmit(e) {
     e?.preventDefault();
+
     if (submitLock.current) return;
     submitLock.current = true;
     dispatch({ type: "SET_SUBMIT_ATTEMPTED", payload: true });

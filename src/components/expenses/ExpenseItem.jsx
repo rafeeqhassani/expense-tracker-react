@@ -1,4 +1,6 @@
 function ExpenseItem({ expense, onDelete, onEdit, isChecked }) {
+  const amount = Number(expense.amount || 0);
+
   return (
     <tr>
       <td>
@@ -11,11 +13,19 @@ function ExpenseItem({ expense, onDelete, onEdit, isChecked }) {
 
       <td>{expense.title}</td>
 
-      <td>{expense.category}</td>
+      <td className="category-badge">{expense.category}</td>
 
       <td>{new Date(expense.date).toLocaleDateString("en-GB")}</td>
 
-      <td className="amount">
+      <td
+        className={
+          amount > 50000
+            ? "amount high"
+            : amount > 20000
+              ? "amount medium"
+              : "amount"
+        }
+      >
         {Number(expense.amount || 0).toLocaleString("en-PK", {
           style: "currency",
           currency: "PKR",
@@ -23,7 +33,11 @@ function ExpenseItem({ expense, onDelete, onEdit, isChecked }) {
       </td>
 
       <td className="actions">
-        <button type="button" onClick={() => onEdit(expense.id)}>
+        <button
+          type="button"
+          className="edit-btn"
+          onClick={() => onEdit(expense.id)}
+        >
           Edit
         </button>
 
