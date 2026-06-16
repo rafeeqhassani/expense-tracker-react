@@ -5,7 +5,7 @@ import {
   FaPlusCircle,
   FaMoneyBillWave,
 } from "react-icons/fa";
-
+import { FaXmark } from "react-icons/fa6";
 function Sidebar({
   openForm,
   total,
@@ -28,7 +28,7 @@ function Sidebar({
           </span>
           Expense Dashboard
           <button className="close-btn" onClick={toggleSidebar}>
-            ✕
+            <FaXmark />
           </button>
         </div>
 
@@ -38,7 +38,7 @@ function Sidebar({
               <span className="add-expense-icon">
                 <FaPlusCircle />
               </span>
-              <span className="button-text"> Add New Expense</span>
+              <span className="button-text">Add New Expense</span>
             </button>
           </div>
 

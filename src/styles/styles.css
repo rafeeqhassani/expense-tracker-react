@@ -40,18 +40,11 @@ body {
   text-align: left;
 }
 
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 999;
-}
-
 .logo {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   font-size: 22px;
   font-weight: 700;
   padding-bottom: 16px;
@@ -59,7 +52,7 @@ body {
 }
 
 .logo-icon {
-  font-size: 32px;
+  font-size: 28px;
 }
 
 .close-btn {
@@ -68,6 +61,7 @@ body {
   color: white;
   font-size: 20px;
   cursor: pointer;
+  padding: 8px 10px;
   margin-left: auto;
   display: block;
 }
@@ -682,5 +676,18 @@ button:hover {
 @media (min-width: 768px) {
   .close-btn {
     display: none;
+  }
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
   }
 }
