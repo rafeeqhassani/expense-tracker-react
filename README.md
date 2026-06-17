@@ -8,9 +8,13 @@ https://rafeeqhassani.github.io/expense-tracker-react/
 
 https://github.com/rafeeqhassani/expense-tracker-react
 
-# Screenshot
+# Desktop View
 
 ![My project view](public/expense-dashboard.png)
+
+# Mobile View
+
+![Mobile View](src/assets/expense-mob-dashboard.png)
 
 # About the Project
 
