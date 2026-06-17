@@ -3,7 +3,7 @@ function Toast({ show, message, type }) {
 
   return (
     <div className="toast-container">
-      <p className={`toast toast-${type}`}>{message}</p>
+      <p className={`toast-message toast-${type}`}>{message}</p>
     </div>
   );
 }

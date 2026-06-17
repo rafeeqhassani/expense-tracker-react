@@ -72,20 +72,11 @@ function reducer(state, action) {
         errors: action.payload,
       };
 
-    case "CLEAR_ERRORS":
+    case "CLEAR_FIELD_ERROR":
       return {
         ...state,
-        errors: {},
+        errors: { ...state.errors, [name]: undefined },
       };
-
-    case "CLEAR_FIELD_ERROR": {
-      const copy = { ...state.errors };
-      delete copy[action.payload];
-      return {
-        ...state,
-        errors: copy,
-      };
-    }
 
     case "RESET_FORM":
       return {
@@ -129,7 +120,7 @@ function useExpenseForm({
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const submitLock = useRef(false);
-  const { formData, touched, submitAttempted, mode, editingId } = state;
+  const { formData, mode, editingId } = state;
 
   const openForm = () => {
     dispatch({ type: "OPEN_FORM" });
@@ -159,17 +150,7 @@ function useExpenseForm({
       });
     }
 
-    dispatch({
-      type: "SET_TOUCHED",
-      payload: { name },
-    });
-
-    if (submitAttempted || touched[name]) {
-      dispatch({
-        type: "CLEAR_FIELD_ERROR",
-        payload: name,
-      });
-    }
+    dispatch({ type: "CLEAR_FIELD_ERROR", payload: name });
   };
 
   function handleSubmit(e) {
@@ -177,6 +158,7 @@ function useExpenseForm({
 
     if (submitLock.current) return;
     submitLock.current = true;
+
     dispatch({ type: "SET_SUBMIT_ATTEMPTED", payload: true });
 
     const snapshot = { ...formData };
@@ -215,10 +197,12 @@ function useExpenseForm({
 
     dispatch({ type: "RESET_FORM" });
     closeForm();
+
     showToastMessage(
       mode === "add" ? "Expense added" : "Expense updated",
       "success",
     );
+
     submitLock.current = false;
   }
 

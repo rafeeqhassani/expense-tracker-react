@@ -39,7 +39,7 @@ function App() {
         isOpen: formHook.isFormOpen,
         errors: formHook.errors,
         touched: formHook.touched,
-        submitAttempted: formHook.submitAttempted,
+        submitAttemted: formHook.submitAttemted,
       }}
       toast={toast}
       actions={{
