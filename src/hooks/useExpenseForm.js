@@ -72,11 +72,11 @@ function reducer(state, action) {
         errors: action.payload,
       };
 
-    case "CLEAR_FIELD_ERROR":
-      return {
-        ...state,
-        errors: { ...state.errors, [name]: undefined },
-      };
+    case "CLEAR_FIELD_ERROR": {
+      const copy = { ...state.errors };
+      delete copy[name];
+      return { ...state, errors: copy };
+    }
 
     case "RESET_FORM":
       return {
@@ -197,7 +197,6 @@ function useExpenseForm({
 
     dispatch({ type: "RESET_FORM" });
     closeForm();
-
     showToastMessage(
       mode === "add" ? "Expense added" : "Expense updated",
       "success",
