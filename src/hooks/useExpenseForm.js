@@ -74,7 +74,7 @@ function reducer(state, action) {
 
     case "CLEAR_FIELD_ERROR": {
       const copy = { ...state.errors };
-      delete copy[name];
+      delete copy[action.payload];
       return { ...state, errors: copy };
     }
 
