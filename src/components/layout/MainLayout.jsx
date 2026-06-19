@@ -20,7 +20,7 @@ function MainLayout({ data, form, toast, actions }) {
 
   const { totalAmount, filteredTotal, totalRecords } = totals;
 
-  const { formData, mode, isOpen, errors, touched, submitAttemted } = form;
+  const { formData, mode, isOpen, errors, touched, submitAttempted } = form;
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
@@ -102,7 +102,7 @@ function MainLayout({ data, form, toast, actions }) {
               formData={formData}
               handleChange={actions.handleChange}
               errors={errors}
-              submitAttempted={submitAttemted}
+              submitAttempted={submitAttempted}
               touched={touched}
             />
           </div>
