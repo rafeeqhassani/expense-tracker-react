@@ -107,31 +107,32 @@ Closing the form after successful submission ensures a clean UI state and preven
 
 # UI State Debugging & Form Lifecycle Decisions
 
-During form submission, validation messages occasionally appeared alongside success toasts. Although the data flow was correct, UI states were overlapping.
+During form submission, validation messages sometimes appeared alongside success toasts.
 
-To debug this issue, I:
+I investigated the issue by:
 
 - Traced reducer actions step by step
 - Inspected state transitions before/after submit
-- Verified validation flow
-- Added detailed console logs
-- Reviewed rendering behavior
+- Verifying validation flow
+- Adding console logs to confirm state correctness
+- Reviewing render behavior and UI updates
 
-The issue was caused by UI lifecycle overlap, not logic errors. Since the form remained open after submission, validation and success states could briefly coexist.
+The data flow was correct, but the issue appeared to be related to UI lifecycle timing and overlapping render status when the form remained open after submission.
 
 ### Solution
 
-Closing the form after successful submission ensured:
+Closing or resetting the form after successful submission ensured:
 
 - Fresh state on each open
 - No stale validation messages
-- No conflicting UI feedback
-- Simplified rendering flow
-- More predictable UX
+- No overlapping UI states
+- More predictable rendering behavior
 
-This reinforced an important principle:
+This helped stabilize the UI while keeping validation logic intact.
 
-> UI bugs are not always logic bugs — they are often state flow and rendering lifecycle issues.
+### Key Learning
+
+> UI bugs are not always logic errors — they often come from state lifecycle and rendering synchronization issues.
 
 # Problem Solving & Debugging
 

@@ -9,6 +9,11 @@ function ExpenseForm({
   submitAttempted,
   touched,
 }) {
+  console.log({
+    errors,
+    submitAttempted,
+    touched,
+  });
   const showError = (field) =>
     (submitAttempted || touched[field]) && errors[field];
 
