@@ -6,11 +6,17 @@ export function filterByMonth(expenses, month) {
   });
 }
 
-export function searchExpenses(expenses, searchExpense) {
-  const inputText = searchExpense.trim().toLowerCase();
+export function searchExpenses(expenses, query) {
+  if (!query.trim()) return expenses;
 
-  return expenses.filter((expense) => {
-    return expense.title.toLowerCase().includes(inputText);
+  const q = query.toLowerCase();
+
+  return expenses.filter((item) => {
+    return (
+      item.title.toLowerCase().includes(q) ||
+      item.category.toLowerCase().includes(q) ||
+      String(item.amount).includes(q)
+    );
   });
 }
 

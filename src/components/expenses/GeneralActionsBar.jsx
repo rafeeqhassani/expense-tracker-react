@@ -1,8 +1,7 @@
-function ActionsBar({
+function GeneralActionsBar({
   onLoadMore,
   filteredExpenses,
   visibleCount,
-  onClearSelected,
   onClearAll,
 }) {
   let result;
@@ -29,15 +28,7 @@ function ActionsBar({
   return (
     <section className="actions-bar">
       <div className="left"> {result}</div>
-      <div className="center">
-        <button
-          type="button"
-          className="clear-selected"
-          onClick={onClearSelected}
-        >
-          Clear selected
-        </button>
-      </div>
+
       <div className="right">
         <button type="button" className="clear-all" onClick={onClearAll}>
           Clear all
@@ -46,4 +37,4 @@ function ActionsBar({
     </section>
   );
 }
-export default ActionsBar;
+export default GeneralActionsBar;

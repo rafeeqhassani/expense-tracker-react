@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 import Header from "../expenses/Header";
 import Filters from "../expenses/Filters";
 import ExpenseList from "../expenses/ExpenseList";
-import ActionsBar from "../expenses/ActionsBar";
+import GeneralActionsBar from "../expenses/GeneralActionsBar";
+import BulkActionsBar from "../expenses/BulkActionsBar";
 import ExpenseForm from "../modal/ExpenseForm";
 import Toast from "../ui/Toast";
 import Sidebar from "./SideBar";
 
 function MainLayout({ data, form, toast, actions }) {
   const {
-    expenses,
+    visibleExpenses,
     filteredExpenses,
     visibleCount,
     categories,
@@ -65,6 +66,10 @@ function MainLayout({ data, form, toast, actions }) {
           totalRecords={totalRecords}
           toggleSidebar={toggleSidebar}
           openForm={actions.openForm}
+          allSelected={actions.allSelected}
+          someSelected={actions.someSelected}
+          handleSelectAll={actions.handleSelectAll}
+          handleDeselectAll={actions.handleDeselectAll}
         />
 
         <Filters
@@ -75,18 +80,22 @@ function MainLayout({ data, form, toast, actions }) {
         />
 
         <ExpenseList
-          expenses={expenses}
+          expenses={visibleExpenses}
           searchQuery={filters.title}
           onDelete={actions.handleDeleteExpense}
           onEdit={actions.handleEditExpense}
-          isChecked={actions.handleCheckboxChange}
+          onToggleSelected={actions.handleToggleSelected}
         />
 
-        <ActionsBar
+        <BulkActionsBar
+          onClearSelected={actions.handleClearSelected}
+          selectedCount={actions.selectedCount}
+        />
+
+        <GeneralActionsBar
           onLoadMore={actions.handleLoadMore}
           filteredExpenses={filteredExpenses}
           visibleCount={visibleCount}
-          onClearSelected={actions.handleClearSelected}
           onClearAll={actions.handleClearAll}
         />
       </main>

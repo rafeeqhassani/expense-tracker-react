@@ -4,6 +4,10 @@ function Header({
   totalRecords,
   toggleSidebar,
   openForm,
+  allSelected,
+  someSelected,
+  handleDeselectAll,
+  handleSelectAll,
 }) {
   return (
     <section className="app-header">
@@ -20,6 +24,23 @@ function Header({
       <div className="header-top">
         <h1>Expense Tracker</h1>
         <p>Manage your expenses</p>
+      </div>
+
+      <div className="global-checkbox">
+        <input
+          type="checkbox"
+          checked={allSelected}
+          ref={(el) => {
+            if (el) el.indeterminate = someSelected;
+          }}
+          onChange={(e) => {
+            if (e.target.checked) {
+              handleSelectAll();
+            } else {
+              handleDeselectAll();
+            }
+          }}
+        />
       </div>
 
       <div className="summary">

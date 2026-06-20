@@ -1,4 +1,4 @@
-function ExpenseItem({ expense, onDelete, onEdit, isChecked }) {
+function ExpenseItem({ expense, onDelete, onEdit, onToggleSelected }) {
   const amount = Number(expense.amount || 0);
 
   return (
@@ -7,7 +7,7 @@ function ExpenseItem({ expense, onDelete, onEdit, isChecked }) {
         <input
           type="checkbox"
           checked={expense.selected}
-          onChange={(e) => isChecked(expense.id, e.target.checked)}
+          onChange={() => onToggleSelected(expense.id)}
         />
       </td>
 

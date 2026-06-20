@@ -1,6 +1,12 @@
 import ExpenseItem from "./ExpenseItem";
 
-function ExpenseList({ expenses, searchQuery, onDelete, onEdit, isChecked }) {
+function ExpenseList({
+  expenses,
+  searchQuery,
+  onDelete,
+  onEdit,
+  onToggleSelected,
+}) {
   const isSearching = searchQuery.trim() !== "";
 
   if (expenses.length === 0) {
@@ -35,7 +41,7 @@ function ExpenseList({ expenses, searchQuery, onDelete, onEdit, isChecked }) {
                 expense={expense}
                 onDelete={onDelete}
                 onEdit={onEdit}
-                isChecked={isChecked}
+                onToggleSelected={onToggleSelected}
               />
             ))}
           </tbody>

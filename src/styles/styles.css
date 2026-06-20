@@ -682,6 +682,7 @@ button:hover {
 
 @media (max-width: 768px) {
   .sidebar-overlay {
+    display: block;
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.4);

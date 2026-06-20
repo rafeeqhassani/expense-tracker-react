@@ -5,8 +5,13 @@ import {
   addExpense,
   updateExpense,
   deleteExpense,
-  checkboxChange,
   clearSelectedExpenses,
+  toggleSelectedExpense,
+  selectedAllExpenses,
+  deselectAllExpenses,
+  areAllSelected,
+  areSomeSelected,
+  getSelectedCount,
 } from "../utils/expenseState";
 
 function useExpenses(showToastMessage) {
@@ -40,15 +45,28 @@ function useExpenses(showToastMessage) {
     showToastMessage("Expense deleted", "success");
   };
 
-  const handleCheckboxChange = (id, onCheckboxChange) => {
-    setExpenses((prev) => checkboxChange(prev, id, onCheckboxChange));
+  const handleToggleSelected = (id) => {
+    setExpenses((prev) => toggleSelectedExpense(prev, id));
   };
+
+  const selectedCount = getSelectedCount(expenses);
+
+  const allSelected = areAllSelected(expenses);
+  const someSelected = areSomeSelected(expenses);
+
+  const handleSelectAll = () =>
+    setExpenses((prev) => selectedAllExpenses(prev));
+
+  const handleDeselectAll = () =>
+    setExpenses((prev) => deselectAllExpenses(prev));
 
   const handleClearSelected = () =>
     setExpenses((prev) => clearSelectedExpenses(prev));
 
   const handleClearAll = () => {
     setExpenses([]);
+    localStorage.removeItem("expenses");
+    localStorage.removeItem("visibleCount");
   };
 
   return {
@@ -56,7 +74,12 @@ function useExpenses(showToastMessage) {
     handleAddExpense,
     handleDeleteExpense,
     handleUpdateExpense,
-    handleCheckboxChange,
+    handleToggleSelected,
+    allSelected,
+    someSelected,
+    selectedCount,
+    handleSelectAll,
+    handleDeselectAll,
     handleClearSelected,
     handleClearAll,
   };

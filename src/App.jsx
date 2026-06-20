@@ -22,7 +22,7 @@ function App() {
   return (
     <MainLayout
       data={{
-        expenses: filtersHook.limitedExpenses,
+        visibleExpenses: filtersHook.limitedExpenses,
         filteredExpenses: filtersHook.filteredExpenses,
         visibleCount: filtersHook.visibleCount,
         categories: filtersHook.categories,
@@ -50,9 +50,16 @@ function App() {
         handleChange: formHook.handleChange,
 
         handleDeleteExpense: expensesHook.handleDeleteExpense,
-        handleCheckboxChange: expensesHook.handleCheckboxChange,
+        handleToggleSelected: expensesHook.handleToggleSelected,
+        allSelected: expensesHook.allSelected,
+        someSelected: expensesHook.someSelected,
+        selectedCount: expensesHook.selectedCount,
+        handleSelectAll: expensesHook.handleSelectAll,
+        handleDeselectAll: expensesHook.handleDeselectAll,
         handleClearSelected: expensesHook.handleClearSelected,
         handleClearAll: expensesHook.handleClearAll,
+
+        mockExpenses: expensesHook.handleGenerateMockData,
 
         handleFilterChange: filtersHook.handleFilterChange,
         handleLoadMore: filtersHook.handleLoadMore,
