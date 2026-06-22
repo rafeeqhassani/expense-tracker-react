@@ -33,7 +33,7 @@ body {
 
 .menu-btn {
   display: none;
-  font-size: 24px;
+  font-size: 20px;
   background: none;
   border: none;
   cursor: pointer;
@@ -42,28 +42,39 @@ body {
 
 .logo {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo-icon {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .close-btn {
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn button {
+  border-radius: 8px;
+  background: transparent;
   border: none;
   color: white;
-  font-size: 20px;
   cursor: pointer;
-  padding: 8px 10px;
-  margin-left: auto;
-  display: block;
+  transition: all 0.2s ease;
+  font-size: medium;
+  font-weight: 600;
+}
+
+.close-btn button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.05);
 }
 
 .nav {
@@ -119,17 +130,35 @@ h1 {
 .header-top {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
   gap: 8px;
-  text-align: left;
-  margin-top: 12px;
-  margin-bottom: 12px;
+}
+
+.header-top-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header-top p {
   font-size: 24px;
   font-weight: 500;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #111827;
+}
+
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .summary {
@@ -220,6 +249,36 @@ h1 {
   width: 100%;
 }
 
+.date-range {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-label {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.date-inputs input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.date-separator {
+  font-weight: bold;
+  color: #666;
+}
+
 .filter-button-group {
   display: flex;
   align-items: flex-end;
@@ -307,6 +366,25 @@ select:focus {
 
 .expense-table tbody tr:hover {
   background: #f1f5f9;
+}
+
+.row-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.row-checkbox input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.row-checkbox-text {
+  margin-left: 6px;
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .amount {
@@ -604,7 +682,6 @@ button:hover {
   }
 
   .left button,
-  .center button,
   .right button {
     width: 100%;
   }
@@ -657,12 +734,25 @@ button:hover {
 
   .menu-btn,
   .add-btn {
-    font-size: 24px;
-    padding: 8px 12px;
+    background: transparent;
     border: none;
-    background: white;
+    padding: 10px;
     border-radius: 8px;
+    font-size: medium;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     cursor: pointer;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .menu-btn:hover,
+  .add-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
   }
 }
 

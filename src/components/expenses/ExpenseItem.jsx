@@ -4,18 +4,27 @@ function ExpenseItem({ expense, onDelete, onEdit, onToggleSelected }) {
   return (
     <tr>
       <td>
-        <input
-          type="checkbox"
-          checked={expense.selected}
-          onChange={() => onToggleSelected(expense.id)}
-        />
+        <label className="row-checkbox">
+          <input
+            type="checkbox"
+            checked={expense.selected}
+            onChange={() => onToggleSelected(expense.id)}
+          />
+          <span className="row-checkbox-text">Select</span>
+        </label>
       </td>
 
       <td>{expense.title}</td>
 
       <td className="category-badge">{expense.category}</td>
 
-      <td>{new Date(expense.date).toLocaleDateString("en-GB")}</td>
+      <td>
+        {new Date(expense.date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })}
+      </td>
 
       <td
         className={

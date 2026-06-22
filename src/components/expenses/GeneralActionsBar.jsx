@@ -1,17 +1,17 @@
 function GeneralActionsBar({
   onLoadMore,
-  filteredExpenses,
+  processedExpenses = [],
   visibleCount,
   onClearAll,
 }) {
   let result;
+  const list = Array.isArray(processedExpenses) ? processedExpenses : [];
+  const isEmpty = list.length === 0;
 
-  const isEmpty = filteredExpenses.length === 0;
-
-  const hasMore = filteredExpenses.length > visibleCount;
+  const hasMore = processedExpenses.length > visibleCount;
 
   const isFullyLoaded =
-    filteredExpenses.length > 0 && filteredExpenses.length <= visibleCount;
+    processedExpenses.length > 0 && processedExpenses.length <= visibleCount;
 
   if (isEmpty) {
     result = <p className="empty-load-message">No expenses to load</p>;

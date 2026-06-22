@@ -12,7 +12,7 @@ import Sidebar from "./SideBar";
 function MainLayout({ data, form, toast, actions }) {
   const {
     visibleExpenses,
-    filteredExpenses,
+    processedExpenses,
     visibleCount,
     categories,
     filters,
@@ -21,11 +21,11 @@ function MainLayout({ data, form, toast, actions }) {
 
   const { totalAmount, filteredTotal, totalRecords } = totals;
 
-  const { formData, mode, isOpen, errors, touched, submitAttempted } = form;
+  const { formData, mode, isFormOpen, errors, touched, submitAttempted } = form;
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "auto";
-  }, [isOpen]);
+    document.body.style.overflow = isFormOpen ? "hidden" : "auto";
+  }, [isFormOpen]);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   useEffect(() => {
@@ -42,9 +42,7 @@ function MainLayout({ data, form, toast, actions }) {
         actions.closeForm();
       }
     };
-
     window.addEventListener("keydown", handleEsc);
-
     return () => window.removeEventListener("keydown", handleEsc);
   }, [actions]);
 
@@ -94,15 +92,17 @@ function MainLayout({ data, form, toast, actions }) {
 
         <GeneralActionsBar
           onLoadMore={actions.handleLoadMore}
-          filteredExpenses={filteredExpenses}
+          filteredExpenses={processedExpenses}
           visibleCount={visibleCount}
           onClearAll={actions.handleClearAll}
         />
       </main>
 
-      {isOpen && (
+      {isFormOpen && (
         <div className="overlay" onClick={actions.closeForm}>
+          {" "}
           <div className="modal" onClick={(e) => e.stopPropagation()}>
+            {" "}
             <ExpenseForm
               categories={categories}
               onSubmit={actions.handleSubmit}
@@ -113,8 +113,9 @@ function MainLayout({ data, form, toast, actions }) {
               errors={errors}
               submitAttempted={submitAttempted}
               touched={touched}
-            />
-          </div>
+              isFormOpen={isFormOpen}
+            />{" "}
+          </div>{" "}
         </div>
       )}
 

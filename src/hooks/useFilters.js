@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   filterByMonth,
   sortExpenses,
   searchExpenses,
+  filterByDateRange,
   totalCalculate,
   getUniqueCategories,
 } from "../utils/expenseDerive";
@@ -12,6 +13,8 @@ import { getFromLocalStorage, saveToLocalStorage } from "../utils/storage";
 const initialFilters = {
   title: "",
   month: "all",
+  startDate: "",
+  endDate: "",
   sortBy: "smallest",
 };
 
@@ -30,30 +33,54 @@ function useFilters(expenses) {
     }));
   };
 
-  const searchedExpenses = useMemo(() => {
-    return searchExpenses(expenses, filters.title);
-  }, [expenses, filters.title]);
+  const pipeline = useMemo(
+    () => [
+      {
+        fn: searchExpenses,
+        shouldRun: (filters) => filters.title.trim().length > 0,
+      },
+      {
+        fn: filterByMonth,
+        shouldRun: (filters) => filters.month !== "all",
+      },
+      {
+        fn: filterByDateRange,
+        shouldRun: (filters) => filters.startDate || filters.endDate,
+      },
+      {
+        fn: sortExpenses,
+        shouldRun: () => true,
+      },
+    ],
+    [],
+  );
 
-  const sortedExpenses = useMemo(() => {
-    return sortExpenses(searchedExpenses, filters.sortBy);
-  }, [searchedExpenses, filters.sortBy]);
+  const applyPipeline = useCallback(
+    (expenses, filters) => {
+      return pipeline.reduce((result, step) => {
+        if (!step.shouldRun(filters)) return result;
 
-  const monthlyFilteredExpenses = useMemo(() => {
-    return filters.month === "all"
-      ? sortedExpenses
-      : filterByMonth(sortedExpenses, Number(filters.month));
-  }, [sortedExpenses, filters.month]);
+        const output = step.fn(result, filters);
 
-  const filteredExpenses = monthlyFilteredExpenses;
-  const limitedExpenses = filteredExpenses.slice(0, Number(visibleCount));
+        return output ?? result;
+      }, expenses ?? []);
+    },
+    [pipeline],
+  );
+
+  const processedExpenses = useMemo(() => {
+    return applyPipeline(expenses ?? [], filters);
+  }, [expenses, filters, applyPipeline]);
+
+  const limitedExpenses = processedExpenses.slice(0, Number(visibleCount));
 
   const totalAmount = useMemo(() => {
     return totalCalculate(expenses);
   }, [expenses]);
 
   const filteredTotal = useMemo(() => {
-    return totalCalculate(filteredExpenses);
-  }, [filteredExpenses]);
+    return totalCalculate(processedExpenses);
+  }, [processedExpenses]);
 
   const totalRecords = useMemo(() => {
     return expenses.length;
@@ -73,9 +100,11 @@ function useFilters(expenses) {
   };
 
   const hasActiveFilters =
-    filters.title !== "" ||
+    filters.title.trim() !== "" ||
     filters.month !== "all" ||
-    filters.sortBy !== "smallest";
+    filters.sortBy !== "smallest" ||
+    filters.startDate !== "" ||
+    filters.endDate !== "";
 
   useEffect(() => {
     saveToLocalStorage("visibleCount", String(visibleCount));
@@ -91,7 +120,7 @@ function useFilters(expenses) {
     totalRecords,
     limitedExpenses,
     handleLoadMore,
-    filteredExpenses,
+    processedExpenses,
     visibleCount,
     categories,
   };

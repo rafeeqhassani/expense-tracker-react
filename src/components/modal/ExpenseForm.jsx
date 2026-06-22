@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 function ExpenseForm({
   categories,
   onSubmit,
@@ -8,21 +10,31 @@ function ExpenseForm({
   errors,
   submitAttempted,
   touched,
+  isFormOpen,
 }) {
-  console.log({
-    errors,
-    submitAttempted,
-    touched,
-  });
+  const titleRef = useRef(null);
+
+  useEffect(() => {
+    if (isFormOpen) {
+      titleRef.current?.focus();
+    }
+  }, [isFormOpen]);
+
   const showError = (field) =>
     (submitAttempted || touched[field]) && errors[field];
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
   return (
-    <form className="expense-form" onSubmit={onSubmit}>
+    <form className="expense-form" onSubmit={handleSubmit}>
       <div className="field">
         <label htmlFor="title">Title</label>
 
         <input
+          ref={titleRef}
           type="text"
           id="title"
           name="title"

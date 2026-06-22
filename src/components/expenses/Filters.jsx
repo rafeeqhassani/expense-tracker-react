@@ -1,4 +1,4 @@
-import { SORT_OPTIONS } from "../../utils/expenseDerive";
+import { FaCalendarAlt } from "react-icons/fa";
 
 function Filters({
   filters,
@@ -55,26 +55,42 @@ function Filters({
           onChange={handleFilterChange}
           className="sortSelection"
         >
-          <option value={SORT_OPTIONS.SMALLEST}>
-            Amount: Smallest &#8594; Largest
-          </option>
+          <option value="smallest">Amount: Smallest &#8594; Largest</option>
 
-          <option value={SORT_OPTIONS.LARGEST}>
-            Amount: Largest &#8594; Smallest
-          </option>
+          <option value="largest">Amount: Largest &#8594; Smallest</option>
+          <option value="newest">Date: Newest &#8594; Oldest</option>
 
-          <option value={SORT_OPTIONS.TITLE_ASC}>Title: A &#8594; Z</option>
+          <option value="oldest">Date: Oldest &#8594; Newest</option>
 
-          <option value={SORT_OPTIONS.TITLE_DESC}>Title: Z &#8594; A</option>
+          <option value="title-ascending">Title: A &#8594; Z</option>
 
-          <option value={SORT_OPTIONS.NEWEST}>
-            Date: Newest &#8594; Oldest
-          </option>
-
-          <option value={SORT_OPTIONS.OLDEST}>
-            Date: Oldest &#8594; Newest
-          </option>
+          <option value="title-descending">Title: Z &#8594; A</option>
         </select>
+      </div>
+
+      <div className="filter-group date-range">
+        <label className="date-label">
+          <FaCalendarAlt style={{ marginRight: "6px" }} />
+          Date Range Filter
+        </label>
+
+        <div className="date-inputs">
+          <input
+            type="date"
+            name="startDate"
+            value={filters.startDate}
+            onChange={handleFilterChange}
+          />
+
+          <span className="date-separator">→</span>
+
+          <input
+            type="date"
+            name="endDate"
+            value={filters.endDate}
+            onChange={handleFilterChange}
+          />
+        </div>
       </div>
 
       <div className="filter-button-group">

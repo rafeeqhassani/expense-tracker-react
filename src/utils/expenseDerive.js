@@ -1,12 +1,6 @@
-export function filterByMonth(expenses, month) {
-  return expenses.filter((item) => {
-    const d = new Date(item.date);
+export function searchExpenses(expenses, filters) {
+  const query = filters.title;
 
-    return d.getMonth() + 1 === month;
-  });
-}
-
-export function searchExpenses(expenses, query) {
   if (!query.trim()) return expenses;
 
   const q = query.toLowerCase();
@@ -20,36 +14,52 @@ export function searchExpenses(expenses, query) {
   });
 }
 
-export const SORT_OPTIONS = {
-  SMALLEST: "smallest",
-  LARGEST: "largest",
-  NEWEST: "newest",
-  OLDEST: "oldest",
-  TITLE_ASC: "title-ascending",
-  TITLE_DESC: "title-descending",
-};
+export function filterByMonth(expenses, filters) {
+  if (filters.month === "all") return expenses;
 
-export function sortExpenses(expenses, sortBy) {
+  return expenses.filter((item) => {
+    const d = new Date(item.date);
+    return d.getMonth() + 1 === Number(filters.month);
+  });
+}
+
+export function filterByDateRange(expenses, filters) {
+  if (!filters.startDate && !filters.endDate) return expenses;
+
+  const start = filters.startDate ? new Date(filters.startDate) : null;
+  const end = filters.endDate ? new Date(filters.endDate) : null;
+
+  return expenses.filter((item) => {
+    const date = new Date(item.date);
+
+    if (start && !end) return date >= start;
+    if (!start && end) return date <= end;
+
+    return (!start || date >= start) && (!end || date <= end);
+  });
+}
+
+export function sortExpenses(expenses, filters) {
   const sorted = [...expenses];
 
-  switch (sortBy) {
-    case SORT_OPTIONS.SMALLEST:
+  switch (filters.sortBy) {
+    case "smallest":
       return sorted.sort((a, b) => a.amount - b.amount);
 
-    case SORT_OPTIONS.LARGEST:
+    case "largest":
       return sorted.sort((a, b) => b.amount - a.amount);
 
-    case SORT_OPTIONS.TITLE_ASC:
-      return sorted.sort((a, b) => a.title.localeCompare(b.title));
-
-    case SORT_OPTIONS.TITLE_DESC:
-      return sorted.sort((a, b) => b.title.localeCompare(a.title));
-
-    case SORT_OPTIONS.NEWEST:
+    case "newest":
       return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    case SORT_OPTIONS.OLDEST:
+    case "oldest":
       return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    case "title-ascending":
+      return sorted.sort((a, b) => a.title.localeCompare(b.title));
+
+    case "title-descending":
+      return sorted.sort((a, b) => b.title.localeCompare(a.title));
 
     default:
       return sorted;

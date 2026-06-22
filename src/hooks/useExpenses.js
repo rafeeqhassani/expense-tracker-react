@@ -65,8 +65,6 @@ function useExpenses(showToastMessage) {
 
   const handleClearAll = () => {
     setExpenses([]);
-    localStorage.removeItem("expenses");
-    localStorage.removeItem("visibleCount");
   };
 
   return {

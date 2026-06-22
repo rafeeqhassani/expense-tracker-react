@@ -26,10 +26,12 @@ function Sidebar({
             {" "}
             <FaWallet className="logo-icon" />
           </span>
-          Expense Dashboard
-          <button className="close-btn" onClick={toggleSidebar}>
-            <FaXmark />
-          </button>
+          Dashboard
+          <div className="close-btn">
+            <button onClick={toggleSidebar}>
+              <FaXmark />
+            </button>
+          </div>
         </div>
 
         <nav className="nav">

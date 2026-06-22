@@ -23,7 +23,7 @@ function App() {
     <MainLayout
       data={{
         visibleExpenses: filtersHook.limitedExpenses,
-        filteredExpenses: filtersHook.filteredExpenses,
+        processedExpenses: filtersHook.processedExpenses,
         visibleCount: filtersHook.visibleCount,
         categories: filtersHook.categories,
         filters: filtersHook.filters,
@@ -36,7 +36,7 @@ function App() {
       form={{
         formData: formHook.formData,
         mode: formHook.mode,
-        isOpen: formHook.isFormOpen,
+        isFormOpen: formHook.isFormOpen,
         errors: formHook.errors,
         touched: formHook.touched,
         submitAttempted: formHook.submitAttempted,
@@ -58,8 +58,6 @@ function App() {
         handleDeselectAll: expensesHook.handleDeselectAll,
         handleClearSelected: expensesHook.handleClearSelected,
         handleClearAll: expensesHook.handleClearAll,
-
-        mockExpenses: expensesHook.handleGenerateMockData,
 
         handleFilterChange: filtersHook.handleFilterChange,
         handleLoadMore: filtersHook.handleLoadMore,

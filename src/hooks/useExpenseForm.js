@@ -151,6 +151,7 @@ function useExpenseForm({
     }
 
     dispatch({ type: "CLEAR_FIELD_ERROR", payload: name });
+    dispatch({ type: "SET_TOUCHED", payload: name });
   };
 
   function handleSubmit(e) {
