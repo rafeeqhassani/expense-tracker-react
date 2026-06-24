@@ -4,7 +4,6 @@ import {
   sortExpenses,
   searchExpenses,
   filterByDateRange,
-  totalCalculate,
   getUniqueCategories,
 } from "../utils/expenseDerive";
 
@@ -74,18 +73,6 @@ function useFilters(expenses) {
 
   const limitedExpenses = processedExpenses.slice(0, Number(visibleCount));
 
-  const totalAmount = useMemo(() => {
-    return totalCalculate(expenses);
-  }, [expenses]);
-
-  const filteredTotal = useMemo(() => {
-    return totalCalculate(processedExpenses);
-  }, [processedExpenses]);
-
-  const totalRecords = useMemo(() => {
-    return expenses.length;
-  }, [expenses]);
-
   const categories = useMemo(() => {
     return getUniqueCategories(expenses);
   }, [expenses]);
@@ -115,9 +102,7 @@ function useFilters(expenses) {
     handleFilterChange,
     resetFilters,
     hasActiveFilters,
-    totalAmount,
-    filteredTotal,
-    totalRecords,
+
     limitedExpenses,
     handleLoadMore,
     processedExpenses,

@@ -8,29 +8,25 @@ import BulkActionsBar from "../expenses/BulkActionsBar";
 import ExpenseForm from "../modal/ExpenseForm";
 import Toast from "../ui/Toast";
 import Sidebar from "./SideBar";
+import ExpenseReports from "../expenses/ExpenseReports";
 
-function MainLayout({ data, form, toast, actions }) {
+function MainLayout({ data, reports, form, toast, actions }) {
   const {
     visibleExpenses,
     processedExpenses,
     visibleCount,
     categories,
     filters,
-    totals,
   } = data;
-
-  const { totalAmount, filteredTotal, totalRecords } = totals;
 
   const { formData, mode, isFormOpen, errors, touched, submitAttempted } = form;
 
-  useEffect(() => {
-    document.body.style.overflow = isFormOpen ? "hidden" : "auto";
-  }, [isFormOpen]);
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
   useEffect(() => {
-    document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
-  }, [sidebarOpen]);
+    document.body.style.overflow =
+      isFormOpen || sidebarOpen ? "hidden" : "auto";
+  }, [isFormOpen, sidebarOpen]);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -50,31 +46,31 @@ function MainLayout({ data, form, toast, actions }) {
     <div className="dashboard">
       <Sidebar
         openForm={actions.openForm}
-        total={totalAmount}
-        monthlyTotal={filteredTotal}
-        totalRecords={totalRecords}
         sidebarOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
       />
 
       <main className="main">
-        <Header
-          total={totalAmount}
-          monthlyTotal={filteredTotal}
-          totalRecords={totalRecords}
-          toggleSidebar={toggleSidebar}
-          openForm={actions.openForm}
-          allSelected={actions.allSelected}
-          someSelected={actions.someSelected}
-          handleSelectAll={actions.handleSelectAll}
-          handleDeselectAll={actions.handleDeselectAll}
-        />
+        <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
 
         <Filters
           filters={filters}
           handleFilterChange={actions.handleFilterChange}
           hasActiveFilters={actions.hasActiveFilters}
           resetFilters={actions.resetFilters}
+        />
+
+        <ExpenseReports overall={reports.overall} filtered={reports.filtered} />
+
+        <BulkActionsBar
+          onClearSelected={actions.handleClearSelected}
+          selectedCount={actions.selectedCount}
+          selection={{
+            allSelected: actions.allSelected,
+            someSelected: actions.someSelected,
+            handleSelectAll: actions.handleSelectAll,
+            handleDeselectAll: actions.handleDeselectAll,
+          }}
         />
 
         <ExpenseList
@@ -85,14 +81,9 @@ function MainLayout({ data, form, toast, actions }) {
           onToggleSelected={actions.handleToggleSelected}
         />
 
-        <BulkActionsBar
-          onClearSelected={actions.handleClearSelected}
-          selectedCount={actions.selectedCount}
-        />
-
         <GeneralActionsBar
           onLoadMore={actions.handleLoadMore}
-          filteredExpenses={processedExpenses}
+          processedExpenses={processedExpenses}
           visibleCount={visibleCount}
           onClearAll={actions.handleClearAll}
         />

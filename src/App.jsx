@@ -4,6 +4,7 @@ import useExpenseForm from "./hooks/useExpenseForm";
 import useToast from "./hooks/useToast";
 
 import MainLayout from "./components/layout/MainLayout";
+import useReports from "./hooks/useReports";
 
 function App() {
   const { toast, showToastMessage } = useToast();
@@ -18,6 +19,10 @@ function App() {
   });
 
   const filtersHook = useFilters(expensesHook.expenses);
+  const reportsHook = useReports(
+    expensesHook.expenses,
+    filtersHook.processedExpenses,
+  );
 
   return (
     <MainLayout
@@ -27,10 +32,24 @@ function App() {
         visibleCount: filtersHook.visibleCount,
         categories: filtersHook.categories,
         filters: filtersHook.filters,
-        totals: {
-          totalAmount: filtersHook.totalAmount,
-          filteredTotal: filtersHook.filteredTotal,
-          totalRecords: filtersHook.totalRecords,
+      }}
+      reports={{
+        overall: {
+          totalAmount: reportsHook.totalExpenses,
+          monthlyTotal: reportsHook.monthlyTotal,
+          totalRecords: reportsHook.totalRecords,
+          highestExpense: reportsHook.highestExpense,
+          lowestExpense: reportsHook.lowestExpense,
+          averageExpense: reportsHook.averageExpense,
+        },
+
+        filtered: {
+          totalAmount: reportsHook.filteredTotal,
+          monthlyTotal: reportsHook.filteredMonthlyTotal,
+          totalRecords: reportsHook.filteredRecords,
+          highestExpense: reportsHook.filteredHighest,
+          lowestExpense: reportsHook.filteredLowest,
+          averageExpense: reportsHook.filteredAverage,
         },
       }}
       form={{

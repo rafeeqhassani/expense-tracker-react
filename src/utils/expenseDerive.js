@@ -73,3 +73,29 @@ export function getUniqueCategories(expenses) {
 export function totalCalculate(data) {
   return data.reduce((sum, item) => sum + item.amount, 0);
 }
+
+export function getHighestExpense(expenses) {
+  if (expenses.length === 0) return 0;
+
+  return Math.max(...expenses.map((item) => item.amount));
+}
+
+export function getLowestExpense(expenses) {
+  if (expenses.length === 0) return 0;
+
+  return Math.min(...expenses.map((item) => item.amount));
+}
+
+export function getAverageExpense(expenses) {
+  if (expenses.length === 0) return 0;
+
+  return totalCalculate(expenses) / expenses.length;
+}
+
+export function getMonthlyExpenses(expenses) {
+  const currentMonth = new Date().getMonth();
+
+  return expenses.filter((item) => {
+    return new Date(item.date).getMonth() === currentMonth;
+  });
+}
