@@ -9,6 +9,7 @@ import ExpenseForm from "../modal/ExpenseForm";
 import Toast from "../ui/Toast";
 import Sidebar from "./SideBar";
 import ExpenseReports from "../expenses/ExpenseReports";
+import ExpenseCharts from "../charts/ExpenseCharts";
 
 function MainLayout({ data, reports, form, toast, actions }) {
   const {
@@ -23,14 +24,17 @@ function MainLayout({ data, reports, form, toast, actions }) {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+
   useEffect(() => {
     document.body.style.overflow =
       isFormOpen || sidebarOpen ? "hidden" : "auto";
   }, [isFormOpen, sidebarOpen]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -47,7 +51,7 @@ function MainLayout({ data, reports, form, toast, actions }) {
       <Sidebar
         openForm={actions.openForm}
         sidebarOpen={sidebarOpen}
-        toggleSidebar={toggleSidebar}
+        closeSidebar={closeSidebar}
       />
 
       <main className="main">
@@ -61,7 +65,7 @@ function MainLayout({ data, reports, form, toast, actions }) {
         />
 
         <ExpenseReports overall={reports.overall} filtered={reports.filtered} />
-
+        <ExpenseCharts expenses={processedExpenses} />
         <BulkActionsBar
           onClearSelected={actions.handleClearSelected}
           selectedCount={actions.selectedCount}

@@ -35,21 +35,19 @@ function App() {
       }}
       reports={{
         overall: {
-          totalAmount: reportsHook.totalExpenses,
-          monthlyTotal: reportsHook.monthlyTotal,
-          totalRecords: reportsHook.totalRecords,
-          highestExpense: reportsHook.highestExpense,
-          lowestExpense: reportsHook.lowestExpense,
-          averageExpense: reportsHook.averageExpense,
+          totalAmount: reportsHook.overall.total,
+          totalRecords: reportsHook.overall.records,
+          highestExpense: reportsHook.overall.highest,
+          lowestExpense: reportsHook.overall.lowest,
+          averageExpense: reportsHook.overall.average,
         },
 
         filtered: {
-          totalAmount: reportsHook.filteredTotal,
-          monthlyTotal: reportsHook.filteredMonthlyTotal,
-          totalRecords: reportsHook.filteredRecords,
-          highestExpense: reportsHook.filteredHighest,
-          lowestExpense: reportsHook.filteredLowest,
-          averageExpense: reportsHook.filteredAverage,
+          totalAmount: reportsHook.filtered.total,
+          totalRecords: reportsHook.filtered.records,
+          highestExpense: reportsHook.filtered.highest,
+          lowestExpense: reportsHook.filtered.lowest,
+          averageExpense: reportsHook.filtered.average,
         },
       }}
       form={{

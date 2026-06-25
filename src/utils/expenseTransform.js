@@ -1,3 +1,29 @@
+import {
+  getCategoryChartData,
+  getTrendChartData,
+  getPieChartData,
+} from "./chartsDerive";
+
+export function normalizeDate(date) {
+  return new Date(date).toISOString().split("T")[0];
+}
+
+export function getChartData(type, expenses) {
+  switch (type) {
+    case "bar":
+      return getCategoryChartData(expenses);
+
+    case "line":
+      return getTrendChartData(expenses);
+
+    case "pie":
+      return getPieChartData(expenses);
+
+    default:
+      return [];
+  }
+}
+
 export function normalizedData(
   data,
   existingId = null,

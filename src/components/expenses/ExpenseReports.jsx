@@ -9,14 +9,12 @@ function SummaryCard({ label, value, className = "" }) {
 
 const summaryConfig = [
   { key: "totalAmount", label: "Total", className: "total" },
-  { key: "monthlyTotal", label: "Monthly", className: "monthly" },
   { key: "totalRecords", label: "Records", className: "records" },
   { key: "highestExpense", label: "Highest", className: "highest" },
-  { key: "lowestExpense", label: "Lowest", className: "lowest" },
+  { key: "lowestExpense", label: "lowest", className: "lowest" },
   { key: "averageExpense", label: "Average", className: "average" },
 ];
 
-// ✅ reusable section component (IMPORTANT upgrade)
 function SummarySection({ title, data }) {
   return (
     <div className="summary-section">

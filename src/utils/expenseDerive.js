@@ -87,15 +87,7 @@ export function getLowestExpense(expenses) {
 }
 
 export function getAverageExpense(expenses) {
-  if (expenses.length === 0) return 0;
+  if (!expenses.length) return 0;
 
   return totalCalculate(expenses) / expenses.length;
-}
-
-export function getMonthlyExpenses(expenses) {
-  const currentMonth = new Date().getMonth();
-
-  return expenses.filter((item) => {
-    return new Date(item.date).getMonth() === currentMonth;
-  });
 }

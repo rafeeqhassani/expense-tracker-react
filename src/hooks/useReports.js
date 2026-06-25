@@ -4,24 +4,17 @@ import {
   getLowestExpense,
   getAverageExpense,
   totalCalculate,
-  getMonthlyExpenses,
 } from "../utils/expenseDerive";
-
 function useReports(expenses, processedExpenses) {
-  const highestExpense = useMemo(() => getHighestExpense(expenses), [expenses]);
+  const overallTotal = useMemo(() => totalCalculate(expenses), [expenses]);
+  const overallHighest = useMemo(() => getHighestExpense(expenses), [expenses]);
+  const overallLowest = useMemo(() => getLowestExpense(expenses), [expenses]);
+  const overallAverage = useMemo(() => getAverageExpense(expenses), [expenses]);
 
-  const lowestExpense = useMemo(() => getLowestExpense(expenses), [expenses]);
-
-  const averageExpense = useMemo(() => getAverageExpense(expenses), [expenses]);
-  const monthlyTotal = useMemo(
-    () => totalCalculate(getMonthlyExpenses(expenses)),
-    [expenses],
+  const filteredTotal = useMemo(
+    () => totalCalculate(processedExpenses),
+    [processedExpenses],
   );
-
-  const totalExpenses = useMemo(() => totalCalculate(expenses), [expenses]);
-
-  const totalRecords = expenses.length;
-
   const filteredHighest = useMemo(
     () => getHighestExpense(processedExpenses),
     [processedExpenses],
@@ -30,38 +23,26 @@ function useReports(expenses, processedExpenses) {
     () => getLowestExpense(processedExpenses),
     [processedExpenses],
   );
-
   const filteredAverage = useMemo(
     () => getAverageExpense(processedExpenses),
     [processedExpenses],
   );
 
-  const filteredMonthlyTotal = useMemo(
-    () => totalCalculate(getMonthlyExpenses(processedExpenses)),
-    [processedExpenses],
-  );
-
-  const filteredTotal = useMemo(
-    () => totalCalculate(processedExpenses),
-    [processedExpenses],
-  );
-
-  const filteredRecords = processedExpenses.length;
-
   return {
-    highestExpense,
-    lowestExpense,
-    averageExpense,
-    monthlyTotal,
-    totalExpenses,
-    totalRecords,
-    filteredHighest,
-    filteredLowest,
-    filteredAverage,
-    filteredMonthlyTotal,
-    filteredTotal,
-    filteredRecords,
+    overall: {
+      total: overallTotal,
+      highest: overallHighest,
+      lowest: overallLowest,
+      average: overallAverage,
+      records: expenses.length,
+    },
+    filtered: {
+      total: filteredTotal,
+      highest: filteredHighest,
+      lowest: filteredLowest,
+      average: filteredAverage,
+      records: processedExpenses.length,
+    },
   };
 }
-
 export default useReports;
