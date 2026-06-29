@@ -1,6 +1,6 @@
 import {
   getCategoryChartData,
-  getTrendChartData,
+  getMonthlyTrendChartData,
   getPieChartData,
 } from "./chartsDerive";
 
@@ -14,7 +14,7 @@ export function getChartData(type, expenses) {
       return getCategoryChartData(expenses);
 
     case "line":
-      return getTrendChartData(expenses);
+      return getMonthlyTrendChartData(expenses);
 
     case "pie":
       return getPieChartData(expenses);
@@ -22,6 +22,43 @@ export function getChartData(type, expenses) {
     default:
       return [];
   }
+}
+
+export function formatBudget(b) {
+  let riskLabel;
+
+  switch (b.status) {
+    case "safe":
+      riskLabel = "Low Risk";
+      break;
+
+    case "warning":
+      riskLabel = "Medium Risk";
+      break;
+
+    case "high":
+      riskLabel = "High Risk";
+      break;
+
+    case "over":
+      riskLabel = "Critical Risk";
+      break;
+
+    default:
+      riskLabel = "Not Set";
+  }
+
+  return {
+    ...b,
+    displaySpent: b.spent.toLocaleString(),
+    displayLimit: b.limit.toLocaleString(),
+    displayRemaining:
+      b.remaining < 0
+        ? `-${Math.abs(b.remaining).toLocaleString()}`
+        : b.remaining.toLocaleString(),
+    displayPercent: `${Math.min(b.percentUsed, 9999).toFixed(1)}%`,
+    riskLabel,
+  };
 }
 
 export function normalizedData(

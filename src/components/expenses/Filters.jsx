@@ -18,7 +18,7 @@ function Filters({
             name="title"
             value={title}
             onChange={handleFilterChange}
-            placeholder="Search by title..."
+            placeholder="Search by title, amount, category..."
           />
         </div>
 

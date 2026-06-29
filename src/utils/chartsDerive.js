@@ -17,23 +17,37 @@ export function getCategoryChartData(expenses) {
   }));
 }
 
-export function getTrendChartData(expenses) {
+export function getMonthlyTrendChartData(expenses) {
   const map = {};
 
   for (const item of expenses) {
-    const rawDate = item.date;
-    const key = normalizeDate(rawDate);
+    const date = new Date(item.date);
 
-    if (!map[key]) map[key] = 0;
+    const key = `${date.getFullYear()}-${date.getMonth() + 1}`;
 
-    map[key] += item.amount;
+    if (!map[key]) {
+      map[key] = {
+        total: 0,
+        label: date.toLocaleString("default", {
+          month: "short",
+          year: "numeric",
+        }),
+      };
+    }
+
+    map[key].total += item.amount;
   }
 
   return Object.entries(map)
-    .sort((a, b) => new Date(a[0]) - new Date(b[0]))
-    .map(([date, total]) => ({
-      date,
-      total,
+    .sort(([a], [b]) => {
+      const [yearA, monthA] = a.split("-").map(Number);
+      const [yearB, monthB] = b.split("-").map(Number);
+
+      return yearA - yearB || monthA - monthB;
+    })
+    .map(([, value]) => ({
+      month: value.label,
+      total: value.total,
     }));
 }
 

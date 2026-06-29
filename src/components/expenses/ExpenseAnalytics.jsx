@@ -1,8 +1,8 @@
-function SummaryCard({ label, value, className = "" }) {
+function SummaryCard({ label, value = 0, className = "" }) {
   return (
     <div className={`summary-card ${className}`}>
       <span>{label}</span>
-      <h3>{value ?? 0}</h3>
+      <h3>{value}</h3>
     </div>
   );
 }
@@ -11,7 +11,7 @@ const summaryConfig = [
   { key: "totalAmount", label: "Total", className: "total" },
   { key: "totalRecords", label: "Records", className: "records" },
   { key: "highestExpense", label: "Highest", className: "highest" },
-  { key: "lowestExpense", label: "lowest", className: "lowest" },
+  { key: "lowestExpense", label: "Lowest", className: "lowest" },
   { key: "averageExpense", label: "Average", className: "average" },
 ];
 
@@ -34,7 +34,7 @@ function SummarySection({ title, data }) {
   );
 }
 
-function ExpenseReports({ overall = {}, filtered = {} }) {
+function ExpenseAnalytics({ overall = {}, filtered = {} }) {
   return (
     <>
       <SummarySection title="Overall" data={overall} />
@@ -43,4 +43,4 @@ function ExpenseReports({ overall = {}, filtered = {} }) {
   );
 }
 
-export default ExpenseReports;
+export default ExpenseAnalytics;

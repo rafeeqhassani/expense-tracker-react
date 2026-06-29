@@ -4,12 +4,17 @@ import useExpenseForm from "./hooks/useExpenseForm";
 import useToast from "./hooks/useToast";
 
 import MainLayout from "./components/layout/MainLayout";
-import useReports from "./hooks/useReports";
+
+import useAnalytics from "./hooks/useAnalytics";
+import useBudget from "./hooks/useBudget";
+import useBudgetConfig from "./hooks/useBudgetConfig";
 
 function App() {
   const { toast, showToastMessage } = useToast();
 
   const expensesHook = useExpenses(showToastMessage);
+
+  const filtersHook = useFilters(expensesHook.expenses);
 
   const formHook = useExpenseForm({
     expenses: expensesHook.expenses,
@@ -18,11 +23,22 @@ function App() {
     showToastMessage,
   });
 
-  const filtersHook = useFilters(expensesHook.expenses);
-  const reportsHook = useReports(
+  const reportsHook = useAnalytics(
     expensesHook.expenses,
     filtersHook.processedExpenses,
   );
+
+  const budgetConfigHook = useBudgetConfig();
+  const budgetHook = useBudget(
+    expensesHook.expenses,
+    budgetConfigHook.budgetConfig,
+  );
+
+  const handleClearAllData = () => {
+    expensesHook.handleClearAll();
+    budgetConfigHook.resetBudgetConfig();
+    showToastMessage("All data cleared", "success");
+  };
 
   return (
     <MainLayout
@@ -33,23 +49,11 @@ function App() {
         categories: filtersHook.categories,
         filters: filtersHook.filters,
       }}
-      reports={{
-        overall: {
-          totalAmount: reportsHook.overall.total,
-          totalRecords: reportsHook.overall.records,
-          highestExpense: reportsHook.overall.highest,
-          lowestExpense: reportsHook.overall.lowest,
-          averageExpense: reportsHook.overall.average,
-        },
-
-        filtered: {
-          totalAmount: reportsHook.filtered.total,
-          totalRecords: reportsHook.filtered.records,
-          highestExpense: reportsHook.filtered.highest,
-          lowestExpense: reportsHook.filtered.lowest,
-          averageExpense: reportsHook.filtered.average,
-        },
-      }}
+      analytics={reportsHook}
+      budget={budgetHook}
+      budgetConfig={budgetConfigHook.budgetConfig}
+      updateMonthlyLimit={budgetConfigHook.updateMonthlyLimit}
+      updateCategoryLimit={budgetConfigHook.updateCategoryLimit}
       form={{
         formData: formHook.formData,
         mode: formHook.mode,
@@ -74,7 +78,7 @@ function App() {
         handleSelectAll: expensesHook.handleSelectAll,
         handleDeselectAll: expensesHook.handleDeselectAll,
         handleClearSelected: expensesHook.handleClearSelected,
-        handleClearAll: expensesHook.handleClearAll,
+        handleClearAll: handleClearAllData,
 
         handleFilterChange: filtersHook.handleFilterChange,
         handleLoadMore: filtersHook.handleLoadMore,
