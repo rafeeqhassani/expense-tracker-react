@@ -53,3 +53,83 @@ export function getBudgetStatus(totalSpent, limit) {
     status,
   };
 }
+
+export function getBudgetAlerts(monthlyStatus, categoryStatuses) {
+  const alerts = [];
+
+  switch (monthlyStatus.status) {
+    case "safe":
+      alerts.push({
+        type: "safe",
+        scope: "monthly",
+        message: "Monthly budget is healthy.",
+      });
+      break;
+
+    case "warning":
+      alerts.push({
+        type: "warning",
+        scope: "monthly",
+        message: "Monthly budget is 70% used.",
+      });
+      break;
+
+    case "high":
+      alerts.push({
+        type: "high",
+        scope: "monthly",
+        message: "Monthly budget is almost exhausted.",
+      });
+      break;
+
+    case "over":
+      alerts.push({
+        type: "over",
+        scope: "monthly",
+        message: "Monthly budget exceeded.",
+      });
+      break;
+  }
+
+  Object.entries(categoryStatuses).forEach(([category, status]) => {
+    switch (status.status) {
+      case "safe":
+        alerts.push({
+          type: "safe",
+          scope: "category",
+          category,
+          message: `${category} budget is healthy.`,
+        });
+        break;
+
+      case "warning":
+        alerts.push({
+          type: "warning",
+          scope: "category",
+          category,
+          message: `${category} budget is 70% used.`,
+        });
+        break;
+
+      case "high":
+        alerts.push({
+          type: "high",
+          scope: "category",
+          category,
+          message: `${category} budget is almost exhausted.`,
+        });
+        break;
+
+      case "over":
+        alerts.push({
+          type: "over",
+          scope: "category",
+          category,
+          message: `${category} budget exceeded.`,
+        });
+        break;
+    }
+  });
+
+  return alerts;
+}

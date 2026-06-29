@@ -3,6 +3,7 @@ import {
   calculateTotalSpent,
   calculateCategorySpent,
   getBudgetStatus,
+  getBudgetAlerts,
 } from "../utils/budgetDerive";
 import { formatBudget } from "../utils/expenseTransform";
 
@@ -47,9 +48,14 @@ function useBudget(expenses, budgetConfig) {
     return result;
   }, [allCategories, categorySpent, budgetConfig.categoryLimits]);
 
+  const alerts = useMemo(() => {
+    return getBudgetAlerts(monthly, categories);
+  }, [monthly, categories]);
+
   return {
     monthly,
     categories,
+    alerts,
   };
 }
 

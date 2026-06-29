@@ -15,6 +15,7 @@ import MonthlyBudget from "../budgets/MonthlyBudget";
 import MonthlyBudgetEditor from "../budgets/MonthlyBudgetEditor";
 import CategoryBudget from "../budgets/CategoryBudget";
 import CategoryBudgetEditor from "../budgets/CategoryBudgetEditor";
+import BudgetAlertList from "../budgets/BudgetAlertList";
 
 function MainLayout({
   data,
@@ -62,9 +63,7 @@ function MainLayout({
   }, [actions]);
 
   const query = useQueryParam();
-
   const activeTab = query.get("tab") || "monthly";
-
   const setTab = (tab) => {
     query.set("tab", tab);
   };
@@ -81,6 +80,8 @@ function MainLayout({
         <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
 
         <section className="budget-tabs">
+          <BudgetAlertList alerts={budget.alerts} />
+
           <div className="budget-tab-buttons">
             <button
               className={`budget-tab-button ${
