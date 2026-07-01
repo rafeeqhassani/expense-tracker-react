@@ -128,6 +128,15 @@ export function getBudgetAlerts(monthlyStatus, categoryStatuses) {
           message: `${category} budget exceeded.`,
         });
         break;
+
+      case "not_set":
+        alerts.push({
+          type: "info",
+          scope: "category",
+          category,
+          message: `${category} budget not set yet.`,
+        });
+        break;
     }
   });
 

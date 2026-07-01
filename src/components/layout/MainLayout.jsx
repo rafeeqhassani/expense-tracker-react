@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import useQueryParam from "../../hooks/useQueryParam";
 
 import Header from "../expenses/Header";
 import Filters from "../expenses/Filters";
@@ -11,11 +10,8 @@ import Toast from "../ui/Toast";
 import Sidebar from "./SideBar";
 import ExpenseAnalytics from "../expenses/ExpenseAnalytics";
 import ExpenseCharts from "../charts/ExpenseCharts";
-import MonthlyBudget from "../budgets/MonthlyBudget";
-import MonthlyBudgetEditor from "../budgets/MonthlyBudgetEditor";
-import CategoryBudget from "../budgets/CategoryBudget";
-import CategoryBudgetEditor from "../budgets/CategoryBudgetEditor";
-import BudgetAlertList from "../budgets/BudgetAlertList";
+
+import BudgetController from "../../controllers/BudgetController";
 
 function MainLayout({
   data,
@@ -62,12 +58,6 @@ function MainLayout({
     return () => window.removeEventListener("keydown", handleEsc);
   }, [actions]);
 
-  const query = useQueryParam();
-  const activeTab = query.get("tab") || "monthly";
-  const setTab = (tab) => {
-    query.set("tab", tab);
-  };
-
   return (
     <div className="dashboard">
       <Sidebar
@@ -79,52 +69,13 @@ function MainLayout({
       <main className="main">
         <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
 
-        <section className="budget-tabs">
-          <BudgetAlertList alerts={budget.alerts} />
-
-          <div className="budget-tab-buttons">
-            <button
-              className={`budget-tab-button ${
-                activeTab === "monthly" ? "active" : ""
-              }`}
-              onClick={() => setTab("monthly")}
-            >
-              Monthly Budget
-            </button>
-
-            <button
-              className={`budget-tab-button ${
-                activeTab === "category" ? "active" : ""
-              }`}
-              onClick={() => setTab("category")}
-            >
-              Category Budget
-            </button>
-          </div>
-
-          <div className="budget-tab-content">
-            {activeTab === "monthly" && (
-              <div className="budget-tab-panel">
-                <MonthlyBudget budget={budget.monthly} />
-                <MonthlyBudgetEditor
-                  monthlyLimit={budgetConfig.monthlyLimit}
-                  updateMonthlyLimit={updateMonthlyLimit}
-                />
-              </div>
-            )}
-
-            {activeTab === "category" && (
-              <div className="budget-tab-panel">
-                <CategoryBudget categories={budget.categories} />
-                <CategoryBudgetEditor
-                  categoryLimits={budgetConfig.categoryLimits}
-                  allCategories={categories}
-                  updateCategoryLimit={updateCategoryLimit}
-                />
-              </div>
-            )}
-          </div>
-        </section>
+        <BudgetController
+          budget={budget}
+          budgetConfig={budgetConfig}
+          updateMonthlyLimit={updateMonthlyLimit}
+          updateCategoryLimit={updateCategoryLimit}
+          categories={categories}
+        />
 
         <Filters
           filters={filters}

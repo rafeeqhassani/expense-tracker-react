@@ -1,4 +1,8 @@
-function CategoryBudget({ categories }) {
+function CategoryBudget({ categories, search }) {
+  const filteredCategories = Object.entries(categories).filter(([category]) =>
+    category.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
     <section className="category-budget">
       <div className="budget-header">
@@ -7,7 +11,7 @@ function CategoryBudget({ categories }) {
       </div>
 
       <div className="category-grid">
-        {Object.entries(categories).map(([category, budget]) => (
+        {filteredCategories.map(([category, budget]) => (
           <div key={category} className={`category-card ${budget.status}`}>
             <h4>{category}</h4>
 
@@ -21,6 +25,12 @@ function CategoryBudget({ categories }) {
             <div className="status-label">{budget.riskLabel}</div>
           </div>
         ))}
+
+        {search.trim() ? (
+          filteredCategories.length === 0 ? (
+            <p className="empty-state">No matching categories found.</p>
+          ) : null
+        ) : null}
       </div>
     </section>
   );

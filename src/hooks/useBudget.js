@@ -34,7 +34,6 @@ function useBudget(expenses, budgetConfig) {
 
     allCategories.forEach((category) => {
       const spent = categorySpent?.[category] ?? 0;
-
       const limit = budgetConfig.categoryLimits?.[category] ?? 0;
 
       const status = getBudgetStatus(spent, limit);
@@ -48,9 +47,22 @@ function useBudget(expenses, budgetConfig) {
     return result;
   }, [allCategories, categorySpent, budgetConfig.categoryLimits]);
 
+  const categoryStatuses = useMemo(() => {
+    const result = {};
+
+    allCategories.forEach((category) => {
+      const spent = categorySpent?.[category] ?? 0;
+      const limit = budgetConfig.categoryLimits?.[category] ?? 0;
+
+      result[category] = getBudgetStatus(spent, limit);
+    });
+
+    return result;
+  }, [allCategories, categorySpent, budgetConfig.categoryLimits]);
+
   const alerts = useMemo(() => {
-    return getBudgetAlerts(monthly, categories);
-  }, [monthly, categories]);
+    return getBudgetAlerts(monthly, categoryStatuses);
+  }, [monthly, categoryStatuses]);
 
   return {
     monthly,

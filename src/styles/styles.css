@@ -444,8 +444,15 @@ h1 {
 .category-budget-editor div {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: stretch;
+  gap: 12px;
   margin-bottom: 10px;
+}
+
+.category-budget-editor label {
+  font-weight: 500;
+  display: flex;
+  align-self: flex-start;
 }
 
 .category-budget-editor input,
@@ -453,6 +460,55 @@ h1 {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
+}
+
+.budget-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.budget-input input,
+.budget-input button {
+  width: 100%;
+}
+
+.budget-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.budget-input button {
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  width: 100%;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.budget-input button:hover {
+  background: #1d4ed8;
+}
+
+.budget-input button:active {
+  transform: scale(0.96);
+}
+
+.budget-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .filters,
@@ -1145,6 +1201,11 @@ button:hover {
   .sidebar-overlay {
     display: none;
   }
+
+  .budget-input {
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 @media (min-width: 480px) {
@@ -1177,5 +1238,21 @@ button:hover {
 @media (min-width: 1024px) {
   .summary {
     grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .budget-input {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .budget-input button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .budget-input input {
+    text-align: left;
   }
 }

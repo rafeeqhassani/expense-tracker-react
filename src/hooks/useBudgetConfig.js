@@ -26,19 +26,25 @@ function useBudgetConfig() {
     saveToLocalStorage(STORAGE_KEY, budgetConfig);
   }, [budgetConfig]);
 
-  const updateMonthlyLimit = useCallback((value) => {
+  const updateMonthlyLimit = useCallback((valueOrUpdater) => {
     setBudgetConfig((prev) => ({
       ...prev,
-      monthlyLimit: value,
+      monthlyLimit:
+        typeof valueOrUpdater === "function"
+          ? valueOrUpdater(prev.monthlyLimit)
+          : Number(valueOrUpdater),
     }));
   }, []);
 
-  const updateCategoryLimit = useCallback((category, value) => {
+  const updateCategoryLimit = useCallback((category, valueOrUpdater) => {
     setBudgetConfig((prev) => ({
       ...prev,
       categoryLimits: {
         ...prev.categoryLimits,
-        [category]: value,
+        [category]:
+          typeof valueOrUpdater === "function"
+            ? valueOrUpdater(prev.categoryLimits[category] ?? 0)
+            : Number(valueOrUpdater),
       },
     }));
   }, []);
