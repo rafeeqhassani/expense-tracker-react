@@ -91,3 +91,101 @@ export function getAverageExpense(expenses) {
 
   return totalCalculate(expenses) / expenses.length;
 }
+
+export function getActiveDays(expenses) {
+  const uniqueDays = new Set();
+
+  for (const expense of expenses) {
+    uniqueDays.add(expense.date);
+  }
+
+  return uniqueDays.size;
+}
+
+export function getAverageDailySpending(expenses) {
+  const totalSpent = totalCalculate(expenses);
+  const activeDays = getActiveDays(expenses);
+
+  if (activeDays === 0) return 0;
+
+  return totalSpent / activeDays;
+}
+
+export function getExpensesToday(expenses) {
+  const today = new Date();
+
+  return expenses
+    .filter((expense) => {
+      const date = new Date(expense.date);
+
+      return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      );
+    })
+    .reduce((sum, expense) => {
+      return sum + Number(expense.amount || 0);
+    }, 0);
+}
+
+export function getExpensesThisWeek(expenses) {
+  const today = new Date();
+
+  const startOfWeek = new Date(today);
+
+  startOfWeek.setDate(today.getDate() - today.getDay());
+
+  return expenses
+    .filter((expense) => {
+      const date = new Date(expense.date);
+
+      return date >= startOfWeek && date <= today;
+    })
+    .reduce((sum, expense) => {
+      return sum + Number(expense.amount || 0);
+    }, 0);
+}
+
+export function getExpensesThisMonth(expenses) {
+  const today = new Date();
+
+  return expenses
+    .filter((expense) => {
+      const date = new Date(expense.date);
+
+      return (
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      );
+    })
+    .reduce((sum, expense) => {
+      return sum + Number(expense.amount || 0);
+    }, 0);
+}
+
+export function getExpensesThisYear(expenses) {
+  const currentYear = new Date().getFullYear();
+
+  return expenses
+    .filter((expense) => {
+      const date = new Date(expense.date);
+
+      return date.getFullYear() === currentYear;
+    })
+    .reduce((sum, expense) => {
+      return sum + Number(expense.amount || 0);
+    }, 0);
+}
+
+export function getTotalCategories(expenses) {
+  const categories = new Set();
+
+  for (const expense of expenses) {
+    if (expense.category) {
+      categories.add(expense.category);
+    }
+  }
+
+  return categories.size;
+}

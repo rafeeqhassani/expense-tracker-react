@@ -1,18 +1,53 @@
-function SummaryCard({ label, value = 0, className = "" }) {
+import { formatCurrency } from "../../utils/expenseTransform";
+
+function SummaryCard({ label, value = 0, className = "", type = "number" }) {
+  const displayValue = type === "currency" ? formatCurrency(value) : value;
+
   return (
     <div className={`summary-card ${className}`}>
       <span>{label}</span>
-      <h3>{value}</h3>
+      <h3>{displayValue}</h3>
     </div>
   );
 }
 
 const summaryConfig = [
-  { key: "totalAmount", label: "Total", className: "total" },
-  { key: "totalRecords", label: "Records", className: "records" },
-  { key: "highestExpense", label: "Highest", className: "highest" },
-  { key: "lowestExpense", label: "Lowest", className: "lowest" },
-  { key: "averageExpense", label: "Average", className: "average" },
+  {
+    key: "totalAmount",
+    label: "Total",
+    className: "total",
+    type: "currency",
+  },
+  {
+    key: "totalRecords",
+    label: "Records",
+    className: "records",
+    type: "number",
+  },
+  {
+    key: "highestExpense",
+    label: "Highest",
+    className: "highest",
+    type: "currency",
+  },
+  {
+    key: "lowestExpense",
+    label: "Lowest",
+    className: "lowest",
+    type: "currency",
+  },
+  {
+    key: "averageExpense",
+    label: "Average",
+    className: "average",
+    type: "currency",
+  },
+  {
+    key: "averageDailySpending",
+    label: "Average Daily Spending",
+    className: "daily",
+    type: "currency",
+  },
 ];
 
 function SummarySection({ title, data }) {
@@ -27,6 +62,7 @@ function SummarySection({ title, data }) {
             label={item.label}
             value={data?.[item.key]}
             className={item.className}
+            type={item.type}
           />
         ))}
       </div>

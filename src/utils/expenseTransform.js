@@ -4,10 +4,13 @@ import {
   getPieChartData,
 } from "./chartsDerive";
 
-export function normalizeDate(date) {
-  return new Date(date).toISOString().split("T")[0];
+export function formatCurrency(value) {
+  return Number(value || 0).toLocaleString("en-PK", {
+    style: "currency",
+    currency: "PKR",
+    maximumFractionDigits: 0,
+  });
 }
-
 export function getChartData(type, expenses) {
   switch (type) {
     case "bar":

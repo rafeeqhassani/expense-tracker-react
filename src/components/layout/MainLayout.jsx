@@ -11,7 +11,7 @@ import Toast from "../ui/Toast";
 import Sidebar from "./SideBar";
 import ExpenseAnalytics from "../expenses/ExpenseAnalytics";
 import ExpenseCharts from "../charts/ExpenseCharts";
-
+import DashboardStats from "../dashboard/DashboardStats";
 import BudgetController from "../../controllers/BudgetController";
 
 function MainLayout() {
@@ -73,6 +73,7 @@ function MainLayout() {
 
       <main className="main">
         <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
+        <DashboardStats data={analytics.dashboard} />
         <BudgetController
           budget={budget}
           budgetConfig={budgetConfig}
@@ -100,6 +101,7 @@ function MainLayout() {
             <ExpenseCharts expenses={processedExpenses} />
           </div>
         </section>
+
         <BulkActionsBar
           onClearSelected={actions.handleRemoveSelected}
           selectedCount={actions.selectedCount}

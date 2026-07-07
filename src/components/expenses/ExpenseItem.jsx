@@ -1,5 +1,5 @@
 import useAppContext from "../../providers/useAppContext";
-
+import { formatCurrency } from "../../utils/expenseTransform";
 function ExpenseItem({ expense, onDelete, onEdit }) {
   const { actions } = useAppContext();
 
@@ -41,10 +41,7 @@ function ExpenseItem({ expense, onDelete, onEdit }) {
               : "amount"
         }
       >
-        {Number(expense.amount || 0).toLocaleString("en-PK", {
-          style: "currency",
-          currency: "PKR",
-        })}
+        {formatCurrency(expense.amount || 0)}
       </td>
 
       <td className="actions">
