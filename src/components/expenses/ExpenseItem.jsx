@@ -1,5 +1,11 @@
-function ExpenseItem({ expense, onDelete, onEdit, onToggleSelected }) {
+import useAppContext from "../../providers/useAppContext";
+
+function ExpenseItem({ expense, onDelete, onEdit }) {
+  const { actions } = useAppContext();
+
   const amount = Number(expense.amount || 0);
+
+  const isSelected = actions.selectedIds.has(expense.id);
 
   return (
     <tr>
@@ -7,8 +13,8 @@ function ExpenseItem({ expense, onDelete, onEdit, onToggleSelected }) {
         <label className="row-checkbox">
           <input
             type="checkbox"
-            checked={expense.selected}
-            onChange={() => onToggleSelected(expense.id)}
+            checked={isSelected}
+            onChange={() => actions.handleToggleSelected(expense.id)}
           />
           <span className="row-checkbox-text">Select</span>
         </label>

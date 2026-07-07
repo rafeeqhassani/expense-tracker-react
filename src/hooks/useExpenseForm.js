@@ -9,6 +9,8 @@ const createInitialFormData = () => ({
   category: "",
   customCategory: "",
   date: "",
+  recurring: "none",
+  lastGeneratedDate: "",
 });
 
 const getInitialState = () => ({
@@ -99,6 +101,8 @@ function reducer(state, action) {
           category: action.payload.category ?? "",
           customCategory: action.payload.customCategory ?? "",
           date: action.payload.date ?? "",
+          recurring: action.payload.recurring ?? "none",
+          lastGeneratedDate: action.payload.lastGeneratedDate ?? "",
         },
         mode: "edit",
         editingId: action.payload.id,
@@ -181,7 +185,11 @@ function useExpenseForm({
       });
 
       if (mode === "add") {
-        handleAddExpense(data);
+        const finalData = {
+          ...data,
+          lastGeneratedDate: data.recurring !== "none" ? data.date : "",
+        };
+        handleAddExpense(finalData);
       } else {
         const existing = expenses.find((e) => e.id === editingId);
 

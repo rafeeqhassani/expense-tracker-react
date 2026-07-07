@@ -61,11 +61,7 @@ export function formatBudget(b) {
   };
 }
 
-export function normalizedData(
-  data,
-  existingId = null,
-  existingSelected = false,
-) {
+export function normalizedData(data, existingId = null) {
   const parsedAmount = Number(String(data.amount).trim());
   const isValidDate = data.date && !isNaN(Date.parse(data.date));
   return {
@@ -74,7 +70,7 @@ export function normalizedData(
     amount: Number.isFinite(parsedAmount) ? parsedAmount : 0,
     category: (data.customCategory || data.category).trim().toLowerCase(),
     date: isValidDate ? data.date : new Date().toISOString().split("T")[0],
-    selected: existingSelected,
+    deleted: false,
   };
 }
 

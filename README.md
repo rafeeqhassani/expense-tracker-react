@@ -2,7 +2,7 @@
 
 # Live Demo
 
-https://rafeeqhassani.github.io/expense-tracker-react/
+https://expense-tracker-react-eosin-ten.vercel.app/
 
 # Source Code
 

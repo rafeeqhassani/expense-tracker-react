@@ -126,6 +126,23 @@ function ExpenseForm({
         )}
       </div>
 
+      <div className="field">
+        <label htmlFor="recurring">Recurring</label>
+
+        <select
+          id="recurring"
+          name="recurring"
+          value={formData.recurring}
+          onChange={handleChange}
+        >
+          <option value="none">None</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+
       <div className="form-actions">
         <button type="submit" className="submit-button">
           {mode === "add" ? "Add Expense" : "Update Expense"}

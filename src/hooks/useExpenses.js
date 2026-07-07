@@ -5,14 +5,17 @@ import {
   addExpense,
   updateExpense,
   deleteExpense,
-  clearSelectedExpenses,
+  restoreExpense,
+  deleteSelectedExpenses,
   toggleSelectedExpense,
-  selectedAllExpenses,
+  selectAllExpenses,
   deselectAllExpenses,
   areAllSelected,
   areSomeSelected,
   getSelectedCount,
 } from "../utils/expenseState";
+
+import useRecurring from "./useRecurring";
 
 function useExpenses(showToastMessage) {
   const [expenses, setExpenses] = useState(() => {
@@ -25,61 +28,99 @@ function useExpenses(showToastMessage) {
     }
   });
 
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+
+  const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
+
   useEffect(() => {
     saveToLocalStorage("expenses", expenses);
   }, [expenses]);
 
   const handleAddExpense = (newExpense) => {
-    setExpenses((prev) => {
-      const added = addExpense(prev, newExpense);
-
-      return added;
-    });
+    setExpenses((prev) => addExpense(prev, newExpense));
   };
 
-  const handleUpdateExpense = (editingId, updatedData) =>
+  const handleUpdateExpense = (editingId, updatedData) => {
     setExpenses((prev) => updateExpense(prev, editingId, updatedData));
+  };
+
+  const handleUndoDelete = () => {
+    if (!lastDeletedExpense) return;
+
+    const expenseToRestore = lastDeletedExpense;
+
+    setExpenses((prev) => restoreExpense(prev, expenseToRestore));
+
+    setLastDeletedExpense(null);
+  };
 
   const handleDeleteExpense = (id) => {
-    setExpenses((prev) => deleteExpense(prev, id));
+    setExpenses((prev) => {
+      const { updatedExpenses, deletedItem } = deleteExpense(prev, id);
+
+      setLastDeletedExpense(deletedItem);
+      return updatedExpenses;
+    });
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
     showToastMessage("Expense deleted", "success");
   };
 
   const handleToggleSelected = (id) => {
-    setExpenses((prev) => toggleSelectedExpense(prev, id));
+    setSelectedIds((prev) => toggleSelectedExpense(prev, id));
   };
 
-  const selectedCount = getSelectedCount(expenses);
+  const handleSelectAll = () => {
+    setSelectedIds(() => selectAllExpenses(expenses.filter((e) => !e.deleted)));
+  };
 
-  const allSelected = areAllSelected(expenses);
-  const someSelected = areSomeSelected(expenses);
+  const handleDeselectAll = () => {
+    setSelectedIds(() => deselectAllExpenses());
+  };
 
-  const handleSelectAll = () =>
-    setExpenses((prev) => selectedAllExpenses(prev));
+  const handleRemoveSelected = () => {
+    setExpenses((prev) => deleteSelectedExpenses(prev, selectedIds));
 
-  const handleDeselectAll = () =>
-    setExpenses((prev) => deselectAllExpenses(prev));
+    setSelectedIds(() => new Set());
+  };
 
-  const handleClearSelected = () =>
-    setExpenses((prev) => clearSelectedExpenses(prev));
+  const handleClearSelection = () => {
+    setSelectedIds(new Set());
+  };
 
-  const handleClearAll = () => {
+  const handleClearAllExpenses = () => {
     setExpenses([]);
   };
 
+  const selectedCount = getSelectedCount(selectedIds);
+  const allSelected = areAllSelected(expenses, selectedIds);
+  const someSelected = areSomeSelected(expenses, selectedIds);
+
+  useRecurring(expenses, setExpenses);
+
   return {
     expenses,
+    lastDeletedExpense,
+    selectedIds,
+    handleToggleSelected,
+    handleSelectAll,
+    handleDeselectAll,
+    handleRemoveSelected,
+    handleClearSelection,
+    handleClearAllExpenses,
+
     handleAddExpense,
+    handleUndoDelete,
     handleDeleteExpense,
     handleUpdateExpense,
-    handleToggleSelected,
+
     allSelected,
     someSelected,
     selectedCount,
-    handleSelectAll,
-    handleDeselectAll,
-    handleClearSelected,
-    handleClearAll,
   };
 }
+
 export default useExpenses;

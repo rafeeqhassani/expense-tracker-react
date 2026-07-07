@@ -3,31 +3,30 @@ function GeneralActionsBar({
   processedExpenses = [],
   visibleCount,
   onClearAll,
+  hasActiveFilters,
 }) {
-  let result;
   const list = Array.isArray(processedExpenses) ? processedExpenses : [];
+
   const isEmpty = list.length === 0;
+  const hasMore = visibleCount < list.length;
 
-  const hasMore = processedExpenses.length > visibleCount;
-
-  const isFullyLoaded =
-    processedExpenses.length > 0 && processedExpenses.length <= visibleCount;
+  let result = null;
 
   if (isEmpty) {
     result = <p className="empty-load-message">No expenses to load</p>;
-  } else if (hasMore) {
+  } else if (!hasActiveFilters && hasMore) {
     result = (
       <button type="button" className="load-more" onClick={onLoadMore}>
         Load more
       </button>
     );
-  } else if (isFullyLoaded) {
+  } else if (!hasActiveFilters) {
     result = <p className="empty-load-message">No more expenses exist</p>;
   }
 
   return (
     <section className="actions-bar">
-      <div className="left"> {result}</div>
+      <div className="left">{result}</div>
 
       <div className="right">
         <button type="button" className="clear-all" onClick={onClearAll}>
@@ -37,4 +36,5 @@ function GeneralActionsBar({
     </section>
   );
 }
+
 export default GeneralActionsBar;

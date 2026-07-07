@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useAppContext from "../../providers/useAppContext";
 
 import Header from "../expenses/Header";
 import Filters from "../expenses/Filters";
@@ -13,19 +14,21 @@ import ExpenseCharts from "../charts/ExpenseCharts";
 
 import BudgetController from "../../controllers/BudgetController";
 
-function MainLayout({
-  data,
-  analytics,
-  budget,
-  budgetConfig,
-  updateMonthlyLimit,
-  updateCategoryLimit,
-  form,
-  toast,
-  actions,
-}) {
+function MainLayout() {
   const {
-    visibleExpenses,
+    data,
+    analytics,
+    budget,
+    budgetConfig,
+    updateMonthlyLimit,
+    updateCategoryLimit,
+    form,
+    toast,
+    actions,
+  } = useAppContext();
+
+  const {
+    displayedExpenses,
     processedExpenses,
     visibleCount,
     categories,
@@ -39,6 +42,7 @@ function MainLayout({
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
+
   const closeSidebar = () => {
     setSidebarOpen(false);
   };
@@ -54,6 +58,7 @@ function MainLayout({
         actions.closeForm();
       }
     };
+
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [actions]);
@@ -68,7 +73,6 @@ function MainLayout({
 
       <main className="main">
         <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
-
         <BudgetController
           budget={budget}
           budgetConfig={budgetConfig}
@@ -76,14 +80,12 @@ function MainLayout({
           updateCategoryLimit={updateCategoryLimit}
           categories={categories}
         />
-
         <Filters
           filters={filters}
           handleFilterChange={actions.handleFilterChange}
           hasActiveFilters={actions.hasActiveFilters}
           resetFilters={actions.resetFilters}
         />
-
         <section className="analytics-section">
           <div className="section-header">
             <h2>Analytics</h2>
@@ -98,9 +100,8 @@ function MainLayout({
             <ExpenseCharts expenses={processedExpenses} />
           </div>
         </section>
-
         <BulkActionsBar
-          onClearSelected={actions.handleClearSelected}
+          onClearSelected={actions.handleRemoveSelected}
           selectedCount={actions.selectedCount}
           selection={{
             allSelected: actions.allSelected,
@@ -110,27 +111,31 @@ function MainLayout({
           }}
         />
 
+        {actions.lastDeletedExpense && (
+          <div className="undo-bar">
+            <span>Expense deleted</span>
+            <button onClick={actions.handleUndoDelete}>Undo</button>
+          </div>
+        )}
+
         <ExpenseList
-          expenses={visibleExpenses}
+          expenses={displayedExpenses}
           searchQuery={filters?.title || ""}
           onDelete={actions.handleDeleteExpense}
           onEdit={actions.handleEditExpense}
-          onToggleSelected={actions.handleToggleSelected}
         />
-
         <GeneralActionsBar
           onLoadMore={actions.handleLoadMore}
           processedExpenses={processedExpenses}
           visibleCount={visibleCount}
           onClearAll={actions.handleClearAll}
+          hasActiveFilters={actions.hasActiveFilters}
         />
       </main>
 
       {isFormOpen && (
         <div className="overlay" onClick={actions.closeForm}>
-          {" "}
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            {" "}
             <ExpenseForm
               categories={categories}
               onSubmit={actions.handleSubmit}
@@ -142,8 +147,8 @@ function MainLayout({
               submitAttempted={submitAttempted}
               touched={touched}
               isFormOpen={isFormOpen}
-            />{" "}
-          </div>{" "}
+            />
+          </div>
         </div>
       )}
 

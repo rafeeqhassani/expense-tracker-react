@@ -1,5 +1,5 @@
 export function editExpense(expenses, id) {
-  return expenses.find((item) => item.id === id);
+  return expenses.find((item) => item.id === id && !item.deleted);
 }
 
 export function validateForm(formData) {

@@ -4,7 +4,21 @@ export function addExpense(expenses, newExpense) {
 }
 
 export function deleteExpense(expenses, id) {
-  return expenses.filter((item) => item.id !== id);
+  let deletedItem = null;
+  const updatedExpenses = expenses.map((item) => {
+    if (item.id === id) {
+      deletedItem = item;
+      return { ...item, deleted: true };
+    }
+    return item;
+  });
+  return { updatedExpenses, deletedItem };
+}
+
+export function restoreExpense(expenses, expenseToRestore) {
+  return expenses.map((item) =>
+    item.id === expenseToRestore.id ? { ...item, deleted: false } : item,
+  );
 }
 
 export function updateExpense(expenses, editingId, updatedData) {
@@ -13,31 +27,38 @@ export function updateExpense(expenses, editingId, updatedData) {
   );
 }
 
-export function clearSelectedExpenses(expenses) {
-  return expenses.filter((item) => !item.selected);
+export function deleteSelectedExpenses(expenses, selectedSet) {
+  return expenses.filter((item) => !selectedSet.has(item.id));
 }
 
-export function toggleSelectedExpense(expenses, id) {
-  return expenses.map((item) =>
-    item.id === id ? { ...item, selected: !item.selected } : item,
-  );
+export function toggleSelectedExpense(prevSet, id) {
+  const next = new Set(prevSet);
+
+  if (next.has(id)) {
+    next.delete(id);
+  } else {
+    next.add(id);
+  }
+
+  return next;
 }
 
-export function selectedAllExpenses(expenses) {
-  return expenses.map((item) => ({ ...item, selected: true }));
-}
-export function deselectAllExpenses(expenses) {
-  return expenses.map((item) => ({ ...item, selected: false }));
+export function selectAllExpenses(expenses) {
+  return new Set(expenses.map((e) => e.id));
 }
 
-export function getSelectedCount(expenses) {
-  return expenses.filter((item) => item.selected).length;
+export function deselectAllExpenses() {
+  return new Set();
 }
 
-export function areAllSelected(expenses) {
-  return expenses.length > 0 && expenses.every((item) => item.selected);
+export function getSelectedCount(selectedSet) {
+  return selectedSet.size;
 }
 
-export function areSomeSelected(expenses) {
-  return expenses.some((item) => item.selected) && !areAllSelected(expenses);
+export function areAllSelected(expenses, selectedSet) {
+  return expenses.length > 0 && expenses.every((e) => selectedSet.has(e.id));
+}
+
+export function areSomeSelected(expenses, selectedSet) {
+  return selectedSet.size > 0 && selectedSet.size < expenses.length;
 }

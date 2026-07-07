@@ -71,7 +71,16 @@ function useFilters(expenses) {
     return applyPipeline(expenses ?? [], filters);
   }, [expenses, filters, applyPipeline]);
 
-  const limitedExpenses = processedExpenses.slice(0, Number(visibleCount));
+  const hasActiveFilters =
+    filters.title.trim() !== "" ||
+    filters.month !== "all" ||
+    filters.sortBy !== "smallest" ||
+    filters.startDate !== "" ||
+    filters.endDate !== "";
+
+  const displayedExpenses = hasActiveFilters
+    ? processedExpenses
+    : processedExpenses.slice(0, Number(visibleCount));
 
   const categories = useMemo(() => {
     return getUniqueCategories(expenses);
@@ -86,13 +95,6 @@ function useFilters(expenses) {
     setVisibleCount(40);
   };
 
-  const hasActiveFilters =
-    filters.title.trim() !== "" ||
-    filters.month !== "all" ||
-    filters.sortBy !== "smallest" ||
-    filters.startDate !== "" ||
-    filters.endDate !== "";
-
   useEffect(() => {
     saveToLocalStorage("visibleCount", String(visibleCount));
   }, [visibleCount]);
@@ -103,7 +105,7 @@ function useFilters(expenses) {
     resetFilters,
     hasActiveFilters,
 
-    limitedExpenses,
+    displayedExpenses,
     handleLoadMore,
     processedExpenses,
     visibleCount,
