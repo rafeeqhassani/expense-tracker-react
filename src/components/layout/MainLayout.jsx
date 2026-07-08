@@ -13,6 +13,7 @@ import ExpenseAnalytics from "../expenses/ExpenseAnalytics";
 import ExpenseCharts from "../charts/ExpenseCharts";
 import DashboardStats from "../dashboard/DashboardStats";
 import BudgetController from "../../controllers/BudgetController";
+import RecentActivity from "../activities/RecentActivity";
 
 function MainLayout() {
   const {
@@ -33,6 +34,7 @@ function MainLayout() {
     visibleCount,
     categories,
     filters,
+    activities,
   } = data;
 
   const { formData, mode, isFormOpen, errors, touched, submitAttempted } = form;
@@ -101,6 +103,8 @@ function MainLayout() {
             <ExpenseCharts expenses={processedExpenses} />
           </div>
         </section>
+
+        <RecentActivity activities={activities} />
 
         <BulkActionsBar
           onClearSelected={actions.handleRemoveSelected}

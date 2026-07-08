@@ -15,6 +15,8 @@ import {
   getSelectedCount,
 } from "../utils/expenseState";
 
+import { createActivity } from "../utils/activity";
+
 import useRecurring from "./useRecurring";
 
 function useExpenses(showToastMessage) {
@@ -28,20 +30,44 @@ function useExpenses(showToastMessage) {
     }
   });
 
-  const [selectedIds, setSelectedIds] = useState(() => new Set());
-
-  const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
+  const [activities, setActivities] = useState(() => {
+    try {
+      const stored = getFromLocalStorage("activities");
+      return Array.isArray(stored) ? stored : [];
+    } catch (error) {
+      console.error("Error loading activities:", error);
+      return [];
+    }
+  });
 
   useEffect(() => {
     saveToLocalStorage("expenses", expenses);
   }, [expenses]);
 
+  useEffect(() => {
+    saveToLocalStorage("activities", activities);
+  }, [activities]);
+
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+
+  const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
+
+  const addActivity = (type, message) => {
+    const activity = createActivity(type, message);
+
+    setActivities((prev) => [activity, ...prev]);
+  };
+
   const handleAddExpense = (newExpense) => {
     setExpenses((prev) => addExpense(prev, newExpense));
+
+    addActivity("ADD_EXPENSE", `Added ${newExpense.title}`);
   };
 
   const handleUpdateExpense = (editingId, updatedData) => {
     setExpenses((prev) => updateExpense(prev, editingId, updatedData));
+
+    addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
   };
 
   const handleUndoDelete = () => {
@@ -51,21 +77,28 @@ function useExpenses(showToastMessage) {
 
     setExpenses((prev) => restoreExpense(prev, expenseToRestore));
 
+    addActivity("RESTORE_EXPENSE", `Restored ${expenseToRestore.title}`);
+
     setLastDeletedExpense(null);
   };
 
   const handleDeleteExpense = (id) => {
-    setExpenses((prev) => {
-      const { updatedExpenses, deletedItem } = deleteExpense(prev, id);
+    const { updatedExpenses, deletedItem } = deleteExpense(expenses, id);
 
+    setExpenses(updatedExpenses);
+
+    if (deletedItem) {
       setLastDeletedExpense(deletedItem);
-      return updatedExpenses;
-    });
+
+      addActivity("DELETE_EXPENSE", `Deleted ${deletedItem.title}`);
+    }
+
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.delete(id);
       return next;
     });
+
     showToastMessage("Expense deleted", "success");
   };
 
@@ -95,6 +128,10 @@ function useExpenses(showToastMessage) {
     setExpenses([]);
   };
 
+  const clearAllRecent = () => {
+    setActivities([]);
+  };
+
   const selectedCount = getSelectedCount(selectedIds);
   const allSelected = areAllSelected(expenses, selectedIds);
   const someSelected = areSomeSelected(expenses, selectedIds);
@@ -103,6 +140,8 @@ function useExpenses(showToastMessage) {
 
   return {
     expenses,
+    activities,
+
     lastDeletedExpense,
     selectedIds,
     handleToggleSelected,
@@ -111,6 +150,7 @@ function useExpenses(showToastMessage) {
     handleRemoveSelected,
     handleClearSelection,
     handleClearAllExpenses,
+    clearAllRecent,
 
     handleAddExpense,
     handleUndoDelete,

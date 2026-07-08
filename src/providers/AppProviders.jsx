@@ -15,7 +15,7 @@ function AppProviders({ children }) {
 
   const {
     expenses: expenseList,
-
+    activities,
     selectedIds,
     lastDeletedExpense,
     handleAddExpense,
@@ -28,6 +28,7 @@ function AppProviders({ children }) {
     handleRemoveSelected,
     handleClearSelection,
     handleClearAllExpenses,
+    clearAllRecent,
     allSelected,
     someSelected,
     selectedCount,
@@ -52,6 +53,7 @@ function AppProviders({ children }) {
   const clearAll = () => {
     handleClearSelection();
     handleClearAllExpenses();
+    clearAllRecent();
     budgetConfig.resetBudgetConfig();
     showToastMessage("All data cleared", "success");
   };
@@ -63,6 +65,7 @@ function AppProviders({ children }) {
       visibleCount: filters.visibleCount,
       categories: filters.categories,
       filters: filters.filters,
+      activities,
     },
 
     analytics,
@@ -105,6 +108,7 @@ function AppProviders({ children }) {
       allSelected,
       someSelected,
       handleClearAll: clearAll,
+
       handleFilterChange: filters.handleFilterChange,
       handleLoadMore: filters.handleLoadMore,
       resetFilters: filters.resetFilters,

@@ -164,8 +164,6 @@ function useExpenseForm({
 
   function handleSubmit(e) {
     e?.preventDefault();
-    console.count("submit");
-    console.trace();
 
     if (submitLock.current) return;
     submitLock.current = true;
