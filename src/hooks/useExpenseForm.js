@@ -87,7 +87,7 @@ function reducer(state, action) {
         errors: {},
         touched: {},
         submitAttempted: false,
-        isFormOpen: false,
+        isFormOpen: true,
         mode: "add",
         editingId: null,
       };
@@ -164,6 +164,8 @@ function useExpenseForm({
 
   function handleSubmit(e) {
     e?.preventDefault();
+    console.count("submit");
+    console.trace();
 
     if (submitLock.current) return;
     submitLock.current = true;
@@ -206,7 +208,6 @@ function useExpenseForm({
         handleUpdateExpense(editingId, data);
       }
 
-      dispatch({ type: "SET_ERRORS", payload: {} });
       dispatch({ type: "RESET_FORM" });
 
       showToastMessage(
