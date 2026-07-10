@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useCallback, useMemo } from "react";
 
 import useExpenses from "../hooks/useExpenses";
 import useFilters from "../hooks/useFilters";
@@ -8,13 +8,13 @@ import useAnalytics from "../hooks/useAnalytics";
 import useBudget from "../hooks/useBudget";
 import useBudgetConfig from "../hooks/useBudgetConfig";
 
-export const AppContext = createContext();
+export const AppContext = createContext(null);
 
 function AppProviders({ children }) {
   const { toast, showToastMessage } = useToast();
 
   const {
-    expenses: expenseList,
+    expenses,
     activities,
     selectedIds,
     lastDeletedExpense,
@@ -28,13 +28,16 @@ function AppProviders({ children }) {
     handleRemoveSelected,
     handleClearSelection,
     handleClearAllExpenses,
-    clearAllRecent,
+    handleClearActivities,
     allSelected,
     someSelected,
     selectedCount,
   } = useExpenses(showToastMessage);
 
-  const activeExpenses = expenseList.filter((expense) => !expense.deleted);
+  const activeExpenses = useMemo(
+    () => expenses.filter((expense) => !expense.deleted),
+    [expenses],
+  );
 
   const filters = useFilters(activeExpenses);
 
@@ -47,56 +50,100 @@ function AppProviders({ children }) {
 
   const analytics = useAnalytics(activeExpenses, filters.processedExpenses);
 
-  const budgetConfig = useBudgetConfig();
-  const budget = useBudget(activeExpenses, budgetConfig.budgetConfig);
+  const {
+    budgetConfig,
+    resetBudgetConfig,
+    updateMonthlyLimit,
+    updateCategoryLimit,
+  } = useBudgetConfig();
+  const budget = useBudget(activeExpenses, budgetConfig);
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     handleClearSelection();
     handleClearAllExpenses();
-    clearAllRecent();
-    budgetConfig.resetBudgetConfig();
+    handleClearActivities();
+    resetBudgetConfig();
     showToastMessage("All data cleared", "success");
-  };
+  }, [
+    handleClearSelection,
+    handleClearAllExpenses,
+    handleClearActivities,
+    resetBudgetConfig,
+    showToastMessage,
+  ]);
 
-  const value = {
-    data: {
-      displayedExpenses: filters.displayedExpenses,
-      processedExpenses: filters.processedExpenses,
-      visibleCount: filters.visibleCount,
-      categories: filters.categories,
-      filters: filters.filters,
+  const value = useMemo(
+    () => ({
+      data: {
+        displayedExpenses: filters.displayedExpenses,
+        processedExpenses: filters.processedExpenses,
+        visibleCount: filters.visibleCount,
+        categories: filters.categories,
+        filters: filters.filters,
+        activities,
+      },
+
+      analytics,
+      budget,
+      budgetConfig,
+      updateMonthlyLimit,
+      updateCategoryLimit,
+
+      form: {
+        formData: form.formData,
+        mode: form.mode,
+        isFormOpen: form.isFormOpen,
+        errors: form.errors,
+        touched: form.touched,
+        submitAttempted: form.submitAttempted,
+      },
+
+      toast,
+
+      actions: {
+        openForm: form.openForm,
+        closeForm: form.closeForm,
+        handleEditExpense: form.handleEditExpense,
+        handleSubmit: form.handleSubmit,
+        handleChange: form.handleChange,
+
+        handleAddExpense,
+        handleUpdateExpense,
+        handleUndoDelete,
+        handleDeleteExpense,
+
+        selectedIds,
+        lastDeletedExpense,
+        handleToggleSelected,
+        handleSelectAll,
+        handleDeselectAll,
+        handleRemoveSelected,
+        handleClearSelection,
+        selectedCount,
+        allSelected,
+        someSelected,
+        handleClearAll: clearAll,
+
+        handleFilterChange: filters.handleFilterChange,
+        handleLoadMore: filters.handleLoadMore,
+        resetFilters: filters.resetFilters,
+        hasActiveFilters: filters.hasActiveFilters,
+      },
+    }),
+    [
+      filters,
       activities,
-    },
-
-    analytics,
-    budget,
-    budgetConfig: budgetConfig.budgetConfig,
-    updateMonthlyLimit: budgetConfig.updateMonthlyLimit,
-    updateCategoryLimit: budgetConfig.updateCategoryLimit,
-
-    form: {
-      formData: form.formData,
-      mode: form.mode,
-      isFormOpen: form.isFormOpen,
-      errors: form.errors,
-      touched: form.touched,
-      submitAttempted: form.submitAttempted,
-    },
-
-    toast,
-
-    actions: {
-      openForm: form.openForm,
-      closeForm: form.closeForm,
-      handleEditExpense: form.handleEditExpense,
-      handleSubmit: form.handleSubmit,
-      handleChange: form.handleChange,
-
+      analytics,
+      budget,
+      budgetConfig,
+      updateMonthlyLimit,
+      updateCategoryLimit,
+      form,
+      toast,
       handleAddExpense,
       handleUpdateExpense,
       handleUndoDelete,
       handleDeleteExpense,
-
       selectedIds,
       lastDeletedExpense,
       handleToggleSelected,
@@ -107,14 +154,9 @@ function AppProviders({ children }) {
       selectedCount,
       allSelected,
       someSelected,
-      handleClearAll: clearAll,
-
-      handleFilterChange: filters.handleFilterChange,
-      handleLoadMore: filters.handleLoadMore,
-      resetFilters: filters.resetFilters,
-      hasActiveFilters: filters.hasActiveFilters,
-    },
-  };
+      clearAll,
+    ],
+  );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

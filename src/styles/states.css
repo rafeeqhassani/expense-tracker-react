@@ -1,0 +1,42 @@
+/* ==========================================================================
+   STATES.CSS
+   Empty states and loading messages. Kept tiny and separate so new
+   empty/loading states (e.g. for the activity feed) can be added here
+   without hunting through table.css or budget.css.
+   ========================================================================== */
+
+.no-alerts {
+  padding: var(--space-sm);
+  background: var(--color-success-bg-soft);
+  color: var(--color-success-text);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  border-left: 5px solid var(--color-success);
+}
+
+.empty-load-message {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.empty-list-message {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* RecentActivity's empty state — previously had no matching rule. */
+.empty-activity-message {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* Note: RecentActivity's populated state (the activity rows themselves)
+   currently renders bare <div><p/><small/></div> with no className at
+   all, so there's no hook to style them from CSS alone yet — that needs
+   a small JSX change (a wrapping class) rather than a states.css rule,
+   which is why it isn't addressed here. Flagging for the JSX pass.
+*/

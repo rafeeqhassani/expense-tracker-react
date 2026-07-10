@@ -2,16 +2,18 @@ import BarChartView from "./BarChartView";
 import LineChartView from "./LineChartView";
 import PieChartView from "./PieChartView";
 
-const components = {
+const CHART_COMPONENTS = {
   bar: BarChartView,
   line: LineChartView,
   pie: PieChartView,
 };
 
 function ChartRenderer({ type, data }) {
-  const Component = components[type];
-  if (!Component) return null;
-  return Component ? <Component data={data} /> : null;
+  const ChartComponent = CHART_COMPONENTS[type];
+
+  if (!ChartComponent) return null;
+
+  return <ChartComponent data={data} />;
 }
 
 export default ChartRenderer;

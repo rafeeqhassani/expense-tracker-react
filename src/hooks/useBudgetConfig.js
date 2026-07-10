@@ -10,14 +10,14 @@ const DEFAULT_BUDGET_CONFIG = {
 
 function useBudgetConfig() {
   const [budgetConfig, setBudgetConfig] = useState(() => {
-    const saved = getFromLocalStorage(STORAGE_KEY);
+    const savedConfig = getFromLocalStorage(STORAGE_KEY);
 
     return {
       ...DEFAULT_BUDGET_CONFIG,
-      ...saved,
+      ...savedConfig,
       categoryLimits: {
         ...DEFAULT_BUDGET_CONFIG.categoryLimits,
-        ...(saved?.categoryLimits ?? {}),
+        ...(savedConfig?.categoryLimits ?? {}),
       },
     };
   });

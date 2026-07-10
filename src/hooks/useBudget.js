@@ -8,61 +8,46 @@ import {
 import { formatBudget } from "../utils/expenseTransform";
 
 function useBudget(expenses, budgetConfig) {
-  const totalSpent = useMemo(() => {
-    return calculateTotalSpent(expenses);
-  }, [expenses]);
+  const totalSpent = useMemo(() => calculateTotalSpent(expenses), [expenses]);
 
-  const categorySpent = useMemo(() => {
-    return calculateCategorySpent(expenses);
-  }, [expenses]);
+  const categorySpent = useMemo(
+    () => calculateCategorySpent(expenses),
+    [expenses],
+  );
 
   const monthly = useMemo(() => {
     const status = getBudgetStatus(totalSpent, budgetConfig.monthlyLimit);
-
-    return formatBudget({
-      ...status,
-      spent: totalSpent,
-    });
+    return formatBudget({ ...status, spent: totalSpent });
   }, [totalSpent, budgetConfig.monthlyLimit]);
 
-  const allCategories = useMemo(() => {
-    return Object.keys(categorySpent || {});
-  }, [categorySpent]);
+  const categoryNames = useMemo(
+    () => Object.keys(categorySpent || {}),
+    [categorySpent],
+  );
 
-  const categories = useMemo(() => {
-    const result = {};
+  const { categories, categoryStatuses } = useMemo(() => {
+    const formattedByCategory = {};
+    const statusByCategory = {};
 
-    allCategories.forEach((category) => {
+    categoryNames.forEach((category) => {
       const spent = categorySpent?.[category] ?? 0;
       const limit = budgetConfig.categoryLimits?.[category] ?? 0;
-
       const status = getBudgetStatus(spent, limit);
 
-      result[category] = formatBudget({
-        ...status,
-        spent,
-      });
+      statusByCategory[category] = status;
+      formattedByCategory[category] = formatBudget({ ...status, spent });
     });
 
-    return result;
-  }, [allCategories, categorySpent, budgetConfig.categoryLimits]);
+    return {
+      categories: formattedByCategory,
+      categoryStatuses: statusByCategory,
+    };
+  }, [categoryNames, categorySpent, budgetConfig.categoryLimits]);
 
-  const categoryStatuses = useMemo(() => {
-    const result = {};
-
-    allCategories.forEach((category) => {
-      const spent = categorySpent?.[category] ?? 0;
-      const limit = budgetConfig.categoryLimits?.[category] ?? 0;
-
-      result[category] = getBudgetStatus(spent, limit);
-    });
-
-    return result;
-  }, [allCategories, categorySpent, budgetConfig.categoryLimits]);
-
-  const alerts = useMemo(() => {
-    return getBudgetAlerts(monthly, categoryStatuses);
-  }, [monthly, categoryStatuses]);
+  const alerts = useMemo(
+    () => getBudgetAlerts(monthly, categoryStatuses),
+    [monthly, categoryStatuses],
+  );
 
   return {
     monthly,

@@ -1,32 +1,42 @@
+function sumAmountsByCategory(expenses) {
+  const totalsByCategory = {};
 
-
-export function getCategoryChartData(expenses) {
-  const map = {};
-
-  for (const item of expenses) {
-    const key = item.category;
-
-    if (!map[key]) map[key] = 0;
-
-    map[key] += item.amount;
+  for (const expense of expenses) {
+    const category = expense.category;
+    totalsByCategory[category] =
+      (totalsByCategory[category] || 0) + expense.amount;
   }
 
-  return Object.entries(map).map(([category, total]) => ({
+  return totalsByCategory;
+}
+
+export function getCategoryChartData(expenses) {
+  const totalsByCategory = sumAmountsByCategory(expenses);
+
+  return Object.entries(totalsByCategory).map(([category, total]) => ({
     category,
     total,
   }));
 }
 
+export function getPieChartData(expenses) {
+  const totalsByCategory = sumAmountsByCategory(expenses);
+
+  return Object.entries(totalsByCategory).map(([name, value]) => ({
+    name,
+    value,
+  }));
+}
+
 export function getMonthlyTrendChartData(expenses) {
-  const map = {};
+  const totalsByMonth = {};
 
-  for (const item of expenses) {
-    const date = new Date(item.date);
+  for (const expense of expenses) {
+    const date = new Date(expense.date);
+    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
 
-    const key = `${date.getFullYear()}-${date.getMonth() + 1}`;
-
-    if (!map[key]) {
-      map[key] = {
+    if (!totalsByMonth[monthKey]) {
+      totalsByMonth[monthKey] = {
         total: 0,
         label: date.toLocaleString("default", {
           month: "short",
@@ -35,35 +45,18 @@ export function getMonthlyTrendChartData(expenses) {
       };
     }
 
-    map[key].total += item.amount;
+    totalsByMonth[monthKey].total += expense.amount;
   }
 
-  return Object.entries(map)
-    .sort(([a], [b]) => {
-      const [yearA, monthA] = a.split("-").map(Number);
-      const [yearB, monthB] = b.split("-").map(Number);
+  return Object.entries(totalsByMonth)
+    .sort(([monthKeyA], [monthKeyB]) => {
+      const [yearA, monthA] = monthKeyA.split("-").map(Number);
+      const [yearB, monthB] = monthKeyB.split("-").map(Number);
 
       return yearA - yearB || monthA - monthB;
     })
-    .map(([, value]) => ({
-      month: value.label,
-      total: value.total,
+    .map(([, { label, total }]) => ({
+      month: label,
+      total,
     }));
-}
-
-export function getPieChartData(expenses) {
-  const map = {};
-
-  for (const item of expenses) {
-    const key = item.category;
-
-    if (!map[key]) map[key] = 0;
-
-    map[key] += item.amount;
-  }
-
-  return Object.entries(map).map(([name, value]) => ({
-    name,
-    value,
-  }));
 }

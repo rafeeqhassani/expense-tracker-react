@@ -50,4 +50,5 @@ function ExpenseList({
     </section>
   );
 }
+
 export default ExpenseList;

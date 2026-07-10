@@ -20,7 +20,7 @@ function LineChartView({ data }) {
 
         <YAxis stroke={chartColors.text} />
 
-        <Tooltip labelFormatter={(label) => label} />
+        <Tooltip />
 
         <Line
           type="monotone"

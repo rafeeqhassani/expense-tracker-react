@@ -1,10 +1,19 @@
 import useAppContext from "../../providers/useAppContext";
 import { formatCurrency } from "../../utils/expenseTransform";
+
+const HIGH_AMOUNT_THRESHOLD = 50000;
+const MEDIUM_AMOUNT_THRESHOLD = 20000;
+
+function getAmountClassName(amount) {
+  if (amount > HIGH_AMOUNT_THRESHOLD) return "amount high";
+  if (amount > MEDIUM_AMOUNT_THRESHOLD) return "amount medium";
+  return "amount";
+}
+
 function ExpenseItem({ expense, onDelete, onEdit }) {
   const { actions } = useAppContext();
 
   const amount = Number(expense.amount || 0);
-
   const isSelected = actions.selectedIds.has(expense.id);
 
   return (
@@ -32,15 +41,7 @@ function ExpenseItem({ expense, onDelete, onEdit }) {
         })}
       </td>
 
-      <td
-        className={
-          amount > 50000
-            ? "amount high"
-            : amount > 20000
-              ? "amount medium"
-              : "amount"
-        }
-      >
+      <td className={getAmountClassName(amount)}>
         {formatCurrency(expense.amount || 0)}
       </td>
 

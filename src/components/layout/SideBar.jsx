@@ -1,24 +1,22 @@
 import { FaWallet, FaPlusCircle } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
+
 function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
   const handleOpenForm = () => {
     openForm();
     closeSidebar();
   };
+
   return (
     <>
       {sidebarOpen && (
-        <div
-          className={`sidebar-overlay ${sidebarOpen ? "active" : ""}`}
-          onClick={closeSidebar}
-        ></div>
+        <div className="sidebar-overlay active" onClick={closeSidebar} />
       )}
 
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="logo">
           <div className="logo-left">
             <span>
-              {" "}
               <FaWallet className="logo-icon" />
             </span>
             Dashboard
@@ -45,4 +43,5 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
     </>
   );
 }
+
 export default Sidebar;

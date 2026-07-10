@@ -1,21 +1,15 @@
+const ALERT_TYPE_CLASSES = {
+  safe: "alert-safe",
+  warning: "alert-warning",
+  high: "alert-high",
+  over: "alert-over",
+};
+
 function BudgetAlert({ alert }) {
-  const getTypeClass = (type) => {
-    switch (type) {
-      case "safe":
-        return "alert-safe";
-      case "warning":
-        return "alert-warning";
-      case "high":
-        return "alert-high";
-      case "over":
-        return "alert-over";
-      default:
-        return "";
-    }
-  };
+  const typeClass = ALERT_TYPE_CLASSES[alert.type] || "";
 
   return (
-    <div className={`budget-alert ${getTypeClass(alert.type)}`}>
+    <div className={`budget-alert ${typeClass}`}>
       <div className="alert-message">{alert.message}</div>
 
       {alert.scope === "category" && (

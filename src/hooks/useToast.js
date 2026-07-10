@@ -1,35 +1,26 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+
+const TOAST_DURATION_MS = 3000;
+
+const HIDDEN_TOAST = { show: false, message: "", type: "" };
 
 function useToast() {
-  const toastTimer = useRef(null);
-
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "",
-  });
+  const toastTimerRef = useRef(null);
+  const [toast, setToast] = useState(HIDDEN_TOAST);
 
   useEffect(() => {
-    return () => clearTimeout(toastTimer.current);
+    return () => clearTimeout(toastTimerRef.current);
   }, []);
 
-  function showToastMessage(message, type = "success") {
-    clearTimeout(toastTimer.current);
+  const showToastMessage = useCallback((message, type = "success") => {
+    clearTimeout(toastTimerRef.current);
 
-    setToast({
-      show: true,
-      message,
-      type,
-    });
+    setToast({ show: true, message, type });
 
-    toastTimer.current = setTimeout(() => {
-      setToast({
-        show: false,
-        message: "",
-        type: "",
-      });
-    }, 3000);
-  }
+    toastTimerRef.current = setTimeout(() => {
+      setToast(HIDDEN_TOAST);
+    }, TOAST_DURATION_MS);
+  }, []);
 
   return {
     toast,

@@ -1,19 +1,25 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
+/**
+ * Reads and writes a single URL query parameter, preserving all other
+ * existing query params and navigating (not just updating in place) when
+ * a param is set.
+ */
 export default function useQueryParam() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const params = new URLSearchParams(location.search);
-
-  const get = (key) => params.get(key);
-
-  const set = (key, value) => {
-    const newParams = new URLSearchParams(location.search);
-    newParams.set(key, value);
-
-    navigate(`${location.pathname}?${newParams.toString()}`);
+  const getQueryParam = (key) => {
+    const params = new URLSearchParams(location.search);
+    return params.get(key);
   };
 
-  return { get, set };
+  const setQueryParam = (key, value) => {
+    const params = new URLSearchParams(location.search);
+    params.set(key, value);
+
+    navigate(`${location.pathname}?${params.toString()}`);
+  };
+
+  return { get: getQueryParam, set: setQueryParam };
 }

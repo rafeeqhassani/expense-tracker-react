@@ -1,17 +1,14 @@
 export function addExpense(expenses, newExpense) {
-  const added = [...expenses, newExpense];
-  return added;
+  return [...expenses, newExpense];
 }
 
 export function deleteExpense(expenses, id) {
-  let deletedItem = null;
-  const updatedExpenses = expenses.map((item) => {
-    if (item.id === id) {
-      deletedItem = item;
-      return { ...item, deleted: true };
-    }
-    return item;
-  });
+  const deletedItem = expenses.find((item) => item.id === id) ?? null;
+
+  const updatedExpenses = expenses.map((item) =>
+    item.id === id ? { ...item, deleted: true } : item,
+  );
+
   return { updatedExpenses, deletedItem };
 }
 
@@ -21,44 +18,46 @@ export function restoreExpense(expenses, expenseToRestore) {
   );
 }
 
-export function updateExpense(expenses, editingId, updatedData) {
+export function updateExpense(expenses, id, updatedData) {
   return expenses.map((item) =>
-    item.id === editingId ? { ...item, ...updatedData } : item,
+    item.id === id ? { ...item, ...updatedData } : item,
   );
 }
 
-export function deleteSelectedExpenses(expenses, selectedSet) {
-  return expenses.filter((item) => !selectedSet.has(item.id));
+export function deleteSelectedExpenses(expenses, selectedIds) {
+  return expenses.filter((item) => !selectedIds.has(item.id));
 }
 
-export function toggleSelectedExpense(prevSet, id) {
-  const next = new Set(prevSet);
+export function toggleSelectedExpense(selectedIds, id) {
+  const nextSelectedIds = new Set(selectedIds);
 
-  if (next.has(id)) {
-    next.delete(id);
+  if (nextSelectedIds.has(id)) {
+    nextSelectedIds.delete(id);
   } else {
-    next.add(id);
+    nextSelectedIds.add(id);
   }
 
-  return next;
+  return nextSelectedIds;
 }
 
 export function selectAllExpenses(expenses) {
-  return new Set(expenses.map((e) => e.id));
+  return new Set(expenses.map((item) => item.id));
 }
 
 export function deselectAllExpenses() {
   return new Set();
 }
 
-export function getSelectedCount(selectedSet) {
-  return selectedSet.size;
+export function getSelectedCount(selectedIds) {
+  return selectedIds.size;
 }
 
-export function areAllSelected(expenses, selectedSet) {
-  return expenses.length > 0 && expenses.every((e) => selectedSet.has(e.id));
+export function areAllSelected(expenses, selectedIds) {
+  return (
+    expenses.length > 0 && expenses.every((item) => selectedIds.has(item.id))
+  );
 }
 
-export function areSomeSelected(expenses, selectedSet) {
-  return selectedSet.size > 0 && selectedSet.size < expenses.length;
+export function areSomeSelected(expenses, selectedIds) {
+  return selectedIds.size > 0 && selectedIds.size < expenses.length;
 }

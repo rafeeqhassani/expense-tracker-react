@@ -5,45 +5,42 @@ import {
   getAverageExpense,
   totalCalculate,
   getAverageDailySpending,
-} from "../utils/expenseDerive";
-
-import {
   getExpensesToday,
   getExpensesThisWeek,
   getExpensesThisMonth,
   getTotalCategories,
+  getExpensesThisYear,
 } from "../utils/expenseDerive";
 
+/**
+ * Computes the summary stats shown for a given expense list (used for both
+ * the "overall" — unfiltered — and "filtered" — post-search/filter — views).
+ */
+function computeSummary(expenses) {
+  return {
+    totalAmount: totalCalculate(expenses),
+    highestExpense: getHighestExpense(expenses),
+    lowestExpense: getLowestExpense(expenses),
+    averageExpense: getAverageExpense(expenses),
+    averageDailySpending: getAverageDailySpending(expenses),
+    totalRecords: expenses.length,
+  };
+}
+
 function useAnalytics(expenses, processedExpenses) {
-  const overall = useMemo(() => {
-    return {
-      totalAmount: totalCalculate(expenses),
-      highestExpense: getHighestExpense(expenses),
-      lowestExpense: getLowestExpense(expenses),
-      averageExpense: getAverageExpense(expenses),
-      averageDailySpending: getAverageDailySpending(expenses),
+  const overall = useMemo(() => computeSummary(expenses), [expenses]);
 
-      totalRecords: expenses.length,
-    };
-  }, [expenses]);
-
-  const filtered = useMemo(() => {
-    return {
-      totalAmount: totalCalculate(processedExpenses),
-      highestExpense: getHighestExpense(processedExpenses),
-      lowestExpense: getLowestExpense(processedExpenses),
-      averageExpense: getAverageExpense(processedExpenses),
-      averageDailySpending: getAverageDailySpending(processedExpenses),
-      totalRecords: processedExpenses.length,
-    };
-  }, [processedExpenses]);
+  const filtered = useMemo(
+    () => computeSummary(processedExpenses),
+    [processedExpenses],
+  );
 
   const dashboard = useMemo(() => {
     return {
       expensesToday: getExpensesToday(expenses),
       expensesThisWeek: getExpensesThisWeek(expenses),
       expensesThisMonth: getExpensesThisMonth(expenses),
-      expensesThisYear: getExpensesThisMonth(expenses),
+      expensesThisYear: getExpensesThisYear(expenses),
       totalCategories: getTotalCategories(expenses),
     };
   }, [expenses]);

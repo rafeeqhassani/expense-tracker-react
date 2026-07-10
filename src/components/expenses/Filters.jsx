@@ -1,12 +1,38 @@
 import { FaArrowCircleRight, FaCalendarAlt } from "react-icons/fa";
 
+const MONTH_OPTIONS = [
+  { value: "all", label: "All Months" },
+  { value: "1", label: "January" },
+  { value: "2", label: "February" },
+  { value: "3", label: "March" },
+  { value: "4", label: "April" },
+  { value: "5", label: "May" },
+  { value: "6", label: "June" },
+  { value: "7", label: "July" },
+  { value: "8", label: "August" },
+  { value: "9", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
+];
+
+const SORT_OPTIONS = [
+  { value: "smallest", label: "Amount: Low \u2192 High" },
+  { value: "largest", label: "Amount: High \u2192 Low" },
+  { value: "newest", label: "Date: Newest \u2192 Oldest" },
+  { value: "oldest", label: "Date: Oldest \u2192 Newest" },
+  { value: "title-ascending", label: "Title: A \u2192 Z" },
+  { value: "title-descending", label: "Title: Z \u2192 A" },
+];
+
 function Filters({
   filters,
   handleFilterChange,
   hasActiveFilters,
   resetFilters,
 }) {
-  const { title, month, sortBy } = filters || {};
+  const { title, month, sortBy, startDate, endDate } = filters || {};
+
   return (
     <section className="filters">
       <div className="filters-top">
@@ -31,19 +57,11 @@ function Filters({
             onChange={handleFilterChange}
             className="filterByMonth"
           >
-            <option value="all">All Months</option>
-            <option value="1">January</option>
-            <option value="2">February</option>
-            <option value="3">March</option>
-            <option value="4">April</option>
-            <option value="5">May</option>
-            <option value="6">June</option>
-            <option value="7">July</option>
-            <option value="8">August</option>
-            <option value="9">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
+            {MONTH_OPTIONS.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -56,16 +74,11 @@ function Filters({
             onChange={handleFilterChange}
             className="sortSelection"
           >
-            <option value="smallest">Amount: Smallest &#8594; Largest</option>
-
-            <option value="largest">Amount: Largest &#8594; Smallest</option>
-            <option value="newest">Date: Newest &#8594; Oldest</option>
-
-            <option value="oldest">Date: Oldest &#8594; Newest</option>
-
-            <option value="title-ascending">Title: A &#8594; Z</option>
-
-            <option value="title-descending">Title: Z &#8594; A</option>
+            {SORT_OPTIONS.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -81,7 +94,7 @@ function Filters({
             <input
               type="date"
               name="startDate"
-              value={filters.startDate}
+              value={startDate}
               onChange={handleFilterChange}
             />
             <span className="date-separator">
@@ -90,7 +103,7 @@ function Filters({
             <input
               type="date"
               name="endDate"
-              value={filters.endDate}
+              value={endDate}
               onChange={handleFilterChange}
             />
           </div>

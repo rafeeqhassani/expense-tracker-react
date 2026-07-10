@@ -1,7 +1,9 @@
 import { useReducer, useRef } from "react";
 
 import { validateForm, editExpense } from "../utils/expenseFormState";
-import { normalizedData, isSameData } from "../utils/expenseTransform";
+import { normalizeExpenseData, isSameData } from "../utils/expenseTransform";
+
+const CATEGORY_FIELD_NAMES = ["category", "customCategory"];
 
 const createInitialFormData = () => ({
   title: "",
@@ -22,6 +24,12 @@ const getInitialState = () => ({
   mode: "add",
   editingId: null,
 });
+
+function clearErrors(errors, fieldNames) {
+  const nextErrors = { ...errors };
+  fieldNames.forEach((fieldName) => delete nextErrors[fieldName]);
+  return nextErrors;
+}
 
 function reducer(state, action) {
   switch (action.type) {
@@ -74,11 +82,17 @@ function reducer(state, action) {
         errors: action.payload,
       };
 
-    case "CLEAR_FIELD_ERROR": {
-      const copy = { ...state.errors };
-      delete copy[action.payload];
-      return { ...state, errors: copy };
-    }
+    case "CLEAR_FIELD_ERROR":
+      return {
+        ...state,
+        errors: clearErrors(state.errors, [action.payload]),
+      };
+
+    case "CLEAR_FIELD_ERRORS":
+      return {
+        ...state,
+        errors: clearErrors(state.errors, action.payload),
+      };
 
     case "RESET_FORM":
       return {
@@ -138,22 +152,18 @@ function useExpenseForm({
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "category") {
+    if (name === "category" || name === "customCategory") {
+      const isCategory = name === "category";
+
       dispatch({
         type: "SET_CATEGORY",
-        payload: { category: value, customCategory: "" },
+        payload: {
+          category: isCategory ? value : "",
+          customCategory: isCategory ? "" : value,
+        },
       });
 
-      dispatch({ type: "CLEAR_FIELD_ERROR", payload: "category" });
-      dispatch({ type: "CLEAR_FIELD_ERROR", payload: "customCategory" });
-    } else if (name === "customCategory") {
-      dispatch({
-        type: "SET_CATEGORY",
-        payload: { category: "", customCategory: value },
-      });
-
-      dispatch({ type: "CLEAR_FIELD_ERROR", payload: "category" });
-      dispatch({ type: "CLEAR_FIELD_ERROR", payload: "customCategory" });
+      dispatch({ type: "CLEAR_FIELD_ERRORS", payload: CATEGORY_FIELD_NAMES });
     } else {
       dispatch({ type: "SET_FIELD", payload: { name, value } });
       dispatch({ type: "CLEAR_FIELD_ERROR", payload: name });
@@ -171,39 +181,42 @@ function useExpenseForm({
     try {
       dispatch({ type: "SET_SUBMIT_ATTEMPTED", payload: true });
 
-      const snapshot = { ...formData };
-      const formErrors = validateForm(snapshot);
+      const formSnapshot = { ...formData };
+      const formErrors = validateForm(formSnapshot);
 
       if (Object.keys(formErrors).length > 0) {
         dispatch({ type: "SET_ERRORS", payload: formErrors });
         return;
       }
 
-      const data = normalizedData({
-        ...snapshot,
-        category: snapshot.category || snapshot.customCategory,
+      const normalizedData = normalizeExpenseData({
+        ...formSnapshot,
+        category: formSnapshot.category || formSnapshot.customCategory,
       });
 
       if (mode === "add") {
         const finalData = {
-          ...data,
-          lastGeneratedDate: data.recurring !== "none" ? data.date : "",
+          ...normalizedData,
+          lastGeneratedDate:
+            normalizedData.recurring !== "none" ? normalizedData.date : "",
         };
         handleAddExpense(finalData);
       } else {
-        const existing = expenses.find((e) => e.id === editingId);
+        const existingExpense = expenses.find(
+          (expense) => expense.id === editingId,
+        );
 
-        if (!existing) {
+        if (!existingExpense) {
           showToastMessage("Expense not found", "info");
           return;
         }
 
-        if (isSameData(existing, data)) {
+        if (isSameData(existingExpense, normalizedData)) {
           showToastMessage("No changes detected", "info");
           return;
         }
 
-        handleUpdateExpense(editingId, data);
+        handleUpdateExpense(editingId, normalizedData);
       }
 
       dispatch({ type: "RESET_FORM" });

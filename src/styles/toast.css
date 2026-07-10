@@ -1,0 +1,82 @@
+/* ==========================================================================
+   TOAST.CSS
+   Success / error / info toast notifications.
+   ========================================================================== */
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  left: 20px;
+  z-index: 2000;
+  width: fit-content;
+  max-width: 320px;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.toast-message {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  margin: 0;
+  box-shadow: var(--shadow-lg);
+  white-space: normal;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  word-break: break-word;
+  background-color: var(--color-surface);
+  animation: slideInRight var(--transition-base) ease both;
+}
+
+.toast-success {
+  border-left: 4px solid var(--color-success);
+  background-color: var(--color-success-bg-soft);
+  color: var(--color-success-text);
+}
+
+.toast-error {
+  border-left: 4px solid var(--color-danger-strong);
+  background-color: var(--color-danger-bg-soft);
+  color: var(--color-danger-text);
+}
+
+.toast-info {
+  border-left: 4px solid var(--color-info);
+  background-color: var(--color-info-bg);
+  color: var(--color-info-text);
+}
+
+/* -------------------------------------------------------------------- 
+   UNDO BAR (MainLayout's inline "Expense deleted / Undo" strip)
+   Had no matching rule anywhere in the stylesheet — found during the
+   final connected-system review.
+   -------------------------------------------------------------------- */
+.undo-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  animation: slideUpFadeIn var(--transition-base) ease both;
+}
+
+.undo-bar button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-text-inverse);
+  padding: var(--space-2xs) var(--space-sm);
+  min-height: auto;
+  font-weight: var(--font-weight-semibold);
+}
+
+.undo-bar button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}

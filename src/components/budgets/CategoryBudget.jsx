@@ -1,7 +1,19 @@
+const CATEGORY_STAT_FIELDS = [
+  { key: "displayLimit", label: "Limit" },
+  { key: "displaySpent", label: "Spent" },
+  { key: "displayRemaining", label: "Remaining" },
+  { key: "displayPercent", label: "Usage" },
+];
+
 function CategoryBudget({ categories, search }) {
+  const searchTerm = search.toLowerCase();
+
   const filteredCategories = Object.entries(categories).filter(([category]) =>
-    category.toLowerCase().includes(search.toLowerCase()),
+    category.toLowerCase().includes(searchTerm),
   );
+
+  const noMatchesFound =
+    search.trim() !== "" && filteredCategories.length === 0;
 
   return (
     <section className="category-budget">
@@ -16,21 +28,20 @@ function CategoryBudget({ categories, search }) {
             <h4>{category}</h4>
 
             <div className="category-stats">
-              <p>Limit: {budget.displayLimit}</p>
-              <p>Spent: {budget.displaySpent}</p>
-              <p>Remaining: {budget.displayRemaining}</p>
-              <p>Usage: {budget.displayPercent}</p>
+              {CATEGORY_STAT_FIELDS.map(({ key, label }) => (
+                <p key={key}>
+                  {label}: {budget[key]}
+                </p>
+              ))}
             </div>
 
             <div className="status-label">{budget.riskLabel}</div>
           </div>
         ))}
 
-        {search.trim() ? (
-          filteredCategories.length === 0 ? (
-            <p className="empty-state">No matching categories found.</p>
-          ) : null
-        ) : null}
+        {noMatchesFound && (
+          <p className="empty-state">No matching categories found.</p>
+        )}
       </div>
     </section>
   );

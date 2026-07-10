@@ -1,3 +1,19 @@
+const BUDGET_CARDS = [
+  { key: "displayLimit", label: "Limit" },
+  { key: "displaySpent", label: "Spent" },
+  { key: "displayRemaining", label: "Remaining" },
+  { key: "displayPercent", label: "Usage" },
+];
+
+function BudgetCard({ label, value }) {
+  return (
+    <div className="budget-card">
+      <span>{label}</span>
+      <h3>{value}</h3>
+    </div>
+  );
+}
+
 function MonthlyBudget({ budget }) {
   return (
     <section className="monthly-budget">
@@ -7,25 +23,9 @@ function MonthlyBudget({ budget }) {
       </div>
 
       <div className="budget-grid">
-        <div className="budget-card">
-          <span>Limit</span>
-          <h3>{budget.displayLimit}</h3>
-        </div>
-
-        <div className="budget-card">
-          <span>Spent</span>
-          <h3>{budget.displaySpent}</h3>
-        </div>
-
-        <div className="budget-card">
-          <span>Remaining</span>
-          <h3>{budget.displayRemaining}</h3>
-        </div>
-
-        <div className="budget-card">
-          <span>Usage</span>
-          <h3>{budget.displayPercent}</h3>
-        </div>
+        {BUDGET_CARDS.map(({ key, label }) => (
+          <BudgetCard key={key} label={label} value={budget[key]} />
+        ))}
 
         <div className={`budget-status ${budget.status}`}>
           {budget.riskLabel}

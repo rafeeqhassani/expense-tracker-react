@@ -1,21 +1,26 @@
 function RecentActivity({ activities }) {
   return (
-    <section>
+    <section className="recent-activity">
       <h2>Recent Activity</h2>
 
-      {activities.map((activity) => (
-        <div key={activity.id}>
-          <p>{activity.message}</p>
-          <small>
-            {" "}
-            {new Date(activity.createdAt).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
-          </small>
+      {activities.length === 0 ? (
+        <p className="empty-activity-message">No recent activity yet</p>
+      ) : (
+        <div className="activity-list">
+          {activities.map((activity) => (
+            <div className="activity-item" key={activity.id}>
+              <p className="activity-message">{activity.message}</p>
+              <small className="activity-date">
+                {new Date(activity.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </small>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </section>
   );
 }

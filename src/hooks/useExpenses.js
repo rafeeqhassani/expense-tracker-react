@@ -19,26 +19,15 @@ import { createActivity } from "../utils/activity";
 
 import useRecurring from "./useRecurring";
 
-function useExpenses(showToastMessage) {
-  const [expenses, setExpenses] = useState(() => {
-    try {
-      const stored = getFromLocalStorage("expenses");
-      return Array.isArray(stored) ? stored : [];
-    } catch (error) {
-      console.error("Error loading expenses:", error);
-      return [];
-    }
-  });
+const MAX_ACTIVITIES = 10;
 
-  const [activities, setActivities] = useState(() => {
-    try {
-      const stored = getFromLocalStorage("activities");
-      return Array.isArray(stored) ? stored : [];
-    } catch (error) {
-      console.error("Error loading activities:", error);
-      return [];
-    }
-  });
+function useExpenses(showToastMessage) {
+  const [expenses, setExpenses] = useState(() =>
+    getFromLocalStorage("expenses"),
+  );
+  const [activities, setActivities] = useState(() =>
+    getFromLocalStorage("activities"),
+  );
 
   useEffect(() => {
     saveToLocalStorage("expenses", expenses);
@@ -48,37 +37,29 @@ function useExpenses(showToastMessage) {
     saveToLocalStorage("activities", activities);
   }, [activities]);
 
-  const [selectedIds, setSelectedIds] = useState(() => new Set());
-
+  const [selectedIds, setSelectedIds] = useState(new Set());
   const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
 
   const addActivity = (type, message) => {
     const activity = createActivity(type, message);
-
-    setActivities((prev) => [activity, ...prev]);
+    setActivities((prev) => [activity, ...prev].slice(0, MAX_ACTIVITIES));
   };
 
   const handleAddExpense = (newExpense) => {
     setExpenses((prev) => addExpense(prev, newExpense));
-
     addActivity("ADD_EXPENSE", `Added ${newExpense.title}`);
   };
 
-  const handleUpdateExpense = (editingId, updatedData) => {
-    setExpenses((prev) => updateExpense(prev, editingId, updatedData));
-
+  const handleUpdateExpense = (id, updatedData) => {
+    setExpenses((prev) => updateExpense(prev, id, updatedData));
     addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
   };
 
   const handleUndoDelete = () => {
     if (!lastDeletedExpense) return;
 
-    const expenseToRestore = lastDeletedExpense;
-
-    setExpenses((prev) => restoreExpense(prev, expenseToRestore));
-
-    addActivity("RESTORE_EXPENSE", `Restored ${expenseToRestore.title}`);
-
+    setExpenses((prev) => restoreExpense(prev, lastDeletedExpense));
+    addActivity("RESTORE_EXPENSE", `Restored ${lastDeletedExpense.title}`);
     setLastDeletedExpense(null);
   };
 
@@ -89,14 +70,13 @@ function useExpenses(showToastMessage) {
 
     if (deletedItem) {
       setLastDeletedExpense(deletedItem);
-
       addActivity("DELETE_EXPENSE", `Deleted ${deletedItem.title}`);
     }
 
     setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.delete(id);
-      return next;
+      const nextSelectedIds = new Set(prev);
+      nextSelectedIds.delete(id);
+      return nextSelectedIds;
     });
 
     showToastMessage("Expense deleted", "success");
@@ -107,17 +87,18 @@ function useExpenses(showToastMessage) {
   };
 
   const handleSelectAll = () => {
-    setSelectedIds(() => selectAllExpenses(expenses.filter((e) => !e.deleted)));
+    setSelectedIds(
+      selectAllExpenses(expenses.filter((expense) => !expense.deleted)),
+    );
   };
 
   const handleDeselectAll = () => {
-    setSelectedIds(() => deselectAllExpenses());
+    setSelectedIds(deselectAllExpenses());
   };
 
   const handleRemoveSelected = () => {
     setExpenses((prev) => deleteSelectedExpenses(prev, selectedIds));
-
-    setSelectedIds(() => new Set());
+    setSelectedIds(new Set());
   };
 
   const handleClearSelection = () => {
@@ -128,7 +109,7 @@ function useExpenses(showToastMessage) {
     setExpenses([]);
   };
 
-  const clearAllRecent = () => {
+  const handleClearActivities = () => {
     setActivities([]);
   };
 
@@ -150,7 +131,7 @@ function useExpenses(showToastMessage) {
     handleRemoveSelected,
     handleClearSelection,
     handleClearAllExpenses,
-    clearAllRecent,
+    handleClearActivities,
 
     handleAddExpense,
     handleUndoDelete,

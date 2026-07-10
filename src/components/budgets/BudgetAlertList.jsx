@@ -7,9 +7,9 @@ function BudgetAlertList({ alerts }) {
 
   return (
     <div className="budget-alert-list">
-      {alerts.map((alert, index) => (
+      {alerts.map((alert) => (
         <BudgetAlert
-          key={`${alert.scope}-${alert.category || "monthly"}-${index}`}
+          key={`${alert.scope}-${alert.category ?? "monthly"}`}
           alert={alert}
         />
       ))}

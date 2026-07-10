@@ -8,28 +8,32 @@ function useRecurring(expenses, setExpenses) {
 
     for (const expense of expenses) {
       if (expense.recurring === "none") continue;
+
       if (!expense.lastGeneratedDate) continue;
 
-      const lastDate = new Date(expense.lastGeneratedDate);
-      const missingdates = generateMissingDates(
+      const lastGeneratedDate = new Date(expense.lastGeneratedDate);
+
+      const missingDates = generateMissingDates(
         today,
-        lastDate,
+        lastGeneratedDate,
         expense.recurring,
       );
 
-      for (const date of missingdates) {
-        const formattedDate = date.toISOString().split("T")[0];
+      for (const missingDate of missingDates) {
+        const formattedDate = missingDate.toISOString().split("T")[0];
+
         const alreadyExists = expenses.some(
-          (exp) =>
-            exp.title === expense.title &&
-            exp.amount === expense.amount &&
-            exp.category === expense.category &&
-            exp.date === formattedDate,
+          (existingExpense) =>
+            existingExpense.recurringId === expense.id &&
+            existingExpense.date === formattedDate,
         );
+
         if (alreadyExists) continue;
 
         generatedExpenses.push({
           ...expense,
+          id: crypto.randomUUID(),
+          recurringId: expense.id,
           date: formattedDate,
           lastGeneratedDate: formattedDate,
         });
@@ -39,7 +43,7 @@ function useRecurring(expenses, setExpenses) {
     if (generatedExpenses.length > 0) {
       setExpenses((prev) => [...prev, ...generatedExpenses]);
     }
-  }, [expenses]);
+  }, [expenses, setExpenses]);
 }
 
 export default useRecurring;

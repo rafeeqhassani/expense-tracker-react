@@ -1,7 +1,14 @@
 import useHoldButton from "../../hooks/useHoldButton";
 
+const STEP_AMOUNT = 1;
+
 function MonthlyBudgetEditor({ monthlyLimit, updateMonthlyLimit }) {
   const { start, stop } = useHoldButton();
+
+  const decrement = () =>
+    start(() => updateMonthlyLimit((prev) => Math.max(0, prev - STEP_AMOUNT)));
+  const increment = () =>
+    start(() => updateMonthlyLimit((prev) => prev + STEP_AMOUNT));
 
   return (
     <section className="budget-editor">
@@ -10,9 +17,7 @@ function MonthlyBudgetEditor({ monthlyLimit, updateMonthlyLimit }) {
       <div className="budget-input">
         <button
           type="button"
-          onMouseDown={() =>
-            start(() => updateMonthlyLimit((prev) => Math.max(0, prev - 1)))
-          }
+          onMouseDown={decrement}
           onMouseUp={stop}
           onMouseLeave={stop}
         >
@@ -21,16 +26,14 @@ function MonthlyBudgetEditor({ monthlyLimit, updateMonthlyLimit }) {
 
         <input
           type="number"
-          step="1"
+          step={STEP_AMOUNT}
           value={monthlyLimit}
           onChange={(e) => updateMonthlyLimit(e.target.value)}
         />
 
         <button
           type="button"
-          onMouseDown={() =>
-            start(() => updateMonthlyLimit((prev) => prev + 1))
-          }
+          onMouseDown={increment}
           onMouseUp={stop}
           onMouseLeave={stop}
         >

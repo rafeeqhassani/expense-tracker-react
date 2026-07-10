@@ -7,6 +7,12 @@ import CategoryBudget from "../components/budgets/CategoryBudget";
 import CategoryBudgetEditor from "../components/budgets/CategoryBudgetEditor";
 import BudgetAlertList from "../components/budgets/BudgetAlertList";
 
+const TABS = [
+  { id: "monthly", label: "Monthly Budget" },
+  { id: "category", label: "Category Budget" },
+];
+const DEFAULT_TAB = "monthly";
+
 function BudgetPage({
   budget,
   budgetConfig,
@@ -14,13 +20,13 @@ function BudgetPage({
   updateCategoryLimit,
   categories,
 }) {
-  const [search, setSearch] = useState("");
+  const [categorySearch, setCategorySearch] = useState("");
 
-  const query = useQueryParam();
-  const activeTab = query.get("tab") || "monthly";
+  const queryParam = useQueryParam();
+  const activeTab = queryParam.get("tab") || DEFAULT_TAB;
 
-  const setTab = (tab) => {
-    query.set("tab", tab);
+  const setActiveTab = (tab) => {
+    queryParam.set("tab", tab);
   };
 
   return (
@@ -28,19 +34,15 @@ function BudgetPage({
       <BudgetAlertList alerts={budget.alerts} />
 
       <div className="budget-tab-buttons">
-        <button
-          className={`budget-tab-button ${activeTab === "monthly" ? "active" : ""}`}
-          onClick={() => setTab("monthly")}
-        >
-          Monthly Budget
-        </button>
-
-        <button
-          className={`budget-tab-button ${activeTab === "category" ? "active" : ""}`}
-          onClick={() => setTab("category")}
-        >
-          Category Budget
-        </button>
+        {TABS.map(({ id, label }) => (
+          <button
+            key={id}
+            className={`budget-tab-button ${activeTab === id ? "active" : ""}`}
+            onClick={() => setActiveTab(id)}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       <div className="budget-tab-content">
@@ -61,13 +63,16 @@ function BudgetPage({
               <input
                 type="text"
                 placeholder="Search category..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
                 className="category-search"
               />
             </div>
 
-            <CategoryBudget categories={budget.categories} search={search} />
+            <CategoryBudget
+              categories={budget.categories}
+              search={categorySearch}
+            />
 
             <CategoryBudgetEditor
               categoryLimits={budgetConfig.categoryLimits}

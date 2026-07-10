@@ -1,18 +1,28 @@
+const NOT_SET_STATUS = "not_set";
+
+const BUDGET_STATUS_ALERTS = {
+  safe: { type: "safe", text: "budget is healthy." },
+  warning: { type: "warning", text: "budget is 70% used." },
+  high: { type: "high", text: "budget is almost exhausted." },
+  over: { type: "over", text: "budget exceeded." },
+
+  [NOT_SET_STATUS]: { type: "info", text: "budget not set yet." },
+};
+
 export function calculateTotalSpent(expenses) {
-  return expenses.reduce((sum, exp) => {
-    const amount = Number(exp.amount) || 0;
-    return sum + amount;
+  return expenses.reduce((total, expense) => {
+    const amount = Number(expense.amount) || 0;
+    return total + amount;
   }, 0);
 }
 
 export function calculateCategorySpent(expenses) {
-  return expenses.reduce((acc, exp) => {
-    const category = (exp.category || "uncategorized").toLowerCase().trim();
+  return expenses.reduce((totalsByCategory, expense) => {
+    const category = (expense.category || "uncategorized").toLowerCase().trim();
+    const amount = Number(expense.amount) || 0;
 
-    const amount = Number(exp.amount) || 0;
-
-    acc[category] = (acc[category] || 0) + amount;
-    return acc;
+    totalsByCategory[category] = (totalsByCategory[category] || 0) + amount;
+    return totalsByCategory;
   }, {});
 }
 
@@ -28,7 +38,7 @@ export function getBudgetStatus(totalSpent, limit) {
       percentUsed: 0,
       overspendRatio: 0,
       riskScore: 0,
-      status: "not_set",
+      status: NOT_SET_STATUS,
     };
   }
 
@@ -37,7 +47,6 @@ export function getBudgetStatus(totalSpent, limit) {
   const overspendRatio = safeSpent / safeLimit;
 
   let status;
-
   if (percentUsed >= 100) status = "over";
   else if (percentUsed >= 90) status = "high";
   else if (percentUsed >= 70) status = "warning";
@@ -54,90 +63,44 @@ export function getBudgetStatus(totalSpent, limit) {
   };
 }
 
+function buildAlert({ status, scope, prefix, category }) {
+  const alertInfo = BUDGET_STATUS_ALERTS[status];
+  if (!alertInfo) return null;
+
+  const alert = {
+    type: alertInfo.type,
+    scope,
+    message: `${prefix} ${alertInfo.text}`,
+  };
+
+  if (category) {
+    alert.category = category;
+  }
+
+  return alert;
+}
+
 export function getBudgetAlerts(monthlyStatus, categoryStatuses) {
   const alerts = [];
 
-  switch (monthlyStatus.status) {
-    case "safe":
-      alerts.push({
-        type: "safe",
-        scope: "monthly",
-        message: "Monthly budget is healthy.",
-      });
-      break;
-
-    case "warning":
-      alerts.push({
-        type: "warning",
-        scope: "monthly",
-        message: "Monthly budget is 70% used.",
-      });
-      break;
-
-    case "high":
-      alerts.push({
-        type: "high",
-        scope: "monthly",
-        message: "Monthly budget is almost exhausted.",
-      });
-      break;
-
-    case "over":
-      alerts.push({
-        type: "over",
-        scope: "monthly",
-        message: "Monthly budget exceeded.",
-      });
-      break;
+  // Monthly: "not_set" intentionally produces no alert (unlike categories).
+  if (monthlyStatus.status !== NOT_SET_STATUS) {
+    const monthlyAlert = buildAlert({
+      status: monthlyStatus.status,
+      scope: "monthly",
+      prefix: "Monthly",
+    });
+    if (monthlyAlert) alerts.push(monthlyAlert);
   }
 
   Object.entries(categoryStatuses).forEach(([category, status]) => {
-    switch (status.status) {
-      case "safe":
-        alerts.push({
-          type: "safe",
-          scope: "category",
-          category,
-          message: `${category} budget is healthy.`,
-        });
-        break;
-
-      case "warning":
-        alerts.push({
-          type: "warning",
-          scope: "category",
-          category,
-          message: `${category} budget is 70% used.`,
-        });
-        break;
-
-      case "high":
-        alerts.push({
-          type: "high",
-          scope: "category",
-          category,
-          message: `${category} budget is almost exhausted.`,
-        });
-        break;
-
-      case "over":
-        alerts.push({
-          type: "over",
-          scope: "category",
-          category,
-          message: `${category} budget exceeded.`,
-        });
-        break;
-
-      case "not_set":
-        alerts.push({
-          type: "info",
-          scope: "category",
-          category,
-          message: `${category} budget not set yet.`,
-        });
-        break;
-    }
+    const categoryAlert = buildAlert({
+      status: status.status,
+      scope: "category",
+      prefix: category,
+      category,
+    });
+    if (categoryAlert) alerts.push(categoryAlert);
   });
 
   return alerts;

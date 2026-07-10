@@ -1,0 +1,233 @@
+/* ==========================================================================
+   BUDGET.CSS
+   Budget alerts banner, budget tab switcher, and the budget/category
+   editor forms. (Status color tokens shared with cards.css.)
+   ========================================================================== */
+
+/* -------------------------------------------------------------------- 
+   ALERTS
+   -------------------------------------------------------------------- */
+.budget-alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0 var(--space-md) 0;
+}
+
+.budget-alert {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border-left: 5px solid transparent;
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  animation: slideUpFadeIn var(--transition-base) ease both;
+}
+
+.budget-alert:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.alert-safe {
+  background: var(--color-success-bg-soft);
+  border-left-color: var(--color-success);
+  color: var(--color-success-text);
+}
+
+.alert-warning {
+  background: var(--color-warning-bg-soft);
+  border-left-color: var(--color-warning-accent);
+  color: var(--color-warning-text);
+}
+
+.alert-high {
+  background: var(--color-attention-bg);
+  border-left-color: var(--color-attention);
+  color: var(--color-attention-text);
+}
+
+.alert-over {
+  background: var(--color-danger-bg-soft);
+  border-left-color: var(--color-danger-strong);
+  color: var(--color-danger-text);
+}
+
+.alert-message {
+  font-weight: var(--font-weight-medium);
+}
+
+.alert-category {
+  margin-top: var(--space-2xs);
+  font-size: var(--text-xs);
+  opacity: 0.75;
+}
+
+/* -------------------------------------------------------------------- 
+   BUDGET TABS
+   -------------------------------------------------------------------- */
+.budget-tabs {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.budget-tab-buttons {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.budget-tab-content,
+.budget-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  animation: fadeIn var(--transition-base) ease both;
+}
+
+/* -------------------------------------------------------------------- 
+   CATEGORY BUDGET TAB CONTROLS
+   The search field above the category grid (BudgetPage's category tab).
+   -------------------------------------------------------------------- */
+.category-budget-header {
+  display: flex;
+  width: 100%;
+}
+
+.category-search {
+  width: 100%;
+}
+
+/* Category grid's own empty-state message needs to span the full grid,
+   not collapse into a single cramped cell. */
+.category-grid .empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Per-category numeric stat lines inside a category card (Limit/Spent/
+   Remaining/Usage). These render as plain "Label: value" text from a
+   single <p>, so the number can't be isolated into the mono/tabular
+   token without splitting that markup — left as regular text for now. */
+.category-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  margin: var(--space-xs) 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------- 
+   BUDGET / CATEGORY EDITORS
+   -------------------------------------------------------------------- */
+.budget-editor,
+.category-budget-editor {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.category-budget-editor div {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.category-budget-editor label {
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-self: flex-start;
+}
+
+.category-budget-editor input,
+.budget-editor input {
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Numeric stepper layout (buttons themselves styled in buttons.css) */
+.budget-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.budget-input input,
+.budget-input button {
+  width: 100%;
+}
+
+.budget-input input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-sm) 0.75rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* -------------------------------------------------------------------- 
+   RESPONSIVE
+   -------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .budget-input {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .budget-input input {
+    flex: 1;
+    width: auto;
+    text-align: left;
+  }
+
+  .budget-input button {
+    width: auto;
+    flex: 0 0 auto;
+    min-width: 44px;
+  }
+
+  /* Category Budget Editor */
+  .category-budget-editor div {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .category-budget-editor label {
+    flex: 0 0 140px;
+    margin: 0;
+    font-size: large;
+  }
+
+  .category-budget-editor input {
+    flex: 1;
+    width: auto;
+  }
+
+  .category-budget-header {
+    max-width: 320px;
+  }
+}

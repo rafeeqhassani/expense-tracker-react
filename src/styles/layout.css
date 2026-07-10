@@ -1,0 +1,240 @@
+/* ==========================================================================
+   LAYOUT.CSS
+   App shell: dashboard grid, sidebar/nav, header, mobile menu.
+   Mobile-first: sidebar is an off-canvas drawer by default, becomes a
+   sticky static column at the `md` breakpoint.
+   ========================================================================== */
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+  gap: var(--space-sm);
+  background: var(--color-surface);
+  padding: var(--space-xs);
+}
+
+/* -------------------------------------------------------------------- 
+   SIDEBAR (mobile: off-canvas drawer / desktop: sticky static column)
+   -------------------------------------------------------------------- */
+.sidebar {
+  background-color: var(--color-secondary-900);
+  color: var(--color-text-inverse);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  border-radius: var(--radius-lg);
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: var(--sidebar-width);
+  transition: transform var(--transition-slow);
+  z-index: 1000;
+  transform: translateX(-100%);
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 11, 24, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+  z-index: 999;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-family: var(--font-family-display);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logo-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.logo-icon {
+  font-size: clamp(1rem, 1vw, 1.5rem);
+  color: var(--color-primary-100);
+}
+
+.close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn button {
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  transition:
+    background var(--transition-base),
+    transform var(--transition-base);
+  font-size: clamp(1rem, 1vw, 1.5rem);
+  font-weight: var(--font-weight-semibold);
+  min-height: auto;
+  min-width: var(--min-tap-target);
+}
+
+.close-btn button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.05);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* -------------------------------------------------------------------- 
+   MAIN CONTENT AREA
+   Constrained to a max-width and centered so content stays readable on
+   ultra-wide monitors instead of stretching edge to edge.
+   -------------------------------------------------------------------- */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  overflow-y: auto;
+  background: var(--color-bg);
+}
+
+.main > * {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.menu-btn,
+.add-btn {
+  font-size: var(--text-lg);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs);
+  min-height: var(--min-tap-target);
+  min-width: var(--min-tap-target);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-base);
+  color: var(--color-text-primary);
+}
+
+.menu-btn:hover,
+.add-btn:hover {
+  background: var(--color-surface-muted);
+}
+
+.add-btn {
+  color: var(--color-primary-500);
+}
+
+.menu-btn:active,
+.add-btn:active {
+  transform: scale(0.95);
+}
+
+.header-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+}
+
+.header-top p {
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* -------------------------------------------------------------------- 
+   RESPONSIVE: TABLET / DESKTOP (>= 768px)
+   -------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .dashboard {
+    grid-template-columns: var(--sidebar-width-desktop) 1fr;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: var(--space-md);
+    transform: none;
+    width: auto;
+    height: calc(100vh - var(--space-md) * 2);
+  }
+
+  .menu-btn,
+  .close-btn,
+  .add-btn,
+  .sidebar-overlay {
+    display: none;
+  }
+
+  .main {
+    padding: 0 var(--space-md) var(--space-lg);
+  }
+
+  .app-header {
+    padding-bottom: var(--space-md);
+  }
+}
+
+/* -------------------------------------------------------------------- 
+   RESPONSIVE: LARGE DESKTOP (>= 1280px)
+   A little extra breathing room once there's space to spend.
+   -------------------------------------------------------------------- */
+@media (min-width: 1280px) {
+  .dashboard {
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+  }
+
+  .main {
+    gap: var(--space-lg);
+  }
+}

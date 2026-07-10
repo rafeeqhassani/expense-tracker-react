@@ -1,191 +1,192 @@
-## Expense Tracker (React Version)
+# Expense Tracker React
 
-# Live Demo
+A full-featured responsive expense management application built with React.js.
+
+## Live Demo
 
 https://expense-tracker-react-eosin-ten.vercel.app/
 
-# Source Code
+## Source Code
 
 https://github.com/rafeeqhassani/expense-tracker-react
 
-# Desktop View
+---
 
-![My project view](public/expense-dashboard.png)
+## Screenshots
 
-# Mobile View
+### Desktop View
 
-![Mobile View](src/assets/expense-mob-dashboard.png)
+![Expense Dashboard](public/expense-dashboard.png)
 
-# About the Project
+### Mobile View
 
-A React-based Expense Tracker Application built to manage daily and monthly expenses with dynamic UI updates, filtering, sorting, validation, and persistent LocalStorage storage.
+![Mobile Dashboard](public/expense-mob-dashboard.png)
 
-This project focuses not only on building features but also on understanding frontend architecture, React state management, UI behavior, rendering flow, debugging, and real-world application structure.
+---
 
-The project was originally built in Vanilla JavaScript and later refactored into React to better understand component-based architecture and state-driven UI design.
+# About The Project
+
+Expense Tracker is a React-based personal finance application designed to manage daily expenses, analyze spending patterns, and provide a structured dashboard experience.
+
+The project was originally developed using Vanilla JavaScript and later rebuilt using React to improve scalability, component organization, and state management.
+
+The goal was not only feature development but also understanding real-world frontend architecture, state flow, rendering behavior, and maintainable code structure.
+
+---
 
 # Features
 
+## Expense Management
+
 - Add, edit, and delete expenses
-- Load More pagination (40 items per batch)
 - Search expenses by title
-- Sort expenses (alphabetical & numeric)
+- Sort expenses alphabetically and numerically
 - Filter expenses by month
-- Bulk selection & removal
-- Real-time total calculation
-- Dynamic category management
+- Bulk select and remove expenses
+- Load more pagination
+
+## Dashboard & Analytics
+
+- Total spending overview
+- Expense statistics
+- Spending analytics
+- Expense charts
+- Recent activity tracking
+
+## Budget Management
+
+- Monthly budget limits
+- Category-based budget limits
+- Spending monitoring
+
+## Advanced Features
+
+- Recurring expense generation
+- Custom categories
 - Form validation
+- Toast notifications
+- Undo delete functionality
 - LocalStorage persistence
-- State-driven UI rendering
-- Responsive behavior
+- Responsive mobile-first layout
+
+---
 
 # Technologies Used
 
-- React
-- JavaScript (ES6+)
-- CSS3
+- React.js
+- JavaScript ES6+
 - HTML5
-- React Hooks (useState, useReducer, useEffect)
+- CSS3
+- React Hooks
+- Context API
+- useReducer
+- LocalStorage
+- Vercel
 
-# Project Architecture & Learning
+---
 
-This project helped me deeply understand:
+# Architecture
 
-## React Architecture
+The application follows a component-based architecture with separation between UI components, state management, and business logic.
 
-- Component-based structure
-- Separation of UI and business logic
-- Scalable project organization
-- When abstraction is actually needed
+## State Management
 
-Complex form logic was handled using `useReducer`, while simpler logic (filtering, pagination, totals) was kept modular without over-engineering.
+### Context API
 
-# State Management Understanding
+Used for shared application state.
 
-## UI State
+### useReducer
 
-- Form open/close state
-- Mode (add/edit)
-- Editing ID
+Used for complex form state:
+
+- Form data
 - Validation errors
-- Toast notifications
+- Edit mode
+- Modal state
+- Submission flow
 
-## Data State
+### Custom Hooks
 
-- Expenses array
-- Categories
-- Filtered results
+Created reusable logic for:
 
-## App Flow
+- Recurring expenses
+- Application behavior management
 
-Understanding how UI changes based on user actions, reducer transitions, and rendering conditions.
+---
 
-# Form Complexity & Reducer Logic
+# Engineering Decisions
 
-The form was managed using `useReducer` due to multiple connected states:
+## State Lifecycle Handling
 
-- formData
-- errors
-- mode
-- editingId
-- isFormOpen
+During development, UI inconsistencies were debugged by tracing:
 
-Key learnings:
+- Reducer actions
+- State transitions
+- Component rendering
+- User interaction flow
 
-- reducer-driven state flow
-- event-based UI updates
-- centralized state transitions
-- conditional UI behavior
+The solution focused on maintaining predictable UI states instead of adding unnecessary complexity.
 
-A key principle learned:
+## Component Responsibility
 
-> A single submit action should produce a single clear UI outcome.
+Components were separated based on responsibility:
 
-During debugging, inconsistent validation and success messages were caused by overlapping UI states rather than data issues.
+- Dashboard sections
+- Expense management
+- Forms
+- Analytics
+- Navigation
+- UI feedback
 
-Closing the form after successful submission ensures a clean UI state and prevents conflicting feedback.
+This improved maintainability and future scalability.
 
-# UI State Debugging & Form Lifecycle Decisions
-
-During form submission, validation messages sometimes appeared alongside success toasts.
-
-I investigated the issue by:
-
-- Traced reducer actions step by step
-- Inspected state transitions before/after submit
-- Verifying validation flow
-- Adding console logs to confirm state correctness
-- Reviewing render behavior and UI updates
-
-The data flow was correct, but the issue appeared to be related to UI lifecycle timing and overlapping render status when the form remained open after submission.
-
-### Solution
-
-Closing or resetting the form after successful submission ensured:
-
-- Fresh state on each open
-- No stale validation messages
-- No overlapping UI states
-- More predictable rendering behavior
-
-This helped stabilize the UI while keeping validation logic intact.
-
-### Key Learning
-
-> UI bugs are not always logic errors — they often come from state lifecycle and rendering synchronization issues.
-
-# Problem Solving & Debugging
-
-This project involved deep debugging and architectural decisions:
-
-- Tracing rendering flow
-- Debugging state transitions
-- Understanding async behavior
-- Fixing UI conflicts
-- Using DevTools effectively
-- Finding root causes, not just symptoms
+---
 
 # What I Learned
 
-## Vanilla JavaScript
+## JavaScript
 
 - DOM manipulation
 - Event handling
-- Dynamic rendering
-- LocalStorage sync
+- Data processing
+- LocalStorage management
 
 ## React
 
-- State-driven UI
-- useReducer architecture
-- Component responsibility
-- Derived state handling
+- Component architecture
+- State-driven rendering
+- Reducer patterns
+- Context API
+- Custom hooks
+- Derived state
 - UI lifecycle management
-- Scalable project structure
+
+## Problem Solving
+
+- Debugging complex state issues
+- Understanding rendering behavior
+- Improving architecture through refactoring
+
+---
 
 # Future Improvements
 
-- UI/UX redesign
-- Analytics charts
-- Dark mode
-- Export (CSV/PDF)
 - Backend integration
 - Authentication
-- Database support
+- Database storage
+- CSV/PDF export
+- Dark mode
+- Advanced financial insights
+
+---
 
 # Project Status
 
-Core functionality is complete.
+Core functionality completed.
 
-Current focus:
+Currently improving:
 
-- UI improvements
-- Architecture refinement
-- Scalability
+- UI design system
+- Performance optimization
+- Code scalability
 - Advanced React patterns
-
-# Note
-
-This project was built through consistent self-learning, debugging, and experimentation.
-
-The goal was not only to implement features but to understand how frontend applications behave internally — especially state flow, UI rendering, and reducer-driven architecture.

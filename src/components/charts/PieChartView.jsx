@@ -7,6 +7,7 @@ import {
   Cell,
 } from "recharts";
 import { chartColors } from "../../utils/chartsColors";
+
 function PieChartView({ data }) {
   return (
     <ResponsiveContainer width="100%" height={350}>
@@ -14,7 +15,7 @@ function PieChartView({ data }) {
         <Pie data={data} dataKey="value" nameKey="name" outerRadius={120}>
           {data.map((entry, index) => (
             <Cell
-              key={index}
+              key={entry.name}
               fill={chartColors.pie[index % chartColors.pie.length]}
             />
           ))}

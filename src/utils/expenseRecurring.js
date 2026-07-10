@@ -1,28 +1,34 @@
-function addStep(date, type) {
-  switch (type) {
-    case "daily":
-      const newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + 1);
-      return newDate;
+const STEP_ADDERS = {
+  daily: (date) => {
+    const nextDate = new Date(date);
+    nextDate.setDate(nextDate.getDate() + 1);
+    return nextDate;
+  },
+  weekly: (date) => {
+    const nextDate = new Date(date);
+    nextDate.setDate(nextDate.getDate() + 7);
+    return nextDate;
+  },
+  monthly: (date) => {
+    const nextDate = new Date(date);
+    nextDate.setMonth(nextDate.getMonth() + 1);
+    return nextDate;
+  },
+  yearly: (date) => {
+    const nextDate = new Date(date);
+    nextDate.setFullYear(nextDate.getFullYear() + 1);
+    return nextDate;
+  },
+};
 
-    case "weekly":
-      const weeklyDate = new Date(date);
-      weeklyDate.setDate(weeklyDate.getDate() + 7);
-      return weeklyDate;
+function addStep(date, recurringType) {
+  const stepAdder = STEP_ADDERS[recurringType];
 
-    case "monthly":
-      const monthlyDate = new Date(date);
-      monthlyDate.setMonth(monthlyDate.getMonth() + 1);
-      return monthlyDate;
-
-    case "yearly":
-      const yearlyDate = new Date(date);
-      yearlyDate.setFullYear(yearlyDate.getFullYear() + 1);
-      return yearlyDate;
-
-    default:
-      return date;
+  if (!stepAdder) {
+    throw new Error(`Invalid recurring type: ${recurringType}`);
   }
+
+  return stepAdder(date);
 }
 
 export default function generateMissingDates(
@@ -30,12 +36,21 @@ export default function generateMissingDates(
   lastRunDate,
   recurringType,
 ) {
-  let lastRun = new Date(lastRunDate.toISOString().split("T")[0]);
   const current = new Date(currentDate.toISOString().split("T")[0]);
-  const allMissingDates = [];
+  let lastRun = new Date(lastRunDate.toISOString().split("T")[0]);
+
+  const missingDates = [];
+
   while (lastRun < current) {
-    lastRun = addStep(lastRun, recurringType);
-    allMissingDates.push(new Date(lastRun));
+    const nextDate = addStep(lastRun, recurringType);
+
+    if (nextDate.getTime() === lastRun.getTime()) {
+      break;
+    }
+
+    lastRun = nextDate;
+    missingDates.push(new Date(lastRun));
   }
-  return allMissingDates;
+
+  return missingDates;
 }

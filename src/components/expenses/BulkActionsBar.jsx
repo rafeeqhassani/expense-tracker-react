@@ -4,6 +4,14 @@ function BulkActionsBar({ selection, onClearSelected, selectedCount }) {
 
   if (selectedCount === 0) return null;
 
+  const handleSelectAllChange = (e) => {
+    if (e.target.checked) {
+      handleSelectAll();
+    } else {
+      handleDeselectAll();
+    }
+  };
+
   return (
     <div className="bulk-actions-wrapper">
       <div className="bulk-action">
@@ -26,9 +34,7 @@ function BulkActionsBar({ selection, onClearSelected, selectedCount }) {
             ref={(el) => {
               if (el) el.indeterminate = someSelected;
             }}
-            onChange={(e) => {
-              e.target.checked ? handleSelectAll() : handleDeselectAll();
-            }}
+            onChange={handleSelectAllChange}
           />
           <span>Select All</span>
         </label>

@@ -1,15 +1,21 @@
+/**
+ * Expense filtering, sorting, and summary-statistic helpers.
+ */
+
+// --- Search / filter / sort -------------------------------------------------
+
 export function searchExpenses(expenses, filters) {
-  const query = filters.title;
+  const searchTerm = filters.title;
 
-  if (!query.trim()) return expenses;
+  if (!searchTerm.trim()) return expenses;
 
-  const q = query.toLowerCase();
+  const normalizedTerm = searchTerm.toLowerCase();
 
-  return expenses.filter((item) => {
+  return expenses.filter((expense) => {
     return (
-      item.title.toLowerCase().includes(q) ||
-      item.category.toLowerCase().includes(q) ||
-      String(item.amount).includes(q)
+      expense.title.toLowerCase().includes(normalizedTerm) ||
+      expense.category.toLowerCase().includes(normalizedTerm) ||
+      String(expense.amount).includes(normalizedTerm)
     );
   });
 }
@@ -17,9 +23,9 @@ export function searchExpenses(expenses, filters) {
 export function filterByMonth(expenses, filters) {
   if (filters.month === "all") return expenses;
 
-  return expenses.filter((item) => {
-    const d = new Date(item.date);
-    return d.getMonth() + 1 === Number(filters.month);
+  return expenses.filter((expense) => {
+    const date = new Date(expense.date);
+    return date.getMonth() + 1 === Number(filters.month);
   });
 }
 
@@ -29,61 +35,59 @@ export function filterByDateRange(expenses, filters) {
   const start = filters.startDate ? new Date(filters.startDate) : null;
   const end = filters.endDate ? new Date(filters.endDate) : null;
 
-  return expenses.filter((item) => {
-    const date = new Date(item.date);
-
-    if (start && !end) return date >= start;
-    if (!start && end) return date <= end;
-
+  return expenses.filter((expense) => {
+    const date = new Date(expense.date);
     return (!start || date >= start) && (!end || date <= end);
   });
 }
 
 export function sortExpenses(expenses, filters) {
-  const sorted = [...expenses];
+  const sortedExpenses = [...expenses];
 
   switch (filters.sortBy) {
     case "smallest":
-      return sorted.sort((a, b) => a.amount - b.amount);
+      return sortedExpenses.sort((a, b) => a.amount - b.amount);
 
     case "largest":
-      return sorted.sort((a, b) => b.amount - a.amount);
+      return sortedExpenses.sort((a, b) => b.amount - a.amount);
 
     case "newest":
-      return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+      return sortedExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     case "oldest":
-      return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+      return sortedExpenses.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     case "title-ascending":
-      return sorted.sort((a, b) => a.title.localeCompare(b.title));
+      return sortedExpenses.sort((a, b) => a.title.localeCompare(b.title));
 
     case "title-descending":
-      return sorted.sort((a, b) => b.title.localeCompare(a.title));
+      return sortedExpenses.sort((a, b) => b.title.localeCompare(a.title));
 
     default:
-      return sorted;
+      return sortedExpenses;
   }
 }
 
 export function getUniqueCategories(expenses) {
-  return [...new Set(expenses.map((e) => e.category))];
+  return [...new Set(expenses.map((expense) => expense.category))];
 }
 
-export function totalCalculate(data) {
-  return data.reduce((sum, item) => sum + item.amount, 0);
+// --- Aggregate stats ---------------------------------------------------------
+
+export function totalCalculate(expenses) {
+  return expenses.reduce((sum, expense) => sum + expense.amount, 0);
 }
 
 export function getHighestExpense(expenses) {
   if (expenses.length === 0) return 0;
 
-  return Math.max(...expenses.map((item) => item.amount));
+  return Math.max(...expenses.map((expense) => expense.amount));
 }
 
 export function getLowestExpense(expenses) {
   if (expenses.length === 0) return 0;
 
-  return Math.min(...expenses.map((item) => item.amount));
+  return Math.min(...expenses.map((expense) => expense.amount));
 }
 
 export function getAverageExpense(expenses) {
@@ -111,73 +115,6 @@ export function getAverageDailySpending(expenses) {
   return totalSpent / activeDays;
 }
 
-export function getExpensesToday(expenses) {
-  const today = new Date();
-
-  return expenses
-    .filter((expense) => {
-      const date = new Date(expense.date);
-
-      return (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      );
-    })
-    .reduce((sum, expense) => {
-      return sum + Number(expense.amount || 0);
-    }, 0);
-}
-
-export function getExpensesThisWeek(expenses) {
-  const today = new Date();
-
-  const startOfWeek = new Date(today);
-
-  startOfWeek.setDate(today.getDate() - today.getDay());
-
-  return expenses
-    .filter((expense) => {
-      const date = new Date(expense.date);
-
-      return date >= startOfWeek && date <= today;
-    })
-    .reduce((sum, expense) => {
-      return sum + Number(expense.amount || 0);
-    }, 0);
-}
-
-export function getExpensesThisMonth(expenses) {
-  const today = new Date();
-
-  return expenses
-    .filter((expense) => {
-      const date = new Date(expense.date);
-
-      return (
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
-      );
-    })
-    .reduce((sum, expense) => {
-      return sum + Number(expense.amount || 0);
-    }, 0);
-}
-
-export function getExpensesThisYear(expenses) {
-  const currentYear = new Date().getFullYear();
-
-  return expenses
-    .filter((expense) => {
-      const date = new Date(expense.date);
-
-      return date.getFullYear() === currentYear;
-    })
-    .reduce((sum, expense) => {
-      return sum + Number(expense.amount || 0);
-    }, 0);
-}
-
 export function getTotalCategories(expenses) {
   const categories = new Set();
 
@@ -188,4 +125,74 @@ export function getTotalCategories(expenses) {
   }
 
   return categories.size;
+}
+
+// --- Period-based totals ------------------------------------------------------
+//
+// getExpensesToday/ThisWeek/ThisMonth/ThisYear share the same shape: filter
+// expenses that fall within a date window, then sum their amounts. The
+// window logic differs per period, so only the summation is shared here.
+
+function sumAmounts(expenses) {
+  return expenses.reduce(
+    (sum, expense) => sum + Number(expense.amount || 0),
+    0,
+  );
+}
+
+function isSameDay(dateA, dateB) {
+  return (
+    dateA.getDate() === dateB.getDate() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getFullYear() === dateB.getFullYear()
+  );
+}
+
+export function getExpensesToday(expenses) {
+  const today = new Date();
+
+  const todaysExpenses = expenses.filter((expense) =>
+    isSameDay(new Date(expense.date), today),
+  );
+
+  return sumAmounts(todaysExpenses);
+}
+
+export function getExpensesThisWeek(expenses) {
+  const today = new Date();
+
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay());
+
+  const thisWeeksExpenses = expenses.filter((expense) => {
+    const date = new Date(expense.date);
+    return date >= startOfWeek && date <= today;
+  });
+
+  return sumAmounts(thisWeeksExpenses);
+}
+
+export function getExpensesThisMonth(expenses) {
+  const today = new Date();
+
+  const thisMonthsExpenses = expenses.filter((expense) => {
+    const date = new Date(expense.date);
+    return (
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  });
+
+  return sumAmounts(thisMonthsExpenses);
+}
+
+export function getExpensesThisYear(expenses) {
+  const currentYear = new Date().getFullYear();
+
+  const thisYearsExpenses = expenses.filter((expense) => {
+    const date = new Date(expense.date);
+    return date.getFullYear() === currentYear;
+  });
+
+  return sumAmounts(thisYearsExpenses);
 }

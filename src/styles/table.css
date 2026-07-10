@@ -1,0 +1,248 @@
+/* ==========================================================================
+   TABLE.CSS
+   Expense list: table wrapper, rows, bulk-selection bar, and the
+   actions bar above the list. Horizontal scroll is intentional and
+   contained (table-wrapper), never the page.
+   ========================================================================== */
+
+.list-container {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px; /* prevents column-crush; wrapper handles the scroll */
+}
+
+.expense-table thead {
+  background: var(--color-bg);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.expense-table th {
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.expense-table td {
+  padding: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.expense-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.expense-table tbody tr {
+  background: var(--color-surface);
+  transition: background-color var(--transition-base);
+  animation: fadeIn var(--transition-base) ease both;
+}
+
+.expense-table tbody tr:nth-child(even) {
+  background: var(--color-surface-muted);
+}
+
+.expense-table tbody tr:hover {
+  background: var(--color-primary-50);
+}
+
+.expense-table th:first-child,
+.expense-table td:first-child {
+  width: 60px;
+  text-align: center;
+}
+
+/* Row / bulk checkboxes */
+.row-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.row-checkbox input,
+.global-checkbox input,
+.checkbox-label input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  min-height: 0;
+  accent-color: var(--color-primary-500);
+}
+
+.row-checkbox-text {
+  margin-left: var(--space-2xs);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.global-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
+/* Amount emphasis by size (low/medium/high spend) — the primary showcase
+   for the ledger-style tabular mono figures established in the tokens. */
+.amount {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.amount.medium {
+  color: var(--color-accent-amber);
+}
+.amount.high {
+  color: var(--color-danger);
+}
+
+.category-badge {
+  display: inline-block;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-100);
+  color: var(--color-primary-600);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+/* -------------------------------------------------------------------- 
+   BULK ACTIONS BAR (appears when rows are selected)
+   -------------------------------------------------------------------- */
+.bulk-actions-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  animation: slideUpFadeIn var(--transition-base) ease both;
+}
+
+.bulk-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selected-count {
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* -------------------------------------------------------------------- 
+   ACTIONS BAR (above the list: search/sort controls)
+   -------------------------------------------------------------------- */
+.actions-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.left button,
+.right button {
+  width: 100%;
+}
+
+/* -------------------------------------------------------------------- 
+   RESPONSIVE
+   -------------------------------------------------------------------- */
+@media (min-width: 480px) {
+  .bulk-actions-wrapper {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bulk-action {
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .clear-selected {
+    width: auto;
+  }
+
+  .actions-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 768px) {
+  .bulk-actions-wrapper {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bulk-action {
+    width: auto;
+  }
+
+  .actions-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .left button,
+  .right button {
+    width: auto;
+  }
+}

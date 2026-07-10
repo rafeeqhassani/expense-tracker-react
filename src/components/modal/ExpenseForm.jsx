@@ -1,5 +1,23 @@
 import { useEffect, useRef } from "react";
 
+const RECURRING_OPTIONS = [
+  { value: "none", label: "None" },
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+  { value: "yearly", label: "Yearly" },
+];
+
+function FormField({ label, htmlFor, error, children }) {
+  return (
+    <div className="field">
+      <label htmlFor={htmlFor}>{label}</label>
+      {children}
+      {error}
+    </div>
+  );
+}
+
 function ExpenseForm({
   categories,
   onSubmit,
@@ -12,11 +30,11 @@ function ExpenseForm({
   touched,
   isFormOpen,
 }) {
-  const titleRef = useRef(null);
+  const titleInputRef = useRef(null);
 
   useEffect(() => {
     if (isFormOpen) {
-      titleRef.current?.focus();
+      titleInputRef.current?.focus();
     }
   }, [isFormOpen]);
 
@@ -30,11 +48,17 @@ function ExpenseForm({
 
   return (
     <form className="expense-form" onSubmit={handleSubmit}>
-      <div className="field">
-        <label htmlFor="title">Title</label>
-
+      <FormField
+        label="Title"
+        htmlFor="title"
+        error={
+          showError("title") && (
+            <small className="validate-title">{errors.title}</small>
+          )
+        }
+      >
         <input
-          ref={titleRef}
+          ref={titleInputRef}
           type="text"
           id="title"
           name="title"
@@ -43,15 +67,17 @@ function ExpenseForm({
           className="title-input"
           placeholder="Add Expense"
         />
+      </FormField>
 
-        {showError("title") && (
-          <small className="validate-title">{errors.title}</small>
-        )}
-      </div>
-
-      <div className="field">
-        <label htmlFor="amount">Amount</label>
-
+      <FormField
+        label="Amount"
+        htmlFor="amount"
+        error={
+          showError("amount") && (
+            <small className="validate-amount">{errors.amount}</small>
+          )
+        }
+      >
         <input
           type="number"
           id="amount"
@@ -61,11 +87,7 @@ function ExpenseForm({
           className="amount-input"
           placeholder="e.g. 100.00"
         />
-
-        {showError("amount") && (
-          <small className="validate-amount">{errors.amount}</small>
-        )}
-      </div>
+      </FormField>
 
       <div className="category-field">
         <div className="input-group">
@@ -109,9 +131,15 @@ function ExpenseForm({
         )}
       </div>
 
-      <div className="field">
-        <label htmlFor="dateInput">Date</label>
-
+      <FormField
+        label="Date"
+        htmlFor="dateInput"
+        error={
+          showError("date") && (
+            <small className="validate-date">{errors.date}</small>
+          )
+        }
+      >
         <input
           type="date"
           id="dateInput"
@@ -120,28 +148,22 @@ function ExpenseForm({
           onChange={handleChange}
           className="date-input"
         />
+      </FormField>
 
-        {showError("date") && (
-          <small className="validate-date">{errors.date}</small>
-        )}
-      </div>
-
-      <div className="field">
-        <label htmlFor="recurring">Recurring</label>
-
+      <FormField label="Recurring" htmlFor="recurring">
         <select
           id="recurring"
           name="recurring"
           value={formData.recurring}
           onChange={handleChange}
         >
-          <option value="none">None</option>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="yearly">Yearly</option>
+          {RECURRING_OPTIONS.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
-      </div>
+      </FormField>
 
       <div className="form-actions">
         <button type="submit" className="submit-button">

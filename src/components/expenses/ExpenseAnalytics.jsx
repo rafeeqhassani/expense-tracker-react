@@ -11,13 +11,8 @@ function SummaryCard({ label, value = 0, className = "", type = "number" }) {
   );
 }
 
-const summaryConfig = [
-  {
-    key: "totalAmount",
-    label: "Total",
-    className: "total",
-    type: "currency",
-  },
+const SUMMARY_CONFIG = [
+  { key: "totalAmount", label: "Total", className: "total", type: "currency" },
   {
     key: "totalRecords",
     label: "Records",
@@ -56,7 +51,7 @@ function SummarySection({ title, data }) {
       <h3 className="summary-title">{title}</h3>
 
       <div className="summary">
-        {summaryConfig.map((item) => (
+        {SUMMARY_CONFIG.map((item) => (
           <SummaryCard
             key={`${title}-${item.key}`}
             label={item.label}
