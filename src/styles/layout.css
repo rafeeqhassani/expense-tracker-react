@@ -23,7 +23,7 @@
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-sm);
   border-radius: var(--radius-lg);
 
   position: fixed;
@@ -108,7 +108,60 @@
 .nav {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
+}
+
+/* --------------------------------------------------------------------
+   SIDEBAR NAVIGATION
+   -------------------------------------------------------------------- */
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+
+  color: var(--color-text-inverse);
+  text-decoration: none;
+
+  border-radius: var(--radius-sm);
+
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+
+  transition:
+    background var(--transition-base),
+    color var(--transition-base),
+    transform var(--transition-base);
+}
+
+.nav-links a:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-links a.active {
+  background: var(--color-primary-500);
+  color: var(--color-text-inverse);
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: var(--text-md);
+}
+
+.nav-text {
+  flex: 1;
 }
 
 /* -------------------------------------------------------------------- 

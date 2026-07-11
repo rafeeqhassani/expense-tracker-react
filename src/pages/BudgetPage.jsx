@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useQueryParam from "../hooks/useQueryParam";
+import useAppContext from "../providers/useAppContext";
 
 import MonthlyBudget from "../components/budgets/MonthlyBudget";
 import MonthlyBudgetEditor from "../components/budgets/MonthlyBudgetEditor";
@@ -13,13 +14,16 @@ const TABS = [
 ];
 const DEFAULT_TAB = "monthly";
 
-function BudgetPage({
-  budget,
-  budgetConfig,
-  updateMonthlyLimit,
-  updateCategoryLimit,
-  categories,
-}) {
+function BudgetPage() {
+  const {
+    budget,
+    budgetConfig,
+    updateMonthlyLimit,
+    updateCategoryLimit,
+    data,
+  } = useAppContext();
+
+  const { categories } = data;
   const [categorySearch, setCategorySearch] = useState("");
 
   const queryParam = useQueryParam();
@@ -32,7 +36,6 @@ function BudgetPage({
   return (
     <section className="budget-tabs">
       <BudgetAlertList alerts={budget.alerts} />
-
       <div className="budget-tab-buttons">
         {TABS.map(({ id, label }) => (
           <button

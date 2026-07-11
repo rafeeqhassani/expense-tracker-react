@@ -57,6 +57,12 @@
   color: var(--color-danger-text);
 }
 
+.alert-info {
+  background: var(--color-info-bg-soft);
+  border-left-color: var(--color-info);
+  color: var(--color-info-text);
+}
+
 .alert-message {
   font-weight: var(--font-weight-medium);
 }
@@ -128,6 +134,13 @@
   margin: var(--space-xs) 0;
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
+  overflow-x: auto;
+  min-width: max-content;
+  align-items: flex-start;
+}
+
+.category-stats p {
+  white-space: nowrap;
 }
 
 /* -------------------------------------------------------------------- 

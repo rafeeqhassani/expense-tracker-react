@@ -1,5 +1,12 @@
-import { FaWallet, FaPlusCircle } from "react-icons/fa";
+import {
+  FaWallet,
+  FaPlusCircle,
+  FaChartLine,
+  FaReceipt,
+  FaPiggyBank,
+} from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
+import { NavLink } from "react-router-dom";
 
 function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
   const handleOpenForm = () => {
@@ -19,7 +26,7 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
             <span>
               <FaWallet className="logo-icon" />
             </span>
-            Dashboard
+            Expense Tracker
           </div>
 
           <div className="close-btn">
@@ -35,8 +42,32 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
               <span className="add-expense-icon">
                 <FaPlusCircle />
               </span>
+
               <span className="button-text">Add New Expense</span>
             </button>
+          </div>
+
+          <div className="nav-links">
+            <NavLink to="/" end onClick={closeSidebar}>
+              <span className="nav-icon">
+                <FaChartLine />
+              </span>
+              <span className="nav-text">Dashboard</span>
+            </NavLink>
+
+            <NavLink to="/expenses" onClick={closeSidebar}>
+              <span className="nav-icon">
+                <FaReceipt />
+              </span>
+              <span className="nav-text">Expenses</span>
+            </NavLink>
+
+            <NavLink to="/budget" onClick={closeSidebar}>
+              <span className="nav-icon">
+                <FaPiggyBank />
+              </span>
+              <span className="nav-text">Budget Management</span>
+            </NavLink>
           </div>
         </nav>
       </aside>

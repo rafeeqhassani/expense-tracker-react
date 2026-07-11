@@ -17,9 +17,10 @@ function MonthlyBudgetEditor({ monthlyLimit, updateMonthlyLimit }) {
       <div className="budget-input">
         <button
           type="button"
-          onMouseDown={decrement}
-          onMouseUp={stop}
-          onMouseLeave={stop}
+          onPointerDown={decrement}
+          onPointerUp={stop}
+          onPointerLeave={stop}
+          onPointerCancel={stop}
         >
           −
         </button>
@@ -33,9 +34,10 @@ function MonthlyBudgetEditor({ monthlyLimit, updateMonthlyLimit }) {
 
         <button
           type="button"
-          onMouseDown={increment}
-          onMouseUp={stop}
-          onMouseLeave={stop}
+          onPointerDown={increment}
+          onPointerUp={stop}
+          onPointerLeave={stop}
+          onPointerCancel={stop}
         >
           +
         </button>

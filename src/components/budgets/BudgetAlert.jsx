@@ -3,6 +3,7 @@ const ALERT_TYPE_CLASSES = {
   warning: "alert-warning",
   high: "alert-high",
   over: "alert-over",
+  info: "alert-info",
 };
 
 function BudgetAlert({ alert }) {

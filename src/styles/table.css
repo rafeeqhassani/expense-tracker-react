@@ -246,3 +246,9 @@
     width: auto;
   }
 }
+
+@media (min-width: 1024px) {
+  .table-wrapper {
+    overflow: hidden;
+  }
+}

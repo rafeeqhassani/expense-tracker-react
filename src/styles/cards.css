@@ -764,8 +764,11 @@
 .category-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+
   gap: var(--space-sm);
   margin-top: var(--space-sm);
+
+  padding: 0.75rem;
 }
 
 .category-card {
@@ -804,9 +807,41 @@
   letter-spacing: var(--letter-spacing-wider);
 }
 
+.analytics-section,
+.dashboard-stats {
+  min-width: 0;
+}
+
+.main {
+  min-width: 0;
+}
+
 /* -------------------------------------------------------------------- 
    RESPONSIVE
    -------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .summary {
+    grid-auto-flow: column;
+    grid-auto-columns: 220px;
+    grid-template-columns: none;
+    overflow-x: auto;
+  }
+
+  .budget-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-budget {
+    overflow: hidden;
+  }
+
+  .category-grid {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    max-height: 400px;
+  }
+}
+
 @media (min-width: 768px) {
   .summary {
     grid-template-columns: repeat(3, 1fr);
@@ -814,13 +849,21 @@
 }
 
 @media (min-width: 1024px) {
-  /* ExpenseAnalytics */
-  .analytics-section .summary {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  /* DashboardStats */
+  .analytics-section .summary,
   .dashboard-stats .summary {
-    grid-template-columns: repeat(5, 1fr);
+    display: grid;
+
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(220px, 1fr);
+
+    grid-template-columns: none;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+
+    width: 100%;
   }
 }

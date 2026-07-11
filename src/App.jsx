@@ -1,10 +1,10 @@
-import MainLayout from "./components/layout/MainLayout";
 import AppProviders from "./providers/AppProviders";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
     <AppProviders>
-      <MainLayout />
+      <AppRoutes />
     </AppProviders>
   );
 }
