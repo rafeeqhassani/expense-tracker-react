@@ -36,6 +36,7 @@ function BudgetPage() {
   return (
     <section className="budget-tabs">
       <BudgetAlertList alerts={budget.alerts} />
+
       <div className="budget-tab-buttons">
         {TABS.map(({ id, label }) => (
           <button

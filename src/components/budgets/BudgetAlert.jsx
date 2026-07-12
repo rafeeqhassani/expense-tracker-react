@@ -6,7 +6,7 @@ const ALERT_TYPE_CLASSES = {
   info: "alert-info",
 };
 
-function BudgetAlert({ alert }) {
+function BudgetAlert({ alert, children }) {
   const typeClass = ALERT_TYPE_CLASSES[alert.type] || "";
 
   return (
@@ -18,6 +18,8 @@ function BudgetAlert({ alert }) {
           Category: <b>{alert.category}</b>
         </div>
       )}
+
+      {children}
     </div>
   );
 }

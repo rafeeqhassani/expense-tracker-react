@@ -1,8 +1,8 @@
 import useAppContext from "../providers/useAppContext";
 
 import DashboardStats from "../components/dashboard/DashboardStats";
-import BudgetAlertList from "../components/budgets/BudgetAlertList";
-
+import CategoryBudgetSummaryAlert from "../components/budgets/CategoryBudgetSummaryAlert";
+import MonthlyBudgetSummaryAlert from "../components/budgets/MonthlyBudgetSummaryAlert";
 import ExpenseAnalytics from "../components/expenses/ExpenseAnalytics";
 import ExpenseCharts from "../components/charts/ExpenseCharts";
 import RecentActivity from "../components/activities/RecentActivity";
@@ -15,9 +15,9 @@ function DashboardPage() {
   return (
     <>
       <DashboardStats data={analytics.dashboard} />
+      <MonthlyBudgetSummaryAlert summary={budget.monthlyBudgetSummary} />
 
-      <BudgetAlertList alerts={budget.alerts} />
-
+      <CategoryBudgetSummaryAlert summary={budget.categoryBudgetSummary} />
       <section className="analytics-section">
         <div className="section-header">
           <h2>Analytics</h2>

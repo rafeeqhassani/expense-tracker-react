@@ -28,7 +28,7 @@ function MonthlyBudgetEditor({ monthlyLimit, updateMonthlyLimit }) {
         <input
           type="number"
           step={STEP_AMOUNT}
-          value={monthlyLimit}
+          value={monthlyLimit ?? ""}
           onChange={(e) => updateMonthlyLimit(e.target.value)}
         />
 

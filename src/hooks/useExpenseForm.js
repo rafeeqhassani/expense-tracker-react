@@ -101,7 +101,7 @@ function reducer(state, action) {
         errors: {},
         touched: {},
         submitAttempted: false,
-        isFormOpen: true,
+        isFormOpen: false,
         mode: "add",
         editingId: null,
       };

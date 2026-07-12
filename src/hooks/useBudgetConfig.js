@@ -4,7 +4,7 @@ import { saveToLocalStorage, getFromLocalStorage } from "../utils/storage";
 const STORAGE_KEY = "budgetConfig";
 
 const DEFAULT_BUDGET_CONFIG = {
-  monthlyLimit: 50000,
+  monthlyLimit: null,
   categoryLimits: {},
 };
 

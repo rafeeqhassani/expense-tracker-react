@@ -4,6 +4,8 @@ import {
   calculateCategorySpent,
   getBudgetStatus,
   getBudgetAlerts,
+  getCategoryBudgetSummary,
+  getMonthlyBudgetSummary,
 } from "../utils/budgetDerive";
 import { formatBudget } from "../utils/expenseTransform";
 
@@ -49,10 +51,22 @@ function useBudget(expenses, budgetConfig) {
     [monthly, categoryStatuses],
   );
 
+  const categoryBudgetSummary = useMemo(
+    () => getCategoryBudgetSummary(categoryStatuses),
+    [categoryStatuses],
+  );
+
+  const monthlyBudgetSummary = useMemo(
+    () => getMonthlyBudgetSummary(monthly),
+    [monthly],
+  );
+
   return {
     monthly,
     categories,
     alerts,
+    categoryBudgetSummary,
+    monthlyBudgetSummary,
   };
 }
 

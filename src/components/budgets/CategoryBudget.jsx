@@ -8,9 +8,13 @@ const CATEGORY_STAT_FIELDS = [
 function CategoryBudget({ categories, search }) {
   const searchTerm = search.toLowerCase();
 
-  const filteredCategories = Object.entries(categories).filter(([category]) =>
+  const categoryEntries = Object.entries(categories);
+
+  const filteredCategories = categoryEntries.filter(([category]) =>
     category.toLowerCase().includes(searchTerm),
   );
+
+  const noCategories = categoryEntries.length === 0;
 
   const noMatchesFound =
     search.trim() !== "" && filteredCategories.length === 0;
@@ -38,6 +42,13 @@ function CategoryBudget({ categories, search }) {
             <div className="status-label">{budget.riskLabel}</div>
           </div>
         ))}
+
+        {noCategories && (
+          <p className="empty-state">
+            No categories available. Add expenses first to manage category
+            budgets.
+          </p>
+        )}
 
         {noMatchesFound && (
           <p className="empty-state">No matching categories found.</p>

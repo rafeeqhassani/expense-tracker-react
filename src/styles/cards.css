@@ -807,6 +807,41 @@
   letter-spacing: var(--letter-spacing-wider);
 }
 
+/* --------------------------------------------------------------------
+   DASHBOARD BUDGET SUMMARY
+   -------------------------------------------------------------------- */
+
+.manage-budget-button {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.manage-budget-button:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-info);
+  transform: translateY(-1px);
+}
+
+.manage-budget-button:active {
+  transform: translateY(0);
+}
+
+.manage-budget-button:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 2px;
+}
+
 .analytics-section,
 .dashboard-stats {
   min-width: 0;

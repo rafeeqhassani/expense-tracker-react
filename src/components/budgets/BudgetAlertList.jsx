@@ -1,8 +1,8 @@
 import BudgetAlert from "./BudgetAlert";
 
-function BudgetAlertList({ alerts }) {
-  if (!alerts || alerts.length === 0) {
-    return <div className="no-alerts">All budgets are healthy ✅</div>;
+function BudgetAlertList({ alerts = [] }) {
+  if (alerts.length === 0) {
+    return null;
   }
 
   return (
