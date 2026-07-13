@@ -877,7 +877,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .summary {
     grid-template-columns: repeat(3, 1fr);
   }
