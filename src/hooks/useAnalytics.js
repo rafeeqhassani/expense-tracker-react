@@ -12,10 +12,7 @@ import {
   getExpensesThisYear,
 } from "../utils/expenseDerive";
 
-/**
- * Computes the summary stats shown for a given expense list (used for both
- * the "overall" — unfiltered — and "filtered" — post-search/filter — views).
- */
+
 function computeSummary(expenses) {
   return {
     totalAmount: totalCalculate(expenses),

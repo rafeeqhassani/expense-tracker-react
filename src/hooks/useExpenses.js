@@ -18,20 +18,32 @@ import {
 import { createActivity } from "../utils/activity";
 
 import useRecurring from "./useRecurring";
+import {
+  getExpenses,
+  createExpense,
+  deleteExpense as deleteExpenseApi,
+  updateExpense as updateExpenseApi,
+} from "../services/expenseApi";
 
 const MAX_ACTIVITIES = 10;
 
 function useExpenses(showToastMessage) {
-  const [expenses, setExpenses] = useState(() =>
-    getFromLocalStorage("expenses"),
-  );
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [activities, setActivities] = useState(() =>
     getFromLocalStorage("activities"),
   );
 
   useEffect(() => {
+    loadExpenses();
+  }, []);
+
+  /* useEffect(() => {
     saveToLocalStorage("expenses", expenses);
   }, [expenses]);
+*/
 
   useEffect(() => {
     saveToLocalStorage("activities", activities);
@@ -45,14 +57,51 @@ function useExpenses(showToastMessage) {
     setActivities((prev) => [activity, ...prev].slice(0, MAX_ACTIVITIES));
   };
 
-  const handleAddExpense = (newExpense) => {
-    setExpenses((prev) => addExpense(prev, newExpense));
-    addActivity("ADD_EXPENSE", `Added ${newExpense.title}`);
+  const loadExpenses = async () => {
+    setError(null);
+    setLoading(true);
+
+    try {
+      const data = await getExpenses();
+
+      setExpenses(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to load expenses", error);
+      setError("Failed to load expenses");
+      setLoading(false);
+    }
   };
 
-  const handleUpdateExpense = (id, updatedData) => {
-    setExpenses((prev) => updateExpense(prev, id, updatedData));
-    addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
+  const handleAddExpense = async (newExpense) => {
+    try {
+      const savedExpense = await createExpense(newExpense);
+
+      setExpenses((prev) => addExpense(prev, savedExpense));
+      addActivity("ADD_EXPENSE", `Added ${savedExpense.title}`);
+
+      showToastMessage("Expense added", "success");
+    } catch (error) {
+      console.error("Failed to add expense", error);
+      showToastMessage("Failed to add expense", "error");
+    }
+  };
+
+  const handleUpdateExpense = async (id, updatedData) => {
+    try {
+      await updateExpenseApi({
+        id,
+        ...updatedData,
+      });
+
+      setExpenses((prev) => updateExpense(prev, id, updatedData));
+      addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
+
+      showToastMessage("Expense updated", "success");
+    } catch (error) {
+      console.error("Failed to update expense", error);
+      showToastMessage("Failed to update expense", "error");
+    }
   };
 
   const handleUndoDelete = () => {
@@ -63,23 +112,30 @@ function useExpenses(showToastMessage) {
     setLastDeletedExpense(null);
   };
 
-  const handleDeleteExpense = (id) => {
-    const { updatedExpenses, deletedItem } = deleteExpense(expenses, id);
+  const handleDeleteExpense = async (id) => {
+    try {
+      await deleteExpenseApi(id);
 
-    setExpenses(updatedExpenses);
+      const { updatedExpenses, deletedItem } = deleteExpense(expenses, id);
 
-    if (deletedItem) {
-      setLastDeletedExpense(deletedItem);
-      addActivity("DELETE_EXPENSE", `Deleted ${deletedItem.title}`);
+      setExpenses(updatedExpenses);
+
+      if (deletedItem) {
+        setLastDeletedExpense(deletedItem);
+        addActivity("DELETE_EXPENSE", `Deleted ${deletedItem.title}`);
+      }
+
+      setSelectedIds((prev) => {
+        const nextSelectedIds = new Set(prev);
+        nextSelectedIds.delete(id);
+        return nextSelectedIds;
+      });
+
+      showToastMessage("Expense deleted", "success");
+    } catch (error) {
+      console.error("Failed to delete expense", error);
+      showToastMessage("Failed to delete expense", "error");
     }
-
-    setSelectedIds((prev) => {
-      const nextSelectedIds = new Set(prev);
-      nextSelectedIds.delete(id);
-      return nextSelectedIds;
-    });
-
-    showToastMessage("Expense deleted", "success");
   };
 
   const handleToggleSelected = (id) => {
@@ -122,9 +178,11 @@ function useExpenses(showToastMessage) {
   return {
     expenses,
     activities,
-
+    loading,
+    error,
     lastDeletedExpense,
     selectedIds,
+    loadExpenses,
     handleToggleSelected,
     handleSelectAll,
     handleDeselectAll,

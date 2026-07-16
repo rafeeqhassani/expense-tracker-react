@@ -1,4 +1,4 @@
-// chartColors.js
+
 export const chartColors = {
   primary: "#6366f1",
   success: "#10b981",

@@ -10,7 +10,7 @@ import Sidebar from "./Sidebar";
 function MainLayout() {
   const { data, form, toast, actions } = useAppContext();
 
-  const { categories } = data;
+  const { categories, loading, error, loadExpenses } = data;
 
   const { formData, mode, isFormOpen, errors, touched, submitAttempted } = form;
 
@@ -57,6 +57,15 @@ function MainLayout() {
 
       <main className="main">
         <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
+
+        {loading && <p>Loading expenses...</p>}
+
+        {error && (
+          <div>
+            <p>{error}</p>
+            <button onClick={loadExpenses}>Retry</button>
+          </div>
+        )}
 
         <Outlet />
       </main>

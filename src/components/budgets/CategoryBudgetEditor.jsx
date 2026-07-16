@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import useHoldButton from "../../hooks/useHoldButton";
 
 const STEP_AMOUNT = 1;
@@ -5,12 +6,28 @@ const STEP_AMOUNT = 1;
 function CategoryBudgetRow({ category, limit, updateCategoryLimit }) {
   const { start, stop } = useHoldButton();
 
+  const [inputValue, setInputValue] = useState(String(limit));
+
+  useEffect(() => {
+    setInputValue(String(limit));
+  }, [limit]);
+
   const decrement = () =>
     start(() =>
       updateCategoryLimit(category, (prev) => Math.max(0, prev - STEP_AMOUNT)),
     );
   const increment = () =>
     start(() => updateCategoryLimit(category, (prev) => prev + STEP_AMOUNT));
+
+  const handleChange = (e) => {
+    let value = e.target.value;
+
+    value = value.replace(/^0+(?=\d)/, "");
+
+    setInputValue(value);
+
+    updateCategoryLimit(category, value === "" ? 0 : Number(value));
+  };
 
   return (
     <div>
@@ -30,8 +47,8 @@ function CategoryBudgetRow({ category, limit, updateCategoryLimit }) {
         <input
           type="number"
           step={STEP_AMOUNT}
-          value={limit}
-          onChange={(e) => updateCategoryLimit(category, e.target.value)}
+          value={inputValue}
+          onChange={handleChange}
         />
 
         <button

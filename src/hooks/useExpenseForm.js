@@ -189,10 +189,13 @@ function useExpenseForm({
         return;
       }
 
-      const normalizedData = normalizeExpenseData({
-        ...formSnapshot,
-        category: formSnapshot.category || formSnapshot.customCategory,
-      });
+      const normalizedData = normalizeExpenseData(
+        {
+          ...formSnapshot,
+          category: formSnapshot.category || formSnapshot.customCategory,
+        },
+        mode === "edit" ? editingId : null,
+      );
 
       if (mode === "add") {
         const finalData = {
@@ -220,11 +223,6 @@ function useExpenseForm({
       }
 
       dispatch({ type: "RESET_FORM" });
-
-      showToastMessage(
-        mode === "add" ? "Expense added" : "Expense updated",
-        "success",
-      );
     } finally {
       submitLock.current = false;
     }

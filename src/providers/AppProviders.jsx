@@ -16,8 +16,11 @@ function AppProviders({ children }) {
   const {
     expenses,
     activities,
+    loading,
+    error,
     selectedIds,
     lastDeletedExpense,
+    loadExpenses,
     handleAddExpense,
     handleUpdateExpense,
     handleUndoDelete,
@@ -35,7 +38,10 @@ function AppProviders({ children }) {
   } = useExpenses(showToastMessage);
 
   const activeExpenses = useMemo(
-    () => expenses.filter((expense) => !expense.deleted),
+    () =>
+      Array.isArray(expenses)
+        ? expenses.filter((expense) => !expense.deleted)
+        : [],
     [expenses],
   );
 
@@ -81,6 +87,9 @@ function AppProviders({ children }) {
         categories: filters.categories,
         filters: filters.filters,
         activities,
+        loading,
+        error,
+        loadExpenses,
       },
 
       analytics,

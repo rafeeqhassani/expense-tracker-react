@@ -28,5 +28,9 @@ export function validateForm(formData) {
     errors.date = "Date is required";
   }
 
+  if (isNaN(Date.parse(formData.date))) {
+    errors.date = "Invalid date";
+  }
+
   return errors;
 }
