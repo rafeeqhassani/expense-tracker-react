@@ -12,12 +12,6 @@ export function deleteExpense(expenses, id) {
   return { updatedExpenses, deletedItem };
 }
 
-export function restoreExpense(expenses, expenseToRestore) {
-  return expenses.map((item) =>
-    item.id === expenseToRestore.id ? { ...item, deleted: false } : item,
-  );
-}
-
 export function updateExpense(expenses, id, updatedData) {
   return expenses.map((item) =>
     item.id === id ? { ...item, ...updatedData } : item,

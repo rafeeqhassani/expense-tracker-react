@@ -2,8 +2,6 @@ function BulkActionsBar({ selection, onClearSelected, selectedCount }) {
   const { allSelected, someSelected, handleDeselectAll, handleSelectAll } =
     selection;
 
-  if (selectedCount === 0) return null;
-
   const handleSelectAllChange = (e) => {
     if (e.target.checked) {
       handleSelectAll();
@@ -21,6 +19,7 @@ function BulkActionsBar({ selection, onClearSelected, selectedCount }) {
           type="button"
           className="clear-selected"
           onClick={onClearSelected}
+          disabled={selectedCount === 0}
         >
           Clear Selected
         </button>

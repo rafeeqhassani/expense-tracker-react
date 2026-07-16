@@ -5,7 +5,6 @@ import {
   addExpense,
   updateExpense,
   deleteExpense,
-  restoreExpense,
   deleteSelectedExpenses,
   toggleSelectedExpense,
   selectAllExpenses,
@@ -23,6 +22,8 @@ import {
   createExpense,
   deleteExpense as deleteExpenseApi,
   updateExpense as updateExpenseApi,
+  restoreExpense,
+  clearAllExpenses,
 } from "../services/expenseApi";
 
 const MAX_ACTIVITIES = 10;
@@ -104,12 +105,27 @@ function useExpenses(showToastMessage) {
     }
   };
 
-  const handleUndoDelete = () => {
+  const handleUndoDelete = async () => {
     if (!lastDeletedExpense) return;
 
-    setExpenses((prev) => restoreExpense(prev, lastDeletedExpense));
-    addActivity("RESTORE_EXPENSE", `Restored ${lastDeletedExpense.title}`);
-    setLastDeletedExpense(null);
+    try {
+      const restoredExpense = await restoreExpense(lastDeletedExpense.id);
+
+      setExpenses((prev) =>
+        prev.map((expense) =>
+          expense.id === restoredExpense.id ? restoredExpense : expense,
+        ),
+      );
+
+      addActivity("RESTORE_EXPENSE", `Restored ${restoredExpense.title}`);
+
+      setLastDeletedExpense(null);
+
+      showToastMessage("Expense restored", "success");
+    } catch (error) {
+      console.error("Failed to restore expense", error);
+      showToastMessage("Failed to restore expense", "error");
+    }
   };
 
   const handleDeleteExpense = async (id) => {
@@ -143,9 +159,9 @@ function useExpenses(showToastMessage) {
   };
 
   const handleSelectAll = () => {
-    setSelectedIds(
-      selectAllExpenses(expenses.filter((expense) => !expense.deleted)),
-    );
+    const activeExpenses = expenses.filter((expense) => !expense.deleted);
+
+    setSelectedIds(selectAllExpenses(activeExpenses));
   };
 
   const handleDeselectAll = () => {
@@ -161,17 +177,35 @@ function useExpenses(showToastMessage) {
     setSelectedIds(new Set());
   };
 
-  const handleClearAllExpenses = () => {
-    setExpenses([]);
+  const handleClearAllExpenses = async () => {
+    try {
+      await clearAllExpenses();
+
+      setExpenses((prev) =>
+        prev.map((expense) => ({
+          ...expense,
+          deleted: true,
+        })),
+      );
+
+      setSelectedIds(new Set());
+
+      showToastMessage("All expenses cleared", "success");
+    } catch (error) {
+      console.error("Failed to clear all expenses", error);
+      showToastMessage("Failed to clear all expenses", "error");
+    }
   };
 
   const handleClearActivities = () => {
     setActivities([]);
   };
 
+  const activeExpenses = expenses.filter((expense) => !expense.deleted);
+
   const selectedCount = getSelectedCount(selectedIds);
-  const allSelected = areAllSelected(expenses, selectedIds);
-  const someSelected = areSomeSelected(expenses, selectedIds);
+  const allSelected = areAllSelected(activeExpenses, selectedIds);
+  const someSelected = areSomeSelected(activeExpenses, selectedIds);
 
   useRecurring(expenses, setExpenses);
 
