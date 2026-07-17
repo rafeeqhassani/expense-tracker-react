@@ -1,5 +1,4 @@
-const API_URL =
-  "https://expense-tracker-api-production-c311.up.railway.app/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 async function getExpenses() {
   const response = await fetch(`${API_URL}/expenses`);
