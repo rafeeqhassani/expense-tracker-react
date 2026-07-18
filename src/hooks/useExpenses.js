@@ -16,7 +16,6 @@ import {
 
 import { createActivity } from "../utils/activity";
 
-import useRecurring from "./useRecurring";
 import {
   getExpenses,
   createExpense,
@@ -206,8 +205,6 @@ function useExpenses(showToastMessage) {
   const selectedCount = getSelectedCount(selectedIds);
   const allSelected = areAllSelected(activeExpenses, selectedIds);
   const someSelected = areSomeSelected(activeExpenses, selectedIds);
-
-  useRecurring(expenses, setExpenses);
 
   return {
     expenses,

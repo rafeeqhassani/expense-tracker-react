@@ -1,7 +1,9 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 async function getExpenses() {
-  const response = await fetch(`${API_URL}/expenses`);
+  const response = await fetch(`${API_URL}/expenses`, {
+    cache: "no-store",
+  });
 
   const result = await response.json();
 
