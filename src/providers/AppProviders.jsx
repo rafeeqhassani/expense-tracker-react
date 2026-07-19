@@ -18,9 +18,14 @@ function AppProviders({ children }) {
     activities,
     loading,
     error,
+
+    loadingMore,
+    pagination,
+
     selectedIds,
     lastDeletedExpense,
     loadExpenses,
+    loadMoreExpenses,
     handleAddExpense,
     handleUpdateExpense,
     handleUndoDelete,
@@ -83,8 +88,12 @@ function AppProviders({ children }) {
       data: {
         displayedExpenses: filters.displayedExpenses,
         processedExpenses: filters.processedExpenses,
-        visibleCount: filters.visibleCount,
         categories: filters.categories,
+
+        pagination,
+        loadingMore,
+        loadMoreExpenses,
+
         filters: filters.filters,
         activities,
         loading,
@@ -134,7 +143,7 @@ function AppProviders({ children }) {
         handleClearAll: clearAll,
 
         handleFilterChange: filters.handleFilterChange,
-        handleLoadMore: filters.handleLoadMore,
+
         resetFilters: filters.resetFilters,
         hasActiveFilters: filters.hasActiveFilters,
       },

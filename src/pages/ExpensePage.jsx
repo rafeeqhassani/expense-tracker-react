@@ -8,7 +8,14 @@ import GeneralActionsBar from "../components/expenses/GeneralActionsBar";
 function ExpensePage() {
   const { data, actions } = useAppContext();
 
-  const { displayedExpenses, processedExpenses, visibleCount, filters } = data;
+  const {
+    displayedExpenses,
+    processedExpenses,
+    pagination,
+    loadingMore,
+    loadMoreExpenses,
+    filters,
+  } = data;
 
   return (
     <>
@@ -45,9 +52,10 @@ function ExpensePage() {
       />
 
       <GeneralActionsBar
-        onLoadMore={actions.handleLoadMore}
+        onLoadMore={data.loadMoreExpenses}
+        pagination={data.pagination}
+        loadingMore={data.loadingMore}
         processedExpenses={processedExpenses}
-        visibleCount={visibleCount}
         onClearAll={actions.handleClearAll}
         hasActiveFilters={actions.hasActiveFilters}
       />

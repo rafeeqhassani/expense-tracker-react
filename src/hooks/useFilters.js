@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   filterByMonth,
   sortExpenses,
@@ -17,16 +17,8 @@ const INITIAL_FILTERS = {
   sortBy: "smallest",
 };
 
-const DEFAULT_VISIBLE_COUNT = 40;
-const LOAD_MORE_STEP = 20;
-
 function useFilters(expenses) {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
-
-  const [visibleCount, setVisibleCount] = useState(() => {
-    const storedCount = Number(getFromLocalStorage("visibleCount"));
-    return storedCount > 0 ? storedCount : DEFAULT_VISIBLE_COUNT;
-  });
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -83,35 +75,21 @@ function useFilters(expenses) {
     filters.startDate !== "" ||
     filters.endDate !== "";
 
-  const displayedExpenses = hasActiveFilters
-    ? processedExpenses
-    : processedExpenses.slice(0, Number(visibleCount));
+  const displayedExpenses = processedExpenses;
 
   const categories = useMemo(() => getUniqueCategories(expenses), [expenses]);
 
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + LOAD_MORE_STEP);
-  };
-
   const resetFilters = () => {
     setFilters(INITIAL_FILTERS);
-    setVisibleCount(DEFAULT_VISIBLE_COUNT);
   };
-
-  useEffect(() => {
-    saveToLocalStorage("visibleCount", String(visibleCount));
-  }, [visibleCount]);
 
   return {
     filters,
     handleFilterChange,
     resetFilters,
     hasActiveFilters,
-
     displayedExpenses,
-    handleLoadMore,
     processedExpenses,
-    visibleCount,
     categories,
   };
 }

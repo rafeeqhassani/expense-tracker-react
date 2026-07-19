@@ -31,6 +31,9 @@ function useExpenses(showToastMessage) {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [activities, setActivities] = useState(() =>
     getFromLocalStorage("activities"),
@@ -62,14 +65,43 @@ function useExpenses(showToastMessage) {
     setLoading(true);
 
     try {
-      const data = await getExpenses();
+      const data = await getExpenses(1, 20);
 
-      setExpenses(data);
+      console.log("API data:", data);
+      console.log("expenses from API:", data.expenses);
+      console.log("is array:", Array.isArray(data.expenses));
+
+      setExpenses(data.expenses);
+      setPagination(data.pagination);
+      setPage(1);
       setLoading(false);
     } catch (error) {
       console.error("Failed to load expenses", error);
       setError("Failed to load expenses");
       setLoading(false);
+    }
+  };
+
+  const loadMoreExpenses = async () => {
+    if (!pagination) return;
+
+    if (page >= pagination.totalPages) return;
+
+    try {
+      setLoadingMore(true);
+
+      const nextPage = page + 1;
+
+      const data = await getExpenses(nextPage, 20);
+
+      setExpenses((prev) => [...prev, ...data.expenses]);
+
+      setPagination(data.pagination);
+      setPage(nextPage);
+    } catch (error) {
+      console.error("Failed to load more expenses", error);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -211,6 +243,11 @@ function useExpenses(showToastMessage) {
     activities,
     loading,
     error,
+
+    loadMoreExpenses,
+    loadingMore,
+    pagination,
+
     lastDeletedExpense,
     selectedIds,
     loadExpenses,

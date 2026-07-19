@@ -1,14 +1,22 @@
 function GeneralActionsBar({
   onLoadMore,
+  pagination,
+  loadingMore,
   processedExpenses = [],
-  visibleCount,
   onClearAll,
   hasActiveFilters,
 }) {
+  console.log({
+    pagination,
+    hasActiveFilters,
+    processedExpenses: processedExpenses.length,
+  });
+
   const expenses = Array.isArray(processedExpenses) ? processedExpenses : [];
 
   const isEmpty = expenses.length === 0;
-  const hasMore = visibleCount < expenses.length;
+
+  const hasMore = pagination && pagination.page < pagination.totalPages;
 
   let loadStatus = null;
 
@@ -16,11 +24,16 @@ function GeneralActionsBar({
     loadStatus = <p className="empty-load-message">No expenses to load</p>;
   } else if (!hasActiveFilters && hasMore) {
     loadStatus = (
-      <button type="button" className="load-more" onClick={onLoadMore}>
-        Load more
+      <button
+        type="button"
+        className="load-more"
+        onClick={onLoadMore}
+        disabled={loadingMore}
+      >
+        {loadingMore ? "Loading..." : "Load more"}
       </button>
     );
-  } else if (!hasActiveFilters) {
+  } else if (!hasActiveFilters && !hasMore) {
     loadStatus = <p className="empty-load-message">No more expenses exist</p>;
   }
 
