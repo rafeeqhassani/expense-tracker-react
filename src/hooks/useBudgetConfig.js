@@ -1,60 +1,104 @@
 import { useState, useEffect, useCallback } from "react";
-import { saveToLocalStorage, getFromLocalStorage } from "../utils/storage";
-
-const STORAGE_KEY = "budgetConfig";
+import { getBudget, saveBudget } from "../services/budgetApi";
 
 const DEFAULT_BUDGET_CONFIG = {
-  monthlyLimit: null,
+  monthlyLimit: 0,
   categoryLimits: {},
 };
 
-function useBudgetConfig() {
-  const [budgetConfig, setBudgetConfig] = useState(() => {
-    const savedConfig = getFromLocalStorage(STORAGE_KEY);
+function useBudgetConfig(showToastMessage) {
+  const [budgetConfig, setBudgetConfig] = useState(DEFAULT_BUDGET_CONFIG);
 
-    return {
-      ...DEFAULT_BUDGET_CONFIG,
-      ...savedConfig,
-      categoryLimits: {
-        ...DEFAULT_BUDGET_CONFIG.categoryLimits,
-        ...(savedConfig?.categoryLimits ?? {}),
-      },
-    };
-  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    saveToLocalStorage(STORAGE_KEY, budgetConfig);
-  }, [budgetConfig]);
+    async function loadBudget() {
+      try {
+        const budget = await getBudget();
 
-  const updateMonthlyLimit = useCallback((valueOrUpdater) => {
-    setBudgetConfig((prev) => ({
-      ...prev,
-      monthlyLimit:
-        typeof valueOrUpdater === "function"
-          ? valueOrUpdater(prev.monthlyLimit)
-          : Number(valueOrUpdater),
-    }));
-  }, []);
+        if (budget) {
+          setBudgetConfig({
+            ...DEFAULT_BUDGET_CONFIG,
+            ...budget,
+            categoryLimits: {
+              ...DEFAULT_BUDGET_CONFIG.categoryLimits,
+              ...(budget.categoryLimits ?? {}),
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load budget", error);
 
-  const updateCategoryLimit = useCallback((category, valueOrUpdater) => {
-    setBudgetConfig((prev) => ({
-      ...prev,
-      categoryLimits: {
-        ...prev.categoryLimits,
-        [category]:
+        showToastMessage(error.message, "error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadBudget();
+  }, [showToastMessage]);
+
+  const saveConfig = useCallback(
+    async (newConfig) => {
+      try {
+        await saveBudget(newConfig);
+
+        showToastMessage("Budget updated successfully", "success");
+      } catch (error) {
+        console.error("Failed to save budget", error);
+
+        showToastMessage(error.message, "error");
+      }
+    },
+    [showToastMessage],
+  );
+
+  const updateMonthlyLimit = useCallback(
+    async (valueOrUpdater) => {
+      const updatedConfig = {
+        ...budgetConfig,
+        monthlyLimit:
           typeof valueOrUpdater === "function"
-            ? valueOrUpdater(prev.categoryLimits[category] ?? 0)
+            ? valueOrUpdater(budgetConfig.monthlyLimit)
             : Number(valueOrUpdater),
-      },
-    }));
-  }, []);
+      };
+
+      setBudgetConfig(updatedConfig);
+
+      await saveConfig(updatedConfig);
+    },
+    [budgetConfig, saveConfig],
+  );
+
+  const updateCategoryLimit = useCallback(
+    async (category, valueOrUpdater) => {
+      const updatedConfig = {
+        ...budgetConfig,
+        categoryLimits: {
+          ...budgetConfig.categoryLimits,
+          [category]:
+            typeof valueOrUpdater === "function"
+              ? valueOrUpdater(budgetConfig.categoryLimits[category] ?? 0)
+              : Number(valueOrUpdater),
+        },
+      };
+
+      setBudgetConfig(updatedConfig);
+
+      await saveConfig(updatedConfig);
+    },
+    [budgetConfig, saveConfig],
+  );
 
   const resetBudgetConfig = useCallback(() => {
     setBudgetConfig(DEFAULT_BUDGET_CONFIG);
-  }, []);
+
+    showToastMessage("Budget reset", "success");
+  }, [showToastMessage]);
 
   return {
     budgetConfig,
+    loading,
     updateMonthlyLimit,
     updateCategoryLimit,
     resetBudgetConfig,

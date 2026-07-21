@@ -12,7 +12,14 @@ function PieChartView({ data }) {
   return (
     <ResponsiveContainer width="100%" height={350}>
       <PieChart>
-        <Pie data={data} dataKey="value" nameKey="name" outerRadius={120}>
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          outerRadius={120}
+          startAngle={90}
+          endAngle={-270}
+        >
           {data.map((entry, index) => (
             <Cell
               key={entry.name}

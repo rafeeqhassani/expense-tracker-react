@@ -12,6 +12,7 @@ export const AppContext = createContext(null);
 
 function AppProviders({ children }) {
   const { toast, showToastMessage } = useToast();
+  const filters = useFilters([]);
 
   const {
     expenses,
@@ -40,7 +41,7 @@ function AppProviders({ children }) {
     allSelected,
     someSelected,
     selectedCount,
-  } = useExpenses(showToastMessage);
+  } = useExpenses(showToastMessage, filters.filters);
 
   const activeExpenses = useMemo(
     () =>
@@ -50,8 +51,6 @@ function AppProviders({ children }) {
     [expenses],
   );
 
-  const filters = useFilters(activeExpenses);
-
   const form = useExpenseForm({
     expenses: activeExpenses,
     handleAddExpense,
@@ -59,14 +58,15 @@ function AppProviders({ children }) {
     showToastMessage,
   });
 
-  const analytics = useAnalytics(activeExpenses, filters.processedExpenses);
+  const analytics = useAnalytics(showToastMessage);
 
   const {
     budgetConfig,
     resetBudgetConfig,
     updateMonthlyLimit,
     updateCategoryLimit,
-  } = useBudgetConfig();
+  } = useBudgetConfig(showToastMessage);
+
   const budget = useBudget(activeExpenses, budgetConfig);
 
   const clearAll = useCallback(() => {
@@ -86,8 +86,7 @@ function AppProviders({ children }) {
   const value = useMemo(
     () => ({
       data: {
-        displayedExpenses: filters.displayedExpenses,
-        processedExpenses: filters.processedExpenses,
+        displayedExpenses: activeExpenses,
         categories: filters.categories,
 
         pagination,
@@ -143,7 +142,7 @@ function AppProviders({ children }) {
         handleClearAll: clearAll,
 
         handleFilterChange: filters.handleFilterChange,
-
+        setFilters: filters.setFilters,
         resetFilters: filters.resetFilters,
         hasActiveFilters: filters.hasActiveFilters,
       },

@@ -10,8 +10,6 @@ import RecentActivity from "../components/activities/RecentActivity";
 function DashboardPage() {
   const { analytics, budget, data } = useAppContext();
 
-  const { processedExpenses, activities } = data;
-
   return (
     <>
       <DashboardStats data={analytics.dashboard} />
@@ -26,14 +24,14 @@ function DashboardPage() {
 
         <div className="analytics-grid">
           <ExpenseAnalytics
-            overall={analytics.overall}
-            filtered={analytics.filtered}
+            overall={analytics.summary.overall}
+            filtered={analytics.summary.filtered}
           />
-          <ExpenseCharts expenses={processedExpenses} />
+          <ExpenseCharts charts={analytics.charts} />
         </div>
       </section>
 
-      <RecentActivity activities={activities} />
+      <RecentActivity activities={data.activities} />
     </>
   );
 }

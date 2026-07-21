@@ -1,48 +1,55 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import {
-  getHighestExpense,
-  getLowestExpense,
-  getAverageExpense,
-  totalCalculate,
-  getAverageDailySpending,
-  getExpensesToday,
-  getExpensesThisWeek,
-  getExpensesThisMonth,
-  getTotalCategories,
-  getExpensesThisYear,
-} from "../utils/expenseDerive";
+  getAnalyticsSummary,
+  getDashboardStats,
+  getChartData,
+} from "../services/analyticsApi";
 
+function useAnalytics(showToastMessage) {
+  const [summary, setSummary] = useState({
+    overall: {},
+    filtered: {},
+  });
 
-function computeSummary(expenses) {
+  const [dashboard, setDashboard] = useState({});
+  const [charts, setCharts] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function loadAnalytics() {
+      try {
+        const [summary, dashboardStats, chartData] = await Promise.all([
+          getAnalyticsSummary(),
+          getDashboardStats(),
+          getChartData(),
+        ]);
+
+        setSummary(summary);
+        setDashboard(dashboardStats);
+        setCharts(chartData);
+      } catch (error) {
+        console.error("Failed to load analytics", error);
+
+        setError(error.message);
+
+        showToastMessage(error.message, "error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadAnalytics();
+  }, [showToastMessage]);
+
   return {
-    totalAmount: totalCalculate(expenses),
-    highestExpense: getHighestExpense(expenses),
-    lowestExpense: getLowestExpense(expenses),
-    averageExpense: getAverageExpense(expenses),
-    averageDailySpending: getAverageDailySpending(expenses),
-    totalRecords: expenses.length,
+    summary,
+    dashboard,
+    charts,
+    loading,
+    error,
   };
-}
-
-function useAnalytics(expenses, processedExpenses) {
-  const overall = useMemo(() => computeSummary(expenses), [expenses]);
-
-  const filtered = useMemo(
-    () => computeSummary(processedExpenses),
-    [processedExpenses],
-  );
-
-  const dashboard = useMemo(() => {
-    return {
-      expensesToday: getExpensesToday(expenses),
-      expensesThisWeek: getExpensesThisWeek(expenses),
-      expensesThisMonth: getExpensesThisMonth(expenses),
-      expensesThisYear: getExpensesThisYear(expenses),
-      totalCategories: getTotalCategories(expenses),
-    };
-  }, [expenses]);
-
-  return { overall, filtered, dashboard };
 }
 
 export default useAnalytics;

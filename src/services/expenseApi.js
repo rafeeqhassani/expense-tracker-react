@@ -1,14 +1,21 @@
-import { cache } from "react";
+import handleResponse from "./apiClient";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function getExpenses(page = 1, limit = 20) {
-  const response = await fetch(
-    `${API_URL}/expenses?page=${page}&limit=${limit}`,
-    { cache: "no-store" },
-  );
+async function getExpenses(filters = {}) {
+  const params = new URLSearchParams();
 
-  const data = await response.json();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) {
+      params.append(key, value);
+    }
+  });
+
+  const response = await fetch(`${API_URL}/expenses?${params.toString()}`, {
+    cache: "no-store",
+  });
+
+  const data = await handleResponse(response);
 
   return data.data;
 }
@@ -22,9 +29,9 @@ async function createExpense(expense) {
     body: JSON.stringify(expense),
   });
 
-  const result = await response.json();
+  const data = await handleResponse(response);
 
-  return result.data;
+  return data.data;
 }
 
 async function deleteExpense(id) {
@@ -32,7 +39,7 @@ async function deleteExpense(id) {
     method: "DELETE",
   });
 
-  return response.json();
+  return handleResponse(response);
 }
 
 async function updateExpense(expense) {
@@ -44,9 +51,9 @@ async function updateExpense(expense) {
     body: JSON.stringify(expense),
   });
 
-  const result = await response.json();
+  const data = await handleResponse(response);
 
-  return result.data;
+  return data.data;
 }
 
 async function restoreExpense(id) {
@@ -54,9 +61,9 @@ async function restoreExpense(id) {
     method: "PATCH",
   });
 
-  const result = await response.json();
+  const data = await handleResponse(response);
 
-  return result.data;
+  return data.data;
 }
 
 async function clearAllExpenses() {
@@ -64,9 +71,9 @@ async function clearAllExpenses() {
     method: "PATCH",
   });
 
-  const result = await response.json();
+  const data = await handleResponse(response);
 
-  return result.data;
+  return data.data;
 }
 
 export {

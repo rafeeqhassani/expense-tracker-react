@@ -10,7 +10,7 @@ function ExpensePage() {
 
   const {
     displayedExpenses,
-    processedExpenses,
+
     pagination,
     loadingMore,
     loadMoreExpenses,
@@ -55,7 +55,6 @@ function ExpensePage() {
         onLoadMore={data.loadMoreExpenses}
         pagination={data.pagination}
         loadingMore={data.loadingMore}
-        processedExpenses={processedExpenses}
         onClearAll={actions.handleClearAll}
         hasActiveFilters={actions.hasActiveFilters}
       />

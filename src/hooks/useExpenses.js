@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { saveToLocalStorage, getFromLocalStorage } from "../utils/storage";
 import {
@@ -27,7 +27,7 @@ import {
 
 const MAX_ACTIVITIES = 10;
 
-function useExpenses(showToastMessage) {
+function useExpenses(showToastMessage, filters) {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,15 +38,6 @@ function useExpenses(showToastMessage) {
   const [activities, setActivities] = useState(() =>
     getFromLocalStorage("activities"),
   );
-
-  useEffect(() => {
-    loadExpenses();
-  }, []);
-
-  /* useEffect(() => {
-    saveToLocalStorage("expenses", expenses);
-  }, [expenses]);
-*/
 
   useEffect(() => {
     saveToLocalStorage("activities", activities);
@@ -60,27 +51,31 @@ function useExpenses(showToastMessage) {
     setActivities((prev) => [activity, ...prev].slice(0, MAX_ACTIVITIES));
   };
 
-  const loadExpenses = async () => {
+  const loadExpenses = useCallback(async () => {
     setError(null);
     setLoading(true);
 
     try {
-      const data = await getExpenses(1, 20);
-
-      console.log("API data:", data);
-      console.log("expenses from API:", data.expenses);
-      console.log("is array:", Array.isArray(data.expenses));
+      const data = await getExpenses({
+        ...filters,
+        page: 1,
+        limit: 20,
+      });
 
       setExpenses(data.expenses);
       setPagination(data.pagination);
       setPage(1);
-      setLoading(false);
     } catch (error) {
       console.error("Failed to load expenses", error);
-      setError("Failed to load expenses");
+      setError(error.message);
+    } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadExpenses();
+  }, [loadExpenses]);
 
   const loadMoreExpenses = async () => {
     if (!pagination) return;
@@ -115,7 +110,7 @@ function useExpenses(showToastMessage) {
       showToastMessage("Expense added", "success");
     } catch (error) {
       console.error("Failed to add expense", error);
-      showToastMessage("Failed to add expense", "error");
+      showToastMessage(error.message, "error");
     }
   };
 
@@ -132,7 +127,7 @@ function useExpenses(showToastMessage) {
       showToastMessage("Expense updated", "success");
     } catch (error) {
       console.error("Failed to update expense", error);
-      showToastMessage("Failed to update expense", "error");
+      showToastMessage(error.message, "error");
     }
   };
 
@@ -155,7 +150,7 @@ function useExpenses(showToastMessage) {
       showToastMessage("Expense restored", "success");
     } catch (error) {
       console.error("Failed to restore expense", error);
-      showToastMessage("Failed to restore expense", "error");
+      showToastMessage(error.message, "error");
     }
   };
 
@@ -181,7 +176,7 @@ function useExpenses(showToastMessage) {
       showToastMessage("Expense deleted", "success");
     } catch (error) {
       console.error("Failed to delete expense", error);
-      showToastMessage("Failed to delete expense", "error");
+      showToastMessage(error.message, "error");
     }
   };
 
@@ -224,7 +219,7 @@ function useExpenses(showToastMessage) {
       showToastMessage("All expenses cleared", "success");
     } catch (error) {
       console.error("Failed to clear all expenses", error);
-      showToastMessage("Failed to clear all expenses", "error");
+      showToastMessage(error.message, "error");
     }
   };
 

@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  getCategoryChartData,
-  getMonthlyTrendChartData,
-  getPieChartData,
-} from "../../utils/chartsDerive";
+
 import ChartRenderer from "./ChartRenderer";
 
 const CHART_TYPES = [
@@ -13,26 +9,29 @@ const CHART_TYPES = [
 ];
 const DEFAULT_CHART_TYPE = "bar";
 
-function getChartData(type, expenses) {
+function getChartData(type, charts) {
   switch (type) {
     case "bar":
-      return getCategoryChartData(expenses);
+      return charts.category ?? [];
 
     case "line":
-      return getMonthlyTrendChartData(expenses);
+      return charts.monthly ?? [];
 
     case "pie":
-      return getPieChartData(expenses);
+      return (charts.category ?? []).map((item) => ({
+        name: item.category,
+        value: item.total,
+      }));
 
     default:
       return [];
   }
 }
 
-function ExpenseCharts({ expenses }) {
+function ExpenseCharts({ charts = {} }) {
   const [chartType, setChartType] = useState(DEFAULT_CHART_TYPE);
 
-  const chartData = getChartData(chartType, expenses);
+  const chartData = getChartData(chartType, charts);
 
   return (
     <section className="charts-section">

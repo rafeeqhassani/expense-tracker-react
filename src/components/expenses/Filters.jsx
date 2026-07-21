@@ -1,7 +1,7 @@
 import { FaArrowCircleRight, FaCalendarAlt } from "react-icons/fa";
 
 const MONTH_OPTIONS = [
-  { value: "all", label: "All Months" },
+  { value: "", label: "All Months" },
   { value: "1", label: "January" },
   { value: "2", label: "February" },
   { value: "3", label: "March" },
@@ -17,12 +17,9 @@ const MONTH_OPTIONS = [
 ];
 
 const SORT_OPTIONS = [
-  { value: "smallest", label: "Amount: Low \u2192 High" },
-  { value: "largest", label: "Amount: High \u2192 Low" },
-  { value: "newest", label: "Date: Newest \u2192 Oldest" },
-  { value: "oldest", label: "Date: Oldest \u2192 Newest" },
-  { value: "title-ascending", label: "Title: A \u2192 Z" },
-  { value: "title-descending", label: "Title: Z \u2192 A" },
+  { value: "date", label: "Date" },
+  { value: "amount", label: "Amount" },
+  { value: "title", label: "Title" },
 ];
 
 function Filters({
@@ -31,25 +28,36 @@ function Filters({
   hasActiveFilters,
   resetFilters,
 }) {
-  const { title, month, sortBy, startDate, endDate } = filters || {};
+  const {
+    search = "",
+    month = "",
+    sortBy = "date",
+    sortOrder = "desc",
+    startDate = "",
+    endDate = "",
+  } = filters || {};
 
   return (
     <section className="filters">
       <div className="filters-top">
+        {/* Search */}
         <div className="filter-group">
           <label htmlFor="searchExpenses">Search</label>
+
           <input
             type="text"
             id="searchExpenses"
-            name="title"
-            value={title}
+            name="search"
+            value={search}
             onChange={handleFilterChange}
             placeholder="Search by title, amount, category..."
           />
         </div>
 
+        {/* Month */}
         <div className="filter-group">
           <label htmlFor="filterByMonth">Month</label>
+
           <select
             id="filterByMonth"
             name="month"
@@ -65,8 +73,10 @@ function Filters({
           </select>
         </div>
 
+        {/* Sort */}
         <div className="filter-group">
           <label htmlFor="sortSelection">Sort By</label>
+
           <select
             id="sortSelection"
             name="sortBy"
@@ -81,8 +91,25 @@ function Filters({
             ))}
           </select>
         </div>
+
+        {/* Sort Order */}
+        <div className="filter-group">
+          <label htmlFor="sortOrder">Order</label>
+
+          <select
+            id="sortOrder"
+            name="sortOrder"
+            value={sortOrder}
+            onChange={handleFilterChange}
+          >
+            <option value="desc">Descending</option>
+
+            <option value="asc">Ascending</option>
+          </select>
+        </div>
       </div>
 
+      {/* Date Range */}
       <div className="filters-bottom">
         <div className="filter-group date-range">
           <label className="date-label">
@@ -97,9 +124,11 @@ function Filters({
               value={startDate}
               onChange={handleFilterChange}
             />
+
             <span className="date-separator">
               <FaArrowCircleRight />
             </span>
+
             <input
               type="date"
               name="endDate"
@@ -109,6 +138,7 @@ function Filters({
           </div>
         </div>
 
+        {/* Reset */}
         <div className="filter-button-group">
           {hasActiveFilters && (
             <button
