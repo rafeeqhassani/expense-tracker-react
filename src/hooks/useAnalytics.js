@@ -18,8 +18,6 @@ function useAnalytics(showToastMessage, refreshKey) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("Analytics reload", refreshKey);
-
     async function loadAnalytics() {
       try {
         const [summary, dashboardStats, chartData] = await Promise.all([

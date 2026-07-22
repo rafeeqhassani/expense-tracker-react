@@ -34,7 +34,6 @@ const STATS_CONFIG = [
 ];
 
 function DashboardStats({ data = {} }) {
-  console.log("Dashboard render", dashboard);
   return (
     <section className="dashboard-stats">
       <h2>Dashboard Statistics</h2>
