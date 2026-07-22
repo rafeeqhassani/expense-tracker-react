@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { getUniqueCategories } from "../utils/expenseDerive";
 
 const INITIAL_FILTERS = {
   search: "",
@@ -33,15 +32,12 @@ function useFilters(expenses = []) {
     filters.endDate !== "" ||
     filters.sortBy !== "date";
 
-  const categories = useMemo(() => getUniqueCategories(expenses), [expenses]);
-
   return {
     filters,
     setFilters,
     handleFilterChange,
     resetFilters,
     hasActiveFilters,
-    categories,
   };
 }
 

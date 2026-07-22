@@ -11,7 +11,7 @@ function RecentActivity({ activities }) {
             <div className="activity-item" key={activity.id}>
               <p className="activity-message">{activity.message}</p>
               <small className="activity-date">
-                {new Date(activity.createdAt).toLocaleDateString("en-GB", {
+                {new Date(activity.created_at).toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",

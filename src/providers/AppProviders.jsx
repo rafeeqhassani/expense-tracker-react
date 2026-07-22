@@ -1,5 +1,4 @@
 import { createContext, useCallback, useMemo, useState } from "react";
-import { getUniqueCategories } from "../utils/expenseDerive";
 
 import useExpenses from "../hooks/useExpenses";
 import useFilters from "../hooks/useFilters";
@@ -85,8 +84,8 @@ function AppProviders({ children }) {
 
   const form = useExpenseForm({
     expenses: activeExpenses,
-    handleAddExpense,
-    handleUpdateExpense,
+    handleAddExpense: addExpenseWithRefresh,
+    handleUpdateExpense: updateExpenseWithRefresh,
     showToastMessage,
   });
 

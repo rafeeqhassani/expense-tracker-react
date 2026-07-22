@@ -3,7 +3,6 @@ function GeneralActionsBar({
   pagination,
   loadingMore,
   onClearAll,
-  hasActiveFilters,
 }) {
   const hasMore = pagination && pagination.page < pagination.totalPages;
 
@@ -11,7 +10,7 @@ function GeneralActionsBar({
 
   if (!pagination) {
     loadStatus = null;
-  } else if (!hasActiveFilters && hasMore) {
+  } else if (hasMore) {
     loadStatus = (
       <button
         type="button"
@@ -22,7 +21,7 @@ function GeneralActionsBar({
         {loadingMore ? "Loading..." : "Load more"}
       </button>
     );
-  } else if (!hasActiveFilters && !hasMore) {
+  } else {
     loadStatus = <p className="empty-load-message">No more expenses exist</p>;
   }
 

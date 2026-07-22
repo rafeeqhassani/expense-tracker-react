@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { saveToLocalStorage, getFromLocalStorage } from "../utils/storage";
 import {
   addExpense,
   updateExpense,
@@ -14,7 +13,10 @@ import {
   getSelectedCount,
 } from "../utils/expenseState";
 
-import { createActivity } from "../utils/activity";
+import {
+  getActivities,
+  createActivity as createActivityApi,
+} from "../services/activityApi";
 
 import {
   getExpenses,
@@ -34,22 +36,23 @@ function useExpenses(showToastMessage, filters) {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
-
-  const [activities, setActivities] = useState(() =>
-    getFromLocalStorage("activities"),
-  );
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    saveToLocalStorage("activities", activities);
-  }, [activities]);
+    async function loadActivities() {
+      try {
+        const data = await getActivities();
+        setActivities(data);
+      } catch (error) {
+        console.error("Failed to load activities", error);
+      }
+    }
+
+    loadActivities();
+  }, []);
 
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
-
-  const addActivity = (type, message) => {
-    const activity = createActivity(type, message);
-    setActivities((prev) => [activity, ...prev].slice(0, MAX_ACTIVITIES));
-  };
 
   const loadExpenses = useCallback(async () => {
     setError(null);
@@ -87,7 +90,11 @@ function useExpenses(showToastMessage, filters) {
 
       const nextPage = page + 1;
 
-      const data = await getExpenses(nextPage, 20);
+      const data = await getExpenses({
+        ...filters,
+        page: nextPage,
+        limit: 20,
+      });
 
       setExpenses((prev) => [...prev, ...data.expenses]);
 
@@ -97,6 +104,19 @@ function useExpenses(showToastMessage, filters) {
       console.error("Failed to load more expenses", error);
     } finally {
       setLoadingMore(false);
+    }
+  };
+
+  const addActivity = async (type, message) => {
+    try {
+      const activity = await createActivityApi({
+        type,
+        message,
+      });
+
+      setActivities((prev) => [activity, ...prev].slice(0, MAX_ACTIVITIES));
+    } catch (error) {
+      console.error("Failed to create activity", error);
     }
   };
 

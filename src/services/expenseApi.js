@@ -11,7 +11,11 @@ async function getExpenses(filters = {}) {
     }
   });
 
-  const response = await fetch(`${API_URL}/expenses?${params.toString()}`, {
+  const query = params.toString();
+
+  const url = query ? `${API_URL}/expenses?${query}` : `${API_URL}/expenses`;
+
+  const response = await fetch(url, {
     cache: "no-store",
   });
 
@@ -39,7 +43,9 @@ async function deleteExpense(id) {
     method: "DELETE",
   });
 
-  return handleResponse(response);
+  const data = await handleResponse(response);
+
+  return data.data;
 }
 
 async function updateExpense(expense) {
@@ -77,7 +83,6 @@ async function clearAllExpenses() {
 }
 
 export {
-  API_URL,
   getExpenses,
   createExpense,
   deleteExpense,

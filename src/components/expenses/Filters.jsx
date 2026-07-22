@@ -20,6 +20,7 @@ const SORT_OPTIONS = [
   { value: "date", label: "Date" },
   { value: "amount", label: "Amount" },
   { value: "title", label: "Title" },
+  { value: "category", label: "Category" },
 ];
 
 function Filters({
