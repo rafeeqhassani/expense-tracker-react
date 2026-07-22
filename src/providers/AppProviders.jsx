@@ -1,4 +1,5 @@
-import { createContext, useCallback, useMemo } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
+import { getUniqueCategories } from "../utils/expenseDerive";
 
 import useExpenses from "../hooks/useExpenses";
 import useFilters from "../hooks/useFilters";
@@ -7,10 +8,13 @@ import useToast from "../hooks/useToast";
 import useAnalytics from "../hooks/useAnalytics";
 import useBudget from "../hooks/useBudget";
 import useBudgetConfig from "../hooks/useBudgetConfig";
+import useCategories from "../hooks/useCategories";
 
 export const AppContext = createContext(null);
 
 function AppProviders({ children }) {
+  const [analyticsRefreshKey, setAnalyticsRefreshKey] = useState(0);
+
   const { toast, showToastMessage } = useToast();
   const filters = useFilters([]);
 
@@ -43,6 +47,34 @@ function AppProviders({ children }) {
     selectedCount,
   } = useExpenses(showToastMessage, filters.filters);
 
+  const refreshAnalytics = useCallback(() => {
+    setAnalyticsRefreshKey((prev) => prev + 1);
+  }, []);
+
+  const addExpenseWithRefresh = useCallback(
+    async (...args) => {
+      await handleAddExpense(...args);
+      refreshAnalytics();
+    },
+    [handleAddExpense, refreshAnalytics],
+  );
+
+  const updateExpenseWithRefresh = useCallback(
+    async (...args) => {
+      await handleUpdateExpense(...args);
+      refreshAnalytics();
+    },
+    [handleUpdateExpense, refreshAnalytics],
+  );
+
+  const deleteExpenseWithRefresh = useCallback(
+    async (...args) => {
+      await handleDeleteExpense(...args);
+      refreshAnalytics();
+    },
+    [handleDeleteExpense, refreshAnalytics],
+  );
+
   const activeExpenses = useMemo(
     () =>
       Array.isArray(expenses)
@@ -58,7 +90,7 @@ function AppProviders({ children }) {
     showToastMessage,
   });
 
-  const analytics = useAnalytics(showToastMessage);
+  const analytics = useAnalytics(showToastMessage, analyticsRefreshKey);
 
   const {
     budgetConfig,
@@ -68,6 +100,7 @@ function AppProviders({ children }) {
   } = useBudgetConfig(showToastMessage);
 
   const budget = useBudget(activeExpenses, budgetConfig);
+  const categories = useCategories();
 
   const clearAll = useCallback(() => {
     handleClearSelection();
@@ -87,7 +120,7 @@ function AppProviders({ children }) {
     () => ({
       data: {
         displayedExpenses: activeExpenses,
-        categories: filters.categories,
+        categories: categories,
 
         pagination,
         loadingMore,
@@ -124,10 +157,10 @@ function AppProviders({ children }) {
         handleSubmit: form.handleSubmit,
         handleChange: form.handleChange,
 
-        handleAddExpense,
-        handleUpdateExpense,
+        handleAddExpense: addExpenseWithRefresh,
+        handleUpdateExpense: updateExpenseWithRefresh,
+        handleDeleteExpense: deleteExpenseWithRefresh,
         handleUndoDelete,
-        handleDeleteExpense,
 
         selectedIds,
         lastDeletedExpense,

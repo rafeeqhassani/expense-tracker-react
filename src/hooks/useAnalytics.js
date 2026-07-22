@@ -5,7 +5,7 @@ import {
   getChartData,
 } from "../services/analyticsApi";
 
-function useAnalytics(showToastMessage) {
+function useAnalytics(showToastMessage, refreshKey) {
   const [summary, setSummary] = useState({
     overall: {},
     filtered: {},
@@ -41,7 +41,7 @@ function useAnalytics(showToastMessage) {
     }
 
     loadAnalytics();
-  }, [showToastMessage]);
+  }, [showToastMessage, refreshKey]);
 
   return {
     summary,
