@@ -6,6 +6,8 @@ import Header from "../expenses/Header";
 import ExpenseForm from "../modal/ExpenseForm";
 import Toast from "../ui/Toast";
 import Sidebar from "./Sidebar";
+import Loading from "../ui/Loading";
+import ErrorState from "../ui/ErrorState";
 
 function MainLayout() {
   const { data, form, toast, actions } = useAppContext();
@@ -58,14 +60,9 @@ function MainLayout() {
       <main className="main">
         <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
 
-        {loading && <p>Loading expenses...</p>}
+        {loading && <Loading message="Loading expenses..." />}
 
-        {error && (
-          <div>
-            <p>{error}</p>
-            <button onClick={loadExpenses}>Retry</button>
-          </div>
-        )}
+        {error && <ErrorState message={error} onRetry={loadExpenses} />}
 
         <Outlet />
       </main>

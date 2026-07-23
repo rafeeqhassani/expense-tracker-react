@@ -2,28 +2,30 @@ import handleResponse from "./apiClient";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function getBudget() {
-  const response = await fetch(`${API_URL}/budget`);
+const JSON_HEADERS = {
+  "Content-Type": "application/json",
+};
 
+/**
+ * Performs a fetch against the API and unwraps the response's
+ * `data` field, throwing via `handleResponse` on failure.
+ */
+async function request(url, options) {
+  const response = await fetch(url, options);
   const data = await handleResponse(response);
-
   return data.data;
 }
 
+async function getBudget() {
+  return request(`${API_URL}/budget`);
+}
+
 async function saveBudget(budget) {
-  const response = await fetch(`${API_URL}/budget`, {
+  return request(`${API_URL}/budget`, {
     method: "PUT",
-
-    headers: {
-      "Content-Type": "application/json",
-    },
-
+    headers: JSON_HEADERS,
     body: JSON.stringify(budget),
   });
-
-  const data = await handleResponse(response);
-
-  return data.data;
 }
 
 export { getBudget, saveBudget };

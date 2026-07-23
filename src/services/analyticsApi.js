@@ -2,28 +2,26 @@ import handleResponse from "./apiClient";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function getAnalyticsSummary() {
-  const response = await fetch(`${API_URL}/analytics/summary`);
-
+/**
+ * Performs a fetch against the API and unwraps the response's
+ * `data` field, throwing via `handleResponse` on failure.
+ */
+async function request(url) {
+  const response = await fetch(url);
   const data = await handleResponse(response);
-
   return data.data;
+}
+
+async function getAnalyticsSummary() {
+  return request(`${API_URL}/analytics/summary`);
 }
 
 async function getDashboardStats() {
-  const response = await fetch(`${API_URL}/analytics/dashboard`);
-
-  const data = await handleResponse(response);
-
-  return data.data;
+  return request(`${API_URL}/analytics/dashboard`);
 }
 
 async function getChartData() {
-  const response = await fetch(`${API_URL}/analytics/charts`);
-
-  const data = await handleResponse(response);
-
-  return data.data;
+  return request(`${API_URL}/analytics/charts`);
 }
 
 export { getAnalyticsSummary, getDashboardStats, getChartData };

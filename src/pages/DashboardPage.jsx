@@ -8,6 +8,7 @@ import ExpenseCharts from "../components/charts/ExpenseCharts";
 import RecentActivity from "../components/activities/RecentActivity";
 
 function DashboardPage() {
+
   const { analytics, budget, data } = useAppContext();
 
   return (

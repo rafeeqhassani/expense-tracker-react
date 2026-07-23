@@ -5,12 +5,20 @@ import {
   getChartData,
 } from "../services/analyticsApi";
 
-function useAnalytics(showToastMessage, refreshKey) {
-  const [summary, setSummary] = useState({
-    overall: {},
-    filtered: {},
-  });
+const DEFAULT_SUMMARY = {
+  overall: {},
+  filtered: {},
+};
 
+/**
+ * Loads analytics summary, dashboard stats, and chart data together,
+ * refetching whenever `refreshKey` changes.
+ *
+ * @param {(message: string, type: "success" | "error") => void} showToastMessage
+ * @param {*} refreshKey - Changing this value triggers a reload.
+ */
+function useAnalytics(showToastMessage, refreshKey) {
+  const [summary, setSummary] = useState(DEFAULT_SUMMARY);
   const [dashboard, setDashboard] = useState({});
   const [charts, setCharts] = useState([]);
 
@@ -19,21 +27,23 @@ function useAnalytics(showToastMessage, refreshKey) {
 
   useEffect(() => {
     async function loadAnalytics() {
+      setError(null);
+      setLoading(true);
+
       try {
-        const [summary, dashboardStats, chartData] = await Promise.all([
+        const [summaryData, dashboardStats, chartData] = await Promise.all([
           getAnalyticsSummary(),
           getDashboardStats(),
           getChartData(),
         ]);
 
-        setSummary(summary);
+        setSummary(summaryData);
         setDashboard(dashboardStats);
         setCharts(chartData);
       } catch (error) {
         console.error("Failed to load analytics", error);
 
         setError(error.message);
-
         showToastMessage(error.message, "error");
       } finally {
         setLoading(false);

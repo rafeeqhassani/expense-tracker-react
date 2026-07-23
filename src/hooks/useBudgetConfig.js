@@ -6,29 +6,54 @@ const DEFAULT_BUDGET_CONFIG = {
   categoryLimits: {},
 };
 
+/**
+ * Merges a partial/raw budget object (e.g. from the API) on top of
+ * the default config, ensuring `categoryLimits` is always a fully
+ * formed object rather than `undefined`.
+ */
+function mergeWithDefaults(budget) {
+  return {
+    ...DEFAULT_BUDGET_CONFIG,
+    ...budget,
+    categoryLimits: {
+      ...DEFAULT_BUDGET_CONFIG.categoryLimits,
+      ...(budget.categoryLimits ?? {}),
+    },
+  };
+}
+
+/**
+ * Resolves a value that may either be a plain number/string or an
+ * updater function of the previous value, returning a numeric result.
+ */
+function resolveNumericValue(valueOrUpdater, previousValue) {
+  return typeof valueOrUpdater === "function"
+    ? valueOrUpdater(previousValue)
+    : Number(valueOrUpdater);
+}
+
+/**
+ * Manages the budget configuration (overall monthly limit and
+ * per-category limits), including loading, persisting, and
+ * resetting it.
+ *
+ * @param {(message: string, type: "success" | "error") => void} showToastMessage
+ */
 function useBudgetConfig(showToastMessage) {
   const [budgetConfig, setBudgetConfig] = useState(DEFAULT_BUDGET_CONFIG);
-
   const [loading, setLoading] = useState(true);
 
+  // Load the persisted budget config once on mount.
   useEffect(() => {
     async function loadBudget() {
       try {
         const budget = await getBudget();
 
         if (budget) {
-          setBudgetConfig({
-            ...DEFAULT_BUDGET_CONFIG,
-            ...budget,
-            categoryLimits: {
-              ...DEFAULT_BUDGET_CONFIG.categoryLimits,
-              ...(budget.categoryLimits ?? {}),
-            },
-          });
+          setBudgetConfig(mergeWithDefaults(budget));
         }
       } catch (error) {
         console.error("Failed to load budget", error);
-
         showToastMessage(error.message, "error");
       } finally {
         setLoading(false);
@@ -38,61 +63,70 @@ function useBudgetConfig(showToastMessage) {
     loadBudget();
   }, [showToastMessage]);
 
+  /**
+   * Persists a budget config to the backend and notifies the user
+   * of the outcome.
+   */
   const saveConfig = useCallback(
     async (newConfig) => {
       try {
         await saveBudget(newConfig);
-
         showToastMessage("Budget updated successfully", "success");
       } catch (error) {
         console.error("Failed to save budget", error);
-
         showToastMessage(error.message, "error");
       }
     },
     [showToastMessage],
   );
 
+  /**
+   * Updates the overall monthly limit, accepting either a new value
+   * or an updater function of the previous value.
+   */
   const updateMonthlyLimit = useCallback(
     async (valueOrUpdater) => {
       const updatedConfig = {
         ...budgetConfig,
-        monthlyLimit:
-          typeof valueOrUpdater === "function"
-            ? valueOrUpdater(budgetConfig.monthlyLimit)
-            : Number(valueOrUpdater),
+        monthlyLimit: resolveNumericValue(
+          valueOrUpdater,
+          budgetConfig.monthlyLimit,
+        ),
       };
 
       setBudgetConfig(updatedConfig);
-
       await saveConfig(updatedConfig);
     },
     [budgetConfig, saveConfig],
   );
 
+  /**
+   * Updates the limit for a single category, accepting either a new
+   * value or an updater function of the previous value.
+   */
   const updateCategoryLimit = useCallback(
     async (category, valueOrUpdater) => {
+      const previousValue = budgetConfig.categoryLimits[category] ?? 0;
+
       const updatedConfig = {
         ...budgetConfig,
         categoryLimits: {
           ...budgetConfig.categoryLimits,
-          [category]:
-            typeof valueOrUpdater === "function"
-              ? valueOrUpdater(budgetConfig.categoryLimits[category] ?? 0)
-              : Number(valueOrUpdater),
+          [category]: resolveNumericValue(valueOrUpdater, previousValue),
         },
       };
 
       setBudgetConfig(updatedConfig);
-
       await saveConfig(updatedConfig);
     },
     [budgetConfig, saveConfig],
   );
 
+  /**
+   * Resets the budget config back to its default (unsaved) state.
+   */
   const resetBudgetConfig = useCallback(() => {
     setBudgetConfig(DEFAULT_BUDGET_CONFIG);
-
     showToastMessage("Budget reset", "success");
   }, [showToastMessage]);
 

@@ -11,12 +11,18 @@ import useCategories from "../hooks/useCategories";
 
 export const AppContext = createContext(null);
 
+/**
+ * Composes all app-level hooks (expenses, filters, form, analytics,
+ * budget, categories, toast) into a single context value consumed
+ * throughout the app.
+ */
 function AppProviders({ children }) {
   const [analyticsRefreshKey, setAnalyticsRefreshKey] = useState(0);
 
   const { toast, showToastMessage } = useToast();
   const filters = useFilters([]);
 
+  // --- Expenses ---
   const {
     expenses,
     activities,
@@ -46,6 +52,9 @@ function AppProviders({ children }) {
     selectedCount,
   } = useExpenses(showToastMessage, filters.filters);
 
+  // --- Analytics refresh wiring ---
+  // Certain expense mutations should trigger an analytics refetch;
+  // these wrappers run the original handler, then bump the refresh key.
   const refreshAnalytics = useCallback(() => {
     setAnalyticsRefreshKey((prev) => prev + 1);
   }, []);
@@ -82,6 +91,7 @@ function AppProviders({ children }) {
     [expenses],
   );
 
+  // --- Form ---
   const form = useExpenseForm({
     expenses: activeExpenses,
     handleAddExpense: addExpenseWithRefresh,
@@ -89,8 +99,10 @@ function AppProviders({ children }) {
     showToastMessage,
   });
 
+  // --- Analytics ---
   const analytics = useAnalytics(showToastMessage, analyticsRefreshKey);
 
+  // --- Budget ---
   const {
     budgetConfig,
     resetBudgetConfig,
@@ -99,8 +111,11 @@ function AppProviders({ children }) {
   } = useBudgetConfig(showToastMessage);
 
   const budget = useBudget(activeExpenses, budgetConfig);
+
+  // --- Categories ---
   const categories = useCategories();
 
+  // --- Clear everything ---
   const clearAll = useCallback(() => {
     handleClearSelection();
     handleClearAllExpenses();
@@ -115,11 +130,12 @@ function AppProviders({ children }) {
     showToastMessage,
   ]);
 
+  // --- Context value ---
   const value = useMemo(
     () => ({
       data: {
         displayedExpenses: activeExpenses,
-        categories: categories,
+        categories,
 
         pagination,
         loadingMore,
@@ -156,8 +172,6 @@ function AppProviders({ children }) {
         handleSubmit: form.handleSubmit,
         handleChange: form.handleChange,
 
-        handleAddExpense: addExpenseWithRefresh,
-        handleUpdateExpense: updateExpenseWithRefresh,
         handleDeleteExpense: deleteExpenseWithRefresh,
         handleUndoDelete,
 
@@ -174,7 +188,7 @@ function AppProviders({ children }) {
         handleClearAll: clearAll,
 
         handleFilterChange: filters.handleFilterChange,
-        setFilters: filters.setFilters,
+
         resetFilters: filters.resetFilters,
         hasActiveFilters: filters.hasActiveFilters,
       },

@@ -1,3 +1,12 @@
+/**
+ * Parses a fetch `Response` as JSON and throws an `Error` if the
+ * request failed or the body couldn't be parsed.
+ *
+ * @param {Response} response
+ * @returns {Promise<any>} The parsed JSON body, on success.
+ * @throws {Error} With the server's message (if present) or an
+ *   `HTTP <status>` fallback.
+ */
 async function handleResponse(response) {
   let data;
 

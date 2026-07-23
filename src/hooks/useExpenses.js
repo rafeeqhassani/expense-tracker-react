@@ -1,10 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
 import {
-  addExpense,
-  updateExpense,
-  deleteExpense,
-  deleteSelectedExpenses,
   toggleSelectedExpense,
   selectAllExpenses,
   deselectAllExpenses,
@@ -15,29 +11,49 @@ import {
 
 import {
   getActivities,
-  createActivity as createActivityApi,
+  createActivity,
+  clearActivities as clearActivitiesApi,
 } from "../services/activityApi";
 
 import {
   getExpenses,
   createExpense,
-  deleteExpense as deleteExpenseApi,
-  updateExpense as updateExpenseApi,
+  deleteExpense,
+  updateExpense,
   restoreExpense,
   clearAllExpenses,
+  deleteSelectedExpenses,
 } from "../services/expenseApi";
 
 const MAX_ACTIVITIES = 10;
+const EXPENSES_PER_PAGE = 20;
 
+/**
+ * Manages expenses, their pagination, selection state, and the
+ * related activity feed for the expense tracker.
+ *
+ * @param {(message: string, type: "success" | "error") => void} showToastMessage
+ * @param {object} filters - Active filter/sort criteria to apply when fetching expenses.
+ */
 function useExpenses(showToastMessage, filters) {
+  // --- Expense list + pagination state ---
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
-  const [loadingMore, setLoadingMore] = useState(false);
+
+  // --- Selection state ---
+  const [selectedIds, setSelectedIds] = useState(new Set());
+
+  // --- Undo-delete state ---
+  const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
+
+  // --- Activity feed state ---
   const [activities, setActivities] = useState([]);
 
+  // Load the activity feed once on mount.
   useEffect(() => {
     async function loadActivities() {
       try {
@@ -51,9 +67,10 @@ function useExpenses(showToastMessage, filters) {
     loadActivities();
   }, []);
 
-  const [selectedIds, setSelectedIds] = useState(new Set());
-  const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
-
+  /**
+   * Fetches the first page of expenses matching the current filters,
+   * replacing the existing list.
+   */
   const loadExpenses = useCallback(async () => {
     setError(null);
     setLoading(true);
@@ -62,7 +79,7 @@ function useExpenses(showToastMessage, filters) {
       const data = await getExpenses({
         ...filters,
         page: 1,
-        limit: 20,
+        limit: EXPENSES_PER_PAGE,
       });
 
       setExpenses(data.expenses);
@@ -76,28 +93,31 @@ function useExpenses(showToastMessage, filters) {
     }
   }, [filters]);
 
+  // Reload expenses whenever the filters change.
   useEffect(() => {
     loadExpenses();
   }, [loadExpenses]);
 
+  /**
+   * Fetches the next page of expenses (if any remain) and appends
+   * them to the existing list.
+   */
   const loadMoreExpenses = async () => {
     if (!pagination) return;
-
     if (page >= pagination.totalPages) return;
+
+    const nextPage = page + 1;
 
     try {
       setLoadingMore(true);
 
-      const nextPage = page + 1;
-
       const data = await getExpenses({
         ...filters,
         page: nextPage,
-        limit: 20,
+        limit: EXPENSES_PER_PAGE,
       });
 
       setExpenses((prev) => [...prev, ...data.expenses]);
-
       setPagination(data.pagination);
       setPage(nextPage);
     } catch (error) {
@@ -107,12 +127,13 @@ function useExpenses(showToastMessage, filters) {
     }
   };
 
+  /**
+   * Records a new activity in the feed, keeping only the most
+   * recent `MAX_ACTIVITIES` entries.
+   */
   const addActivity = async (type, message) => {
     try {
-      const activity = await createActivityApi({
-        type,
-        message,
-      });
+      const activity = await createActivity({ type, message });
 
       setActivities((prev) => [activity, ...prev].slice(0, MAX_ACTIVITIES));
     } catch (error) {
@@ -124,7 +145,7 @@ function useExpenses(showToastMessage, filters) {
     try {
       const savedExpense = await createExpense(newExpense);
 
-      setExpenses((prev) => addExpense(prev, savedExpense));
+      setExpenses((prev) => [...prev, savedExpense]);
       addActivity("ADD_EXPENSE", `Added ${savedExpense.title}`);
 
       showToastMessage("Expense added", "success");
@@ -136,17 +157,49 @@ function useExpenses(showToastMessage, filters) {
 
   const handleUpdateExpense = async (id, updatedData) => {
     try {
-      await updateExpenseApi({
-        id,
-        ...updatedData,
-      });
+      await updateExpense({ id, ...updatedData });
 
-      setExpenses((prev) => updateExpense(prev, id, updatedData));
+      setExpenses((prev) =>
+        prev.map((expense) =>
+          expense.id === id ? { ...expense, ...updatedData } : expense,
+        ),
+      );
       addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
 
       showToastMessage("Expense updated", "success");
     } catch (error) {
       console.error("Failed to update expense", error);
+      showToastMessage(error.message, "error");
+    }
+  };
+
+  const handleDeleteExpense = async (id) => {
+    try {
+      await deleteExpense(id);
+
+      setExpenses((prev) =>
+        prev.map((expense) =>
+          expense.id === id ? { ...expense, deleted: true } : expense,
+        ),
+      );
+
+      const deletedExpense =
+        expenses.find((expense) => expense.id === id) ?? null;
+
+      if (deletedExpense) {
+        setLastDeletedExpense(deletedExpense);
+        addActivity("DELETE_EXPENSE", `Deleted ${deletedExpense.title}`);
+      }
+
+      setSelectedIds((prev) => {
+        const nextSelectedIds = new Set(prev);
+        nextSelectedIds.delete(id);
+        return nextSelectedIds;
+      });
+
+      showToastMessage("Expense deleted", "success");
+    } catch (error) {
+      console.error("Failed to delete expense", error);
       showToastMessage(error.message, "error");
     }
   };
@@ -164,7 +217,6 @@ function useExpenses(showToastMessage, filters) {
       );
 
       addActivity("RESTORE_EXPENSE", `Restored ${restoredExpense.title}`);
-
       setLastDeletedExpense(null);
 
       showToastMessage("Expense restored", "success");
@@ -174,53 +226,25 @@ function useExpenses(showToastMessage, filters) {
     }
   };
 
-  const handleDeleteExpense = async (id) => {
+  const handleRemoveSelected = async () => {
     try {
-      await deleteExpenseApi(id);
+      const idsToDelete = [...selectedIds];
 
-      const { updatedExpenses, deletedItem } = deleteExpense(expenses, id);
+      await deleteSelectedExpenses(idsToDelete);
 
-      setExpenses(updatedExpenses);
+      setExpenses((prev) =>
+        prev.map((expense) =>
+          selectedIds.has(expense.id) ? { ...expense, deleted: true } : expense,
+        ),
+      );
 
-      if (deletedItem) {
-        setLastDeletedExpense(deletedItem);
-        addActivity("DELETE_EXPENSE", `Deleted ${deletedItem.title}`);
-      }
+      setSelectedIds(new Set());
 
-      setSelectedIds((prev) => {
-        const nextSelectedIds = new Set(prev);
-        nextSelectedIds.delete(id);
-        return nextSelectedIds;
-      });
-
-      showToastMessage("Expense deleted", "success");
+      showToastMessage("Selected expenses deleted", "success");
     } catch (error) {
-      console.error("Failed to delete expense", error);
+      console.error("Failed to delete selected expenses", error);
       showToastMessage(error.message, "error");
     }
-  };
-
-  const handleToggleSelected = (id) => {
-    setSelectedIds((prev) => toggleSelectedExpense(prev, id));
-  };
-
-  const handleSelectAll = () => {
-    const activeExpenses = expenses.filter((expense) => !expense.deleted);
-
-    setSelectedIds(selectAllExpenses(activeExpenses));
-  };
-
-  const handleDeselectAll = () => {
-    setSelectedIds(deselectAllExpenses());
-  };
-
-  const handleRemoveSelected = () => {
-    setExpenses((prev) => deleteSelectedExpenses(prev, selectedIds));
-    setSelectedIds(new Set());
-  };
-
-  const handleClearSelection = () => {
-    setSelectedIds(new Set());
   };
 
   const handleClearAllExpenses = async () => {
@@ -228,10 +252,7 @@ function useExpenses(showToastMessage, filters) {
       await clearAllExpenses();
 
       setExpenses((prev) =>
-        prev.map((expense) => ({
-          ...expense,
-          deleted: true,
-        })),
+        prev.map((expense) => ({ ...expense, deleted: true })),
       );
 
       setSelectedIds(new Set());
@@ -243,12 +264,34 @@ function useExpenses(showToastMessage, filters) {
     }
   };
 
-  const handleClearActivities = () => {
-    setActivities([]);
+  const handleClearActivities = async () => {
+    try {
+      const updatedActivities = await clearActivitiesApi();
+      setActivities(updatedActivities);
+    } catch (error) {
+      console.error("Failed to clear activities", error);
+    }
   };
 
-  const activeExpenses = expenses.filter((expense) => !expense.deleted);
+  const handleToggleSelected = (id) => {
+    setSelectedIds((prev) => toggleSelectedExpense(prev, id));
+  };
 
+  const handleSelectAll = () => {
+    const activeExpenses = expenses.filter((expense) => !expense.deleted);
+    setSelectedIds(selectAllExpenses(activeExpenses));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedIds(deselectAllExpenses());
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIds(new Set());
+  };
+
+  // --- Derived values ---
+  const activeExpenses = expenses.filter((expense) => !expense.deleted);
   const selectedCount = getSelectedCount(selectedIds);
   const allSelected = areAllSelected(activeExpenses, selectedIds);
   const someSelected = areSomeSelected(activeExpenses, selectedIds);

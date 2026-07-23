@@ -2,7 +2,25 @@ import handleResponse from "./apiClient";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function getExpenses(filters = {}) {
+const JSON_HEADERS = {
+  "Content-Type": "application/json",
+};
+
+/**
+ * Performs a fetch against the API and unwraps the response's
+ * `data` field, throwing via `handleResponse` on failure.
+ */
+async function request(url, options) {
+  const response = await fetch(url, options);
+  const data = await handleResponse(response);
+  return data.data;
+}
+
+/**
+ * Builds a query string from a filters object, omitting any keys
+ * whose value is empty, null, or undefined.
+ */
+function buildQueryString(filters) {
   const params = new URLSearchParams();
 
   Object.entries(filters).forEach(([key, value]) => {
@@ -11,75 +29,56 @@ async function getExpenses(filters = {}) {
     }
   });
 
-  const query = params.toString();
+  return params.toString();
+}
 
+async function getExpenses(filters = {}) {
+  const query = buildQueryString(filters);
   const url = query ? `${API_URL}/expenses?${query}` : `${API_URL}/expenses`;
 
-  const response = await fetch(url, {
-    cache: "no-store",
-  });
-
-  const data = await handleResponse(response);
-
-  return data.data;
+  return request(url, { cache: "no-store" });
 }
 
 async function createExpense(expense) {
-  const response = await fetch(`${API_URL}/expenses`, {
+  return request(`${API_URL}/expenses`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: JSON_HEADERS,
     body: JSON.stringify(expense),
   });
-
-  const data = await handleResponse(response);
-
-  return data.data;
-}
-
-async function deleteExpense(id) {
-  const response = await fetch(`${API_URL}/expenses/${id}`, {
-    method: "DELETE",
-  });
-
-  const data = await handleResponse(response);
-
-  return data.data;
 }
 
 async function updateExpense(expense) {
-  const response = await fetch(`${API_URL}/expenses/${expense.id}`, {
+  return request(`${API_URL}/expenses/${expense.id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: JSON_HEADERS,
     body: JSON.stringify(expense),
   });
+}
 
-  const data = await handleResponse(response);
-
-  return data.data;
+async function deleteExpense(id) {
+  return request(`${API_URL}/expenses/${id}`, {
+    method: "DELETE",
+  });
 }
 
 async function restoreExpense(id) {
-  const response = await fetch(`${API_URL}/expenses/${id}/restore`, {
+  return request(`${API_URL}/expenses/${id}/restore`, {
     method: "PATCH",
   });
-
-  const data = await handleResponse(response);
-
-  return data.data;
 }
 
 async function clearAllExpenses() {
-  const response = await fetch(`${API_URL}/expenses/clear-all`, {
+  return request(`${API_URL}/expenses/clear-all`, {
     method: "PATCH",
   });
+}
 
-  const data = await handleResponse(response);
-
-  return data.data;
+async function deleteSelectedExpenses(ids) {
+  return request(`${API_URL}/expenses/bulk`, {
+    method: "DELETE",
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ ids }),
+  });
 }
 
 export {
@@ -89,4 +88,5 @@ export {
   updateExpense,
   restoreExpense,
   clearAllExpenses,
+  deleteSelectedExpenses,
 };

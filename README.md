@@ -1,14 +1,14 @@
 # Expense Tracker React
 
-A full-featured responsive expense management application built with React.js.
+A full-stack responsive expense management application built with React.js and REST API integration.
 
 ## Live Demo
 
-https://expense-tracker-react-eosin-ten.vercel.app/
+[https://expense-tracker-react-eosin-ten.vercel.app/](https://expense-tracker-react-eosin-ten.vercel.app/)
 
 ## Source Code
 
-https://github.com/rafeeqhassani/expense-tracker-react
+[https://github.com/rafeeqhassani/expense-tracker-react](https://github.com/rafeeqhassani/expense-tracker-react)
 
 ---
 
@@ -24,28 +24,28 @@ https://github.com/rafeeqhassani/expense-tracker-react
 
 ---
 
-# About The Project
+## About The Project
 
-Expense Tracker is a React-based personal finance application designed to manage daily expenses, analyze spending patterns, and provide a structured dashboard experience.
+Expense Tracker is a full-stack personal finance application designed to manage daily expenses, analyze spending patterns, and provide a structured dashboard experience.
 
-The project was originally developed using Vanilla JavaScript and later rebuilt using React to improve scalability, component organization, and state management.
+The frontend was built with React.js and communicates with a backend REST API for data management and persistent storage.
 
-The goal was not only feature development but also understanding real-world frontend architecture, state flow, rendering behavior, and maintainable code structure.
+The project was originally developed using Vanilla JavaScript and later rebuilt using React to improve component architecture, state management, scalability, and maintainability.
 
 ---
 
-# Features
+## Features
 
-## Expense Management
+### Expense Management
 
 - Add, edit, and delete expenses
 - Search expenses by title
-- Sort expenses alphabetically and numerically
+- Sort expenses
 - Filter expenses by month
-- Bulk select and remove expenses
-- Load more pagination
+- Server-side pagination
+- Bulk expense actions
 
-## Dashboard & Analytics
+### Dashboard & Analytics
 
 - Total spending overview
 - Expense statistics
@@ -53,25 +53,47 @@ The goal was not only feature development but also understanding real-world fron
 - Expense charts
 - Recent activity tracking
 
-## Budget Management
+### Budget Management
 
 - Monthly budget limits
 - Category-based budget limits
 - Spending monitoring
 
-## Advanced Features
+### Advanced Features
 
 - Recurring expense generation
 - Custom categories
 - Form validation
 - Toast notifications
+- Loading and error states
 - Undo delete functionality
-- LocalStorage persistence
 - Responsive mobile-first layout
 
 ---
 
-# Technologies Used
+## API Integration
+
+The frontend communicates with a backend REST API.
+
+**Frontend responsibilities:**
+
+- Component rendering
+- UI state management
+- User interactions
+- Loading and error handling
+- Displaying API responses
+
+**Backend responsibilities:**
+
+- CRUD operations
+- Database communication
+- Pagination
+- Filtering and sorting logic
+- Recurring expense processing
+
+---
+
+## Technologies Used
 
 - React.js
 - JavaScript ES6+
@@ -80,24 +102,23 @@ The goal was not only feature development but also understanding real-world fron
 - React Hooks
 - Context API
 - useReducer
-- LocalStorage
+- REST API
+- PostgreSQL
 - Vercel
 
 ---
 
-# Architecture
+## Architecture
 
-The application follows a component-based architecture with separation between UI components, state management, and business logic.
+The application follows a component-based architecture with separation between UI components, state management, API services, and business logic.
 
-## State Management
+### State Management
 
-### Context API
-
+**Context API**
 Used for shared application state.
 
-### useReducer
-
-Used for complex form state:
+**useReducer**
+Used for complex state flows:
 
 - Form data
 - Validation errors
@@ -105,29 +126,31 @@ Used for complex form state:
 - Modal state
 - Submission flow
 
-### Custom Hooks
+**Custom Hooks**
+Reusable logic created for:
 
-Created reusable logic for:
-
-- Recurring expenses
-- Application behavior management
+- Expense management
+- Filtering
+- Budget calculations
+- Recurring expense handling
+- Toast notifications
 
 ---
 
-# Engineering Decisions
+## Engineering Decisions
 
-## State Lifecycle Handling
+### State Lifecycle Handling
 
-During development, UI inconsistencies were debugged by tracing:
+During development, application behavior was improved by debugging:
 
 - Reducer actions
 - State transitions
 - Component rendering
-- User interaction flow
+- API communication flow
 
-The solution focused on maintaining predictable UI states instead of adding unnecessary complexity.
+The focus was maintaining predictable state management and a scalable project structure.
 
-## Component Responsibility
+### Component Responsibility
 
 Components were separated based on responsibility:
 
@@ -142,51 +165,66 @@ This improved maintainability and future scalability.
 
 ---
 
-# What I Learned
+## What I Learned
 
-## JavaScript
+### JavaScript
 
 - DOM manipulation
 - Event handling
 - Data processing
-- LocalStorage management
+- Application state concepts
 
-## React
+### React
 
 - Component architecture
 - State-driven rendering
-- Reducer patterns
 - Context API
+- useReducer patterns
 - Custom hooks
 - Derived state
 - UI lifecycle management
 
-## Problem Solving
+### Full Stack Integration
+
+- Connecting React applications with REST APIs
+- Separating frontend and backend responsibilities
+- Managing server-side data flow
+
+### Problem Solving
 
 - Debugging complex state issues
-- Understanding rendering behavior
-- Improving architecture through refactoring
+- Refactoring application architecture
+- Improving code scalability
 
 ---
 
-# Future Improvements
+## Future Improvements
 
-- Backend integration
 - Authentication
-- Database storage
+- User accounts
 - CSV/PDF export
 - Dark mode
 - Advanced financial insights
+- Automated testing
 
 ---
 
-# Project Status
+## Free Tier Notice
 
-Core functionality completed.
+This project uses free-tier deployment services. Due to free hosting limitations:
 
-Currently improving:
+- Backend may take a few seconds to wake up after inactivity.
+- Initial API requests may be slower after long periods without traffic.
+- Database resources are limited by the free-tier plan.
 
-- UI design system
+---
+
+## Project Status
+
+Core functionality is complete.
+
+**Currently improving:**
+
 - Performance optimization
 - Code scalability
 - Advanced React patterns
