@@ -105,12 +105,22 @@ function AppProviders({ children }) {
   // --- Budget ---
   const {
     budgetConfig,
+    loading: budgetLoading,
+    error: budgetError,
+    loadBudget,
     resetBudgetConfig,
     updateMonthlyLimit,
     updateCategoryLimit,
   } = useBudgetConfig(showToastMessage);
 
   const budget = useBudget(activeExpenses, budgetConfig);
+
+  const budgetDomain = {
+    ...budget,
+    loading: budgetLoading,
+    error: budgetError,
+    loadBudget,
+  };
 
   // --- Categories ---
   const categories = useCategories();
@@ -133,23 +143,22 @@ function AppProviders({ children }) {
   // --- Context value ---
   const value = useMemo(
     () => ({
-      data: {
-        displayedExpenses: activeExpenses,
-        categories,
-
+      expense: {
+        expenses: activeExpenses,
         pagination,
         loadingMore,
         loadMoreExpenses,
-
-        filters: filters.filters,
-        activities,
         loading,
         error,
         loadExpenses,
       },
 
+      activities,
+      categories,
+      filters: filters.filters,
+
       analytics,
-      budget,
+      budget: budgetDomain,
       budgetConfig,
       updateMonthlyLimit,
       updateCategoryLimit,

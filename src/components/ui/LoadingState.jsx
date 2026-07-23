@@ -1,4 +1,4 @@
-function Loading({ message = "Loading..." }) {
+function LoadingState({ message = "Loading..." }) {
   return (
     <div className="loading-state">
       <div className="loading-spinner"></div>
@@ -7,4 +7,4 @@ function Loading({ message = "Loading..." }) {
   );
 }
 
-export default Loading;
+export default LoadingState;

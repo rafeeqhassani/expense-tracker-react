@@ -8,6 +8,9 @@ import CategoryBudget from "../components/budgets/CategoryBudget";
 import CategoryBudgetEditor from "../components/budgets/CategoryBudgetEditor";
 import BudgetAlertList from "../components/budgets/BudgetAlertList";
 
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
+
 const TABS = [
   { id: "monthly", label: "Monthly Budget" },
   { id: "category", label: "Category Budget" },
@@ -20,10 +23,9 @@ function BudgetPage() {
     budgetConfig,
     updateMonthlyLimit,
     updateCategoryLimit,
-    data,
+    categories,
   } = useAppContext();
 
-  const { categories } = data;
   const [categorySearch, setCategorySearch] = useState("");
 
   const queryParam = useQueryParam();
@@ -32,6 +34,14 @@ function BudgetPage() {
   const setActiveTab = (tab) => {
     queryParam.set("tab", tab);
   };
+
+  if (budget.loading) {
+    return <LoadingState message="Loading budget..." />;
+  }
+
+  if (budget.error) {
+    return <ErrorState message={budget.error} onRetry={budget.loadBudget} />;
+  }
 
   return (
     <section className="budget-tabs">

@@ -6,13 +6,11 @@ import Header from "../expenses/Header";
 import ExpenseForm from "../modal/ExpenseForm";
 import Toast from "../ui/Toast";
 import Sidebar from "./Sidebar";
-import Loading from "../ui/Loading";
-import ErrorState from "../ui/ErrorState";
 
 function MainLayout() {
-  const { data, form, toast, actions } = useAppContext();
+  const { expense, categories, form, toast, actions } = useAppContext();
 
-  const { categories, loading, error, loadExpenses } = data;
+  const { loading, error, loadExpenses } = expense;
 
   const { formData, mode, isFormOpen, errors, touched, submitAttempted } = form;
 
@@ -59,10 +57,6 @@ function MainLayout() {
 
       <main className="main">
         <Header toggleSidebar={toggleSidebar} openForm={actions.openForm} />
-
-        {loading && <Loading message="Loading expenses..." />}
-
-        {error && <ErrorState message={error} onRetry={loadExpenses} />}
 
         <Outlet />
       </main>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   getAnalyticsSummary,
   getDashboardStats,
@@ -17,7 +17,8 @@ const DEFAULT_SUMMARY = {
  * @param {(message: string, type: "success" | "error") => void} showToastMessage
  * @param {*} refreshKey - Changing this value triggers a reload.
  */
-function useAnalytics(showToastMessage, refreshKey) {
+
+function useAnalytics(refreshKey) {
   const [summary, setSummary] = useState(DEFAULT_SUMMARY);
   const [dashboard, setDashboard] = useState({});
   const [charts, setCharts] = useState([]);
@@ -25,40 +26,42 @@ function useAnalytics(showToastMessage, refreshKey) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function loadAnalytics() {
-      setError(null);
-      setLoading(true);
+  const loadAnalytics = useCallback(async () => {
+    setError(null);
+    setLoading(true);
 
-      try {
-        const [summaryData, dashboardStats, chartData] = await Promise.all([
-          getAnalyticsSummary(),
-          getDashboardStats(),
-          getChartData(),
-        ]);
+    try {
+      const [summaryData, dashboardStats, chartData] = await Promise.all([
+        getAnalyticsSummary(),
+        getDashboardStats(),
+        getChartData(),
+      ]);
 
-        setSummary(summaryData);
-        setDashboard(dashboardStats);
-        setCharts(chartData);
-      } catch (error) {
-        console.error("Failed to load analytics", error);
+      setSummary(summaryData);
+      setDashboard(dashboardStats);
+      setCharts(chartData);
+    } catch (error) {
+      console.error("Failed to load analytics", error);
 
-        setError(error.message);
-        showToastMessage(error.message, "error");
-      } finally {
-        setLoading(false);
-      }
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
+  useEffect(() => {
     loadAnalytics();
-  }, [showToastMessage, refreshKey]);
+  }, [loadAnalytics, refreshKey]);
 
   return {
     summary,
     dashboard,
     charts,
+
     loading,
     error,
+
+    loadAnalytics,
   };
 }
 

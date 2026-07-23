@@ -42,26 +42,29 @@ function resolveNumericValue(valueOrUpdater, previousValue) {
 function useBudgetConfig(showToastMessage) {
   const [budgetConfig, setBudgetConfig] = useState(DEFAULT_BUDGET_CONFIG);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState(null);
   // Load the persisted budget config once on mount.
-  useEffect(() => {
-    async function loadBudget() {
-      try {
-        const budget = await getBudget();
+  const loadBudget = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-        if (budget) {
-          setBudgetConfig(mergeWithDefaults(budget));
-        }
-      } catch (error) {
-        console.error("Failed to load budget", error);
-        showToastMessage(error.message, "error");
-      } finally {
-        setLoading(false);
+    try {
+      const budget = await getBudget();
+
+      if (budget) {
+        setBudgetConfig(mergeWithDefaults(budget));
       }
+    } catch (error) {
+      console.error("Failed to load budget", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
+  }, []);
 
+  useEffect(() => {
     loadBudget();
-  }, [showToastMessage]);
+  }, [loadBudget]);
 
   /**
    * Persists a budget config to the backend and notifies the user
@@ -133,9 +136,11 @@ function useBudgetConfig(showToastMessage) {
   return {
     budgetConfig,
     loading,
+    error,
     updateMonthlyLimit,
     updateCategoryLimit,
     resetBudgetConfig,
+    loadBudget,
   };
 }
 

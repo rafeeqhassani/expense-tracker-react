@@ -5,17 +5,23 @@ import ExpenseList from "../components/expenses/ExpenseList";
 import BulkActionsBar from "../components/expenses/BulkActionsBar";
 import GeneralActionsBar from "../components/expenses/GeneralActionsBar";
 
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
+
 function ExpensePage() {
-  const { data, actions } = useAppContext();
+  const { expense, filters, actions } = useAppContext();
 
-  const {
-    displayedExpenses,
+  const { expenses, pagination, loadingMore, loadMoreExpenses } = expense;
 
-    pagination,
-    loadingMore,
-    loadMoreExpenses,
-    filters,
-  } = data;
+  if (expense.loading) {
+    return <LoadingState message="Loading expenses..." />;
+  }
+
+  if (expense.error) {
+    return (
+      <ErrorState message={expense.error} onRetry={expense.loadExpenses} />
+    );
+  }
 
   return (
     <>
@@ -45,16 +51,16 @@ function ExpensePage() {
       )}
 
       <ExpenseList
-        expenses={displayedExpenses}
+        expenses={expenses}
         searchQuery={filters?.title || ""}
         onDelete={actions.handleDeleteExpense}
         onEdit={actions.handleEditExpense}
       />
 
       <GeneralActionsBar
-        onLoadMore={data.loadMoreExpenses}
-        pagination={data.pagination}
-        loadingMore={data.loadingMore}
+        onLoadMore={expense.loadMoreExpenses}
+        pagination={expense.pagination}
+        loadingMore={expense.loadingMore}
         onClearAll={actions.handleClearAll}
         hasActiveFilters={actions.hasActiveFilters}
       />

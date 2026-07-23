@@ -7,9 +7,21 @@ import ExpenseAnalytics from "../components/expenses/ExpenseAnalytics";
 import ExpenseCharts from "../components/charts/ExpenseCharts";
 import RecentActivity from "../components/activities/RecentActivity";
 
-function DashboardPage() {
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
 
-  const { analytics, budget, data } = useAppContext();
+function DashboardPage() {
+  const { analytics, budget, activities } = useAppContext();
+
+  if (analytics.loading) {
+    return <LoadingState message="Loading analytics..." />;
+  }
+
+  if (analytics.error) {
+    return (
+      <ErrorState message={analytics.error} onRetry={analytics.loadAnalytics} />
+    );
+  }
 
   return (
     <>
@@ -32,7 +44,7 @@ function DashboardPage() {
         </div>
       </section>
 
-      <RecentActivity activities={data.activities} />
+      <RecentActivity activities={activities} />
     </>
   );
 }
