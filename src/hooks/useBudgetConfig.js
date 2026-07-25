@@ -107,6 +107,7 @@ function useBudgetConfig(showToastMessage) {
    * Updates the limit for a single category, accepting either a new
    * value or an updater function of the previous value.
    */
+
   const updateCategoryLimit = useCallback(
     async (category, valueOrUpdater) => {
       const previousValue = budgetConfig.categoryLimits[category] ?? 0;

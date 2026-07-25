@@ -1,3 +1,5 @@
+import { getFromLocalStorage } from "../utils/storage";
+
 /**
  * Parses a fetch `Response` as JSON and throws an `Error` if the
  * request failed or the body couldn't be parsed.
@@ -23,4 +25,29 @@ async function handleResponse(response) {
   return data;
 }
 
-export default handleResponse;
+/**
+ * Shared API request wrapper.
+ * Adds JWT token automatically and unwraps response data.
+ */
+async function request(url, options = {}) {
+  const token = getFromLocalStorage("token", null);
+
+  const headers = {
+    ...options.headers,
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  const data = await handleResponse(response);
+
+  return data.data;
+}
+
+export default request;

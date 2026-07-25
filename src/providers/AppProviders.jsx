@@ -8,6 +8,7 @@ import useAnalytics from "../hooks/useAnalytics";
 import useBudget from "../hooks/useBudget";
 import useBudgetConfig from "../hooks/useBudgetConfig";
 import useCategories from "../hooks/useCategories";
+import useAuth from "../hooks/useAuth";
 
 export const AppContext = createContext(null);
 
@@ -18,6 +19,7 @@ export const AppContext = createContext(null);
  */
 function AppProviders({ children }) {
   const [analyticsRefreshKey, setAnalyticsRefreshKey] = useState(0);
+  const auth = useAuth();
 
   const { toast, showToastMessage } = useToast();
   const filters = useFilters([]);
@@ -143,6 +145,15 @@ function AppProviders({ children }) {
   // --- Context value ---
   const value = useMemo(
     () => ({
+      auth: {
+        user: auth.user,
+        token: auth.token,
+        loading: auth.loading,
+        login: auth.login,
+        logout: auth.logout,
+        loadCurrentUser: auth.loadCurrentUser,
+      },
+
       expense: {
         expenses: activeExpenses,
         pagination,
@@ -203,6 +214,7 @@ function AppProviders({ children }) {
       },
     }),
     [
+      auth,
       filters,
       activities,
       analytics,

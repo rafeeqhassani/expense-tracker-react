@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import useHoldButton from "../../hooks/useHoldButton";
 
 const STEP_AMOUNT = 1;
@@ -86,4 +86,4 @@ function CategoryBudgetEditor({
   );
 }
 
-export default CategoryBudgetEditor;
+export default memo(CategoryBudgetEditor);

@@ -6,12 +6,21 @@ export function saveToLocalStorage(key, data) {
   }
 }
 
-export function getFromLocalStorage(key) {
+export function getFromLocalStorage(key, defaultValue = null) {
   try {
-    const parsed = JSON.parse(localStorage.getItem(key));
-    return parsed ?? [];
+    const item = localStorage.getItem(key);
+
+    if (item === null) {
+      return defaultValue;
+    }
+
+    return JSON.parse(item);
   } catch (error) {
     console.error(`Error reading "${key}" from localStorage:`, error);
-    return [];
+    return defaultValue;
   }
+}
+
+export function removeFromLocalStorage(key) {
+  localStorage.removeItem(key);
 }

@@ -36,7 +36,6 @@ const EXPENSES_PER_PAGE = 20;
  * @param {object} filters - Active filter/sort criteria to apply when fetching expenses.
  */
 function useExpenses(showToastMessage, filters) {
-  // --- Expense list + pagination state ---
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -44,7 +43,6 @@ function useExpenses(showToastMessage, filters) {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
 
-  // --- Selection state ---
   const [selectedIds, setSelectedIds] = useState(new Set());
 
   // --- Undo-delete state ---
@@ -58,6 +56,7 @@ function useExpenses(showToastMessage, filters) {
     async function loadActivities() {
       try {
         const data = await getActivities();
+
         setActivities(data);
       } catch (error) {
         console.error("Failed to load activities", error);
