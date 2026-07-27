@@ -1,5 +1,10 @@
 import { useCallback, useState, useEffect } from "react";
-import { loginUser, getCurrentUser } from "../services/authApi";
+import {
+  loginUser,
+  registerUser,
+  getCurrentUser,
+  demoLoginUser,
+} from "../services/authApi";
 import {
   saveToLocalStorage,
   getFromLocalStorage,
@@ -8,21 +13,62 @@ import {
 
 function useAuth() {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(getFromLocalStorage("token"));
+  const [loading, setLoading] = useState(true);
+  const [initializing, setInitializing] = useState(true);
 
   const login = useCallback(async (credentials) => {
     setLoading(true);
 
     try {
-      const data = await loginUser(credentials);
+      const response = await loginUser(credentials);
 
-      saveToLocalStorage("token", data.token);
+      const { token, user } = response;
 
-      setToken(data.token);
-      setUser(data.user);
+      saveToLocalStorage("token", token);
 
-      return data;
+      setToken(token);
+      setUser(user);
+
+      return response;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const register = useCallback(async (userData) => {
+    setLoading(true);
+
+    try {
+      const response = await registerUser(userData);
+
+      const { token, user } = response;
+
+      saveToLocalStorage("token", token);
+
+      setToken(token);
+      setUser(user);
+
+      return response;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const demoLogin = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const response = await demoLoginUser();
+
+      const { token, user } = response;
+
+      saveToLocalStorage("token", token);
+
+      setToken(token);
+      setUser(user);
+
+      return response;
     } finally {
       setLoading(false);
     }
@@ -31,7 +77,11 @@ function useAuth() {
   const loadCurrentUser = useCallback(async () => {
     const storedToken = getFromLocalStorage("token");
 
-    if (!storedToken) return;
+    if (!storedToken) {
+      setLoading(false);
+      setInitializing(false);
+      return;
+    }
 
     setLoading(true);
 
@@ -39,9 +89,14 @@ function useAuth() {
       const data = await getCurrentUser(storedToken);
 
       setToken(storedToken);
-      setUser(data);
+      setUser(data.user);
+    } catch (error) {
+      removeFromLocalStorage("token");
+      setToken(null);
+      setUser(null);
     } finally {
       setLoading(false);
+      setInitializing(false);
     }
   }, []);
 
@@ -60,7 +115,10 @@ function useAuth() {
     user,
     token,
     loading,
+    initializing,
     login,
+    register,
+    demoLogin,
     logout,
     loadCurrentUser,
   };

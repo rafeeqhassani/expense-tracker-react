@@ -13,7 +13,7 @@ function ExpensePage() {
 
   const { expenses, pagination, loadingMore, loadMoreExpenses } = expense;
 
-  if (expense.loading) {
+  if (expense.loading && expense.length === 0) {
     return <LoadingState message="Loading expenses..." />;
   }
 
@@ -52,7 +52,7 @@ function ExpensePage() {
 
       <ExpenseList
         expenses={expenses}
-        searchQuery={filters?.title || ""}
+        searchQuery={filters?.search || ""}
         onDelete={actions.handleDeleteExpense}
         onEdit={actions.handleEditExpense}
       />

@@ -1,17 +1,10 @@
-import handleResponse from "./apiClient";
+import request from "./apiClient";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const JSON_HEADERS = {
   "Content-Type": "application/json",
 };
-
-async function request(url, options) {
-  const response = await fetch(url, options);
-  const data = await handleResponse(response);
-
-  return data.data;
-}
 
 async function registerUser(userData) {
   return request(`${API_URL}/auth/register`, {
@@ -29,7 +22,7 @@ async function loginUser(credentials) {
   });
 }
 
-async function getCurrentUser(token) {
+function getCurrentUser(token) {
   return request(`${API_URL}/auth/me`, {
     method: "GET",
     headers: {
@@ -38,4 +31,11 @@ async function getCurrentUser(token) {
   });
 }
 
-export { registerUser, loginUser, getCurrentUser };
+async function demoLoginUser() {
+  return request(`${API_URL}/auth/demo`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+  });
+}
+
+export { registerUser, loginUser, getCurrentUser, demoLoginUser };

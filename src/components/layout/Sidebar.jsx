@@ -1,14 +1,19 @@
+import useAppContext from "../../providers/useAppContext";
+
 import {
   FaWallet,
   FaPlusCircle,
   FaChartLine,
   FaReceipt,
   FaPiggyBank,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 
 function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
+  const { auth } = useAppContext();
+
   const handleOpenForm = () => {
     openForm();
     closeSidebar();
@@ -55,19 +60,26 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
               <span className="nav-text">Dashboard</span>
             </NavLink>
 
-            <NavLink to="/expenses" onClick={closeSidebar}>
+            <NavLink to="/dashboard/expenses" onClick={closeSidebar}>
               <span className="nav-icon">
                 <FaReceipt />
               </span>
               <span className="nav-text">Expenses</span>
             </NavLink>
 
-            <NavLink to="/budget" onClick={closeSidebar}>
+            <NavLink to="/dashboard/budget" onClick={closeSidebar}>
               <span className="nav-icon">
                 <FaPiggyBank />
               </span>
               <span className="nav-text">Budget Management</span>
             </NavLink>
+          </div>
+
+          <div className="logout">
+            <button onClick={auth.logout}>
+              <FaSignOutAlt />
+              <span>Logout</span>
+            </button>
           </div>
         </nav>
       </aside>

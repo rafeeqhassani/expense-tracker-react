@@ -39,7 +39,7 @@ function resolveNumericValue(valueOrUpdater, previousValue) {
  *
  * @param {(message: string, type: "success" | "error") => void} showToastMessage
  */
-function useBudgetConfig(showToastMessage) {
+function useBudgetConfig(showToastMessage, authLoading, token) {
   const [budgetConfig, setBudgetConfig] = useState(DEFAULT_BUDGET_CONFIG);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -63,8 +63,10 @@ function useBudgetConfig(showToastMessage) {
   }, []);
 
   useEffect(() => {
+    if (authLoading || !token) return;
+
     loadBudget();
-  }, [loadBudget]);
+  }, [loadBudget, authLoading, token]);
 
   /**
    * Persists a budget config to the backend and notifies the user

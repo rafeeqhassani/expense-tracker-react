@@ -185,6 +185,30 @@
   color: var(--color-danger-strong);
 }
 
+/* Landing page CTA buttons */
+
+.landing-primary-btn {
+  background: var(--color-primary-500);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.landing-primary-btn:hover {
+  background: var(--color-primary-600);
+}
+
+.landing-secondary-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.landing-secondary-btn:hover {
+  background: var(--color-surface-muted);
+  border-color: var(--color-primary-500);
+}
+
 /* -------------------------------------------------------------------- 
    RESPONSIVE
    -------------------------------------------------------------------- */

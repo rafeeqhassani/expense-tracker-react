@@ -8,7 +8,7 @@ import Toast from "../ui/Toast";
 import Sidebar from "./Sidebar";
 
 function MainLayout() {
-  const { expense, categories, form, toast, actions } = useAppContext();
+  const { auth, expense, categories, form, toast, actions } = useAppContext();
 
   const { loading, error, loadExpenses } = expense;
 

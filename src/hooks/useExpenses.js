@@ -35,7 +35,7 @@ const EXPENSES_PER_PAGE = 20;
  * @param {(message: string, type: "success" | "error") => void} showToastMessage
  * @param {object} filters - Active filter/sort criteria to apply when fetching expenses.
  */
-function useExpenses(showToastMessage, filters) {
+function useExpenses(showToastMessage, filters, authLoading, token) {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -53,6 +53,8 @@ function useExpenses(showToastMessage, filters) {
 
   // Load the activity feed once on mount.
   useEffect(() => {
+    if (authLoading || !token) return;
+
     async function loadActivities() {
       try {
         const data = await getActivities();
@@ -94,8 +96,10 @@ function useExpenses(showToastMessage, filters) {
 
   // Reload expenses whenever the filters change.
   useEffect(() => {
+    if (authLoading || !token) return;
+
     loadExpenses();
-  }, [loadExpenses]);
+  }, [loadExpenses, authLoading, token]);
 
   /**
    * Fetches the next page of expenses (if any remain) and appends

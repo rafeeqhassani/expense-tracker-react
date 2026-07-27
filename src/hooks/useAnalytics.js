@@ -18,7 +18,7 @@ const DEFAULT_SUMMARY = {
  * @param {*} refreshKey - Changing this value triggers a reload.
  */
 
-function useAnalytics(refreshKey) {
+function useAnalytics(refreshKey, authLoading, token) {
   const [summary, setSummary] = useState(DEFAULT_SUMMARY);
   const [dashboard, setDashboard] = useState({});
   const [charts, setCharts] = useState([]);
@@ -50,8 +50,10 @@ function useAnalytics(refreshKey) {
   }, []);
 
   useEffect(() => {
+    if (authLoading || !token) return;
+
     loadAnalytics();
-  }, [loadAnalytics, refreshKey]);
+  }, [loadAnalytics, refreshKey, authLoading, token]);
 
   return {
     summary,

@@ -47,7 +47,7 @@ async function request(url, options = {}) {
 
   const data = await handleResponse(response);
 
-  return data.data;
+  return data.data ?? data;
 }
 
 export default request;

@@ -9,6 +9,7 @@ import useBudget from "../hooks/useBudget";
 import useBudgetConfig from "../hooks/useBudgetConfig";
 import useCategories from "../hooks/useCategories";
 import useAuth from "../hooks/useAuth";
+import useDebounce from "../hooks/useDebounce";
 
 export const AppContext = createContext(null);
 
@@ -23,8 +24,8 @@ function AppProviders({ children }) {
 
   const { toast, showToastMessage } = useToast();
   const filters = useFilters([]);
+  const debouncedFilters = useDebounce(filters.filters, 400);
 
-  // --- Expenses ---
   const {
     expenses,
     activities,
@@ -52,7 +53,7 @@ function AppProviders({ children }) {
     allSelected,
     someSelected,
     selectedCount,
-  } = useExpenses(showToastMessage, filters.filters);
+  } = useExpenses(showToastMessage, debouncedFilters, auth.loading, auth.token);
 
   // --- Analytics refresh wiring ---
   // Certain expense mutations should trigger an analytics refetch;
@@ -101,8 +102,7 @@ function AppProviders({ children }) {
     showToastMessage,
   });
 
-  // --- Analytics ---
-  const analytics = useAnalytics(showToastMessage, analyticsRefreshKey);
+  const analytics = useAnalytics(analyticsRefreshKey, auth.loading, auth.token);
 
   // --- Budget ---
   const {
@@ -113,7 +113,7 @@ function AppProviders({ children }) {
     resetBudgetConfig,
     updateMonthlyLimit,
     updateCategoryLimit,
-  } = useBudgetConfig(showToastMessage);
+  } = useBudgetConfig(showToastMessage, auth.loading, auth.token);
 
   const budget = useBudget(activeExpenses, budgetConfig);
 
@@ -124,21 +124,25 @@ function AppProviders({ children }) {
     loadBudget,
   };
 
-  // --- Categories ---
-  const categories = useCategories();
+  const categories = useCategories(auth.loading, auth.token);
+  const clearAll = useCallback(async () => {
+    await handleClearSelection();
 
-  // --- Clear everything ---
-  const clearAll = useCallback(() => {
-    handleClearSelection();
-    handleClearAllExpenses();
-    handleClearActivities();
+    await handleClearAllExpenses();
+
+    await handleClearActivities();
+
     resetBudgetConfig();
+
+    refreshAnalytics();
+
     showToastMessage("All data cleared", "success");
   }, [
     handleClearSelection,
     handleClearAllExpenses,
     handleClearActivities,
     resetBudgetConfig,
+    refreshAnalytics,
     showToastMessage,
   ]);
 
@@ -149,7 +153,10 @@ function AppProviders({ children }) {
         user: auth.user,
         token: auth.token,
         loading: auth.loading,
+        initializing: auth.initializing,
         login: auth.login,
+        register: auth.register,
+        demoLogin: auth.demoLogin,
         logout: auth.logout,
         loadCurrentUser: auth.loadCurrentUser,
       },

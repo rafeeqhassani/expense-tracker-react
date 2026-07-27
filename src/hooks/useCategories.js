@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { getCategories } from "../services/categoryApi";
 
-function useCategories() {
+function useCategories(authLoading, token) {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
+    if (authLoading || !token) return;
     async function loadCategories() {
       try {
         const data = await getCategories();
