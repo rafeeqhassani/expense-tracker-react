@@ -47,7 +47,11 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
 
   // --- Undo-delete state ---
   const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
-
+  useEffect(() => {
+    if (!token) {
+      setLastDeletedExpense(null);
+    }
+  }, [token]);
   // --- Activity feed state ---
   const [activities, setActivities] = useState([]);
 
@@ -66,7 +70,7 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
     }
 
     loadActivities();
-  }, []);
+  }, [authLoading, token]);
 
   /**
    * Fetches the first page of expenses matching the current filters,
@@ -269,8 +273,8 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
 
   const handleClearActivities = async () => {
     try {
-      const updatedActivities = await clearActivitiesApi();
-      setActivities(updatedActivities);
+      await clearActivitiesApi();
+      setActivities([]);
     } catch (error) {
       console.error("Failed to clear activities", error);
     }

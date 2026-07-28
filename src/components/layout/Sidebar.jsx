@@ -53,7 +53,7 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
           </div>
 
           <div className="nav-links">
-            <NavLink to="/" end onClick={closeSidebar}>
+            <NavLink to="/dashboard" end onClick={closeSidebar}>
               <span className="nav-icon">
                 <FaChartLine />
               </span>

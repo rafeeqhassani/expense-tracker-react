@@ -9,8 +9,6 @@ function ProtectedRoute({ children }) {
   }
 
   if (!auth.token) {
-    console.log("Redirecting to login");
-
     return <Navigate to="/login" replace />;
   }
 

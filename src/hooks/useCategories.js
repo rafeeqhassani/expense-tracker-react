@@ -9,6 +9,7 @@ function useCategories(authLoading, token) {
     async function loadCategories() {
       try {
         const data = await getCategories();
+
         setCategories(data);
       } catch (error) {
         console.error("Failed to load categories", error);
@@ -16,7 +17,7 @@ function useCategories(authLoading, token) {
     }
 
     loadCategories();
-  }, []);
+  }, [authLoading, token]);
 
   return categories;
 }
