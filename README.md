@@ -16,11 +16,13 @@ A full-stack responsive expense management application built with React.js and R
 
 ### Desktop View
 
-![Expense Dashboard](public/expense-dashboard.png)
+![Expenses Dashboard](public/expenses-dashboard.png)
+![Expenses table](public/expenses-table.png)
+![Expenses budget](public/expenses-budget.png)
 
 ### Mobile View
 
-![Mobile Dashboard](public/expense-mob-dashboard.png)
+![Expenses mobile Dashboard](public/expenses-mob-dashboard.png)
 
 ---
 
