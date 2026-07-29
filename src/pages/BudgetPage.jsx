@@ -24,6 +24,7 @@ function BudgetPage() {
     updateMonthlyLimit,
     updateCategoryLimit,
     categories,
+    saveBudgetConfig,
   } = useAppContext();
 
   const [categorySearch, setCategorySearch] = useState("");
@@ -67,6 +68,7 @@ function BudgetPage() {
             <MonthlyBudgetEditor
               monthlyLimit={budgetConfig.monthlyLimit}
               updateMonthlyLimit={updateMonthlyLimit}
+              saveBudgetConfig={saveBudgetConfig}
             />
           </div>
         )}
@@ -92,6 +94,7 @@ function BudgetPage() {
               categoryLimits={budgetConfig.categoryLimits}
               allCategories={categories}
               updateCategoryLimit={updateCategoryLimit}
+              saveBudgetConfig={saveBudgetConfig}
             />
           </div>
         )}

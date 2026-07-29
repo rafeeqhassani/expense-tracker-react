@@ -113,6 +113,7 @@ function AppProviders({ children }) {
     resetBudgetConfig,
     updateMonthlyLimit,
     updateCategoryLimit,
+    saveBudgetConfig,
   } = useBudgetConfig(showToastMessage, auth.loading, auth.token);
 
   const budget = useBudget(activeExpenses, budgetConfig);
@@ -180,6 +181,7 @@ function AppProviders({ children }) {
       budgetConfig,
       updateMonthlyLimit,
       updateCategoryLimit,
+      saveBudgetConfig,
 
       form: {
         formData: form.formData,

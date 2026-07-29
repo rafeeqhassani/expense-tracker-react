@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { getBudget, saveBudget } from "../services/budgetApi";
 
 const DEFAULT_BUDGET_CONFIG = {
@@ -43,6 +43,7 @@ function useBudgetConfig(showToastMessage, authLoading, token) {
   const [budgetConfig, setBudgetConfig] = useState(DEFAULT_BUDGET_CONFIG);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   // Load the persisted budget config once on mount.
   const loadBudget = useCallback(async () => {
     setLoading(true);
@@ -62,12 +63,6 @@ function useBudgetConfig(showToastMessage, authLoading, token) {
     }
   }, []);
 
-  useEffect(() => {
-    if (authLoading || !token) return;
-
-    loadBudget();
-  }, [loadBudget, authLoading, token]);
-
   /**
    * Persists a budget config to the backend and notifies the user
    * of the outcome.
@@ -85,48 +80,51 @@ function useBudgetConfig(showToastMessage, authLoading, token) {
     [showToastMessage],
   );
 
+  const saveBudgetConfig = useCallback(async () => {
+    await saveConfig(budgetConfig);
+  }, [budgetConfig, saveConfig]);
+
+  useEffect(() => {
+    if (authLoading || !token) return;
+
+    loadBudget();
+  }, [loadBudget, authLoading, token]);
+
   /**
    * Updates the overall monthly limit, accepting either a new value
    * or an updater function of the previous value.
    */
-  const updateMonthlyLimit = useCallback(
-    async (valueOrUpdater) => {
-      const updatedConfig = {
-        ...budgetConfig,
-        monthlyLimit: resolveNumericValue(
-          valueOrUpdater,
-          budgetConfig.monthlyLimit,
-        ),
-      };
 
-      setBudgetConfig(updatedConfig);
-      await saveConfig(updatedConfig);
-    },
-    [budgetConfig, saveConfig],
-  );
+  const updateMonthlyLimit = useCallback((valueOrUpdater) => {
+    setBudgetConfig((prev) => ({
+      ...prev,
+      monthlyLimit: Math.max(
+        0,
+        resolveNumericValue(valueOrUpdater, prev.monthlyLimit),
+      ),
+    }));
+  }, []);
 
   /**
    * Updates the limit for a single category, accepting either a new
    * value or an updater function of the previous value.
    */
 
-  const updateCategoryLimit = useCallback(
-    async (category, valueOrUpdater) => {
-      const previousValue = budgetConfig.categoryLimits[category] ?? 0;
-
-      const updatedConfig = {
-        ...budgetConfig,
-        categoryLimits: {
-          ...budgetConfig.categoryLimits,
-          [category]: resolveNumericValue(valueOrUpdater, previousValue),
-        },
-      };
-
-      setBudgetConfig(updatedConfig);
-      await saveConfig(updatedConfig);
-    },
-    [budgetConfig, saveConfig],
-  );
+  const updateCategoryLimit = useCallback((category, valueOrUpdater) => {
+    setBudgetConfig((prev) => ({
+      ...prev,
+      categoryLimits: {
+        ...prev.categoryLimits,
+        [category]: Math.max(
+          0,
+          resolveNumericValue(
+            valueOrUpdater,
+            prev.categoryLimits[category] ?? 0,
+          ),
+        ),
+      },
+    }));
+  }, []);
 
   /**
    * Resets the budget config back to its default (unsaved) state.
@@ -144,6 +142,7 @@ function useBudgetConfig(showToastMessage, authLoading, token) {
     updateCategoryLimit,
     resetBudgetConfig,
     loadBudget,
+    saveBudgetConfig,
   };
 }
 

@@ -1,32 +1,51 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useHoldButton from "../../hooks/useHoldButton";
 
+const MAX_BUDGET_LIMIT = 999999999;
 const STEP_AMOUNT = 1;
 
-function CategoryBudgetRow({ category, limit, updateCategoryLimit }) {
+function CategoryBudgetRow({
+  category,
+  limit,
+  updateCategoryLimit,
+  saveBudgetConfig,
+}) {
   const { start, stop } = useHoldButton();
 
   const [inputValue, setInputValue] = useState(String(limit));
+  const isHoldingRef = useRef(false);
 
   useEffect(() => {
     setInputValue(String(limit));
   }, [limit]);
 
-  const decrement = () =>
+  const decrement = useCallback(() => {
     start(() =>
       updateCategoryLimit(category, (prev) => Math.max(0, prev - STEP_AMOUNT)),
     );
-  const increment = () =>
+  }, [start, category, updateCategoryLimit]);
+
+  const increment = useCallback(() => {
     start(() => updateCategoryLimit(category, (prev) => prev + STEP_AMOUNT));
+  }, [start, category, updateCategoryLimit]);
 
   const handleChange = (e) => {
     let value = e.target.value;
 
     value = value.replace(/^0+(?=\d)/, "");
 
-    setInputValue(value);
+    if (value.includes(".") && value.split(".")[1].length > 2) {
+      return;
+    }
 
-    updateCategoryLimit(category, value === "" ? 0 : Number(value));
+    const numericValue = value === "" ? 0 : Number(value);
+
+    if (numericValue > MAX_BUDGET_LIMIT) {
+      return;
+    }
+
+    setInputValue(value);
+    updateCategoryLimit(category, numericValue);
   };
 
   return (
@@ -36,8 +55,17 @@ function CategoryBudgetRow({ category, limit, updateCategoryLimit }) {
       <div className="budget-input">
         <button
           type="button"
-          onPointerDown={decrement}
-          onPointerUp={stop}
+          onPointerDown={() => {
+            isHoldingRef.current = true;
+            decrement();
+          }}
+          onPointerUp={() => {
+            if (!isHoldingRef.current) return;
+            isHoldingRef.current = false;
+
+            stop();
+            saveBudgetConfig();
+          }}
           onPointerLeave={stop}
           onPointerCancel={stop}
         >
@@ -53,8 +81,17 @@ function CategoryBudgetRow({ category, limit, updateCategoryLimit }) {
 
         <button
           type="button"
-          onPointerDown={increment}
-          onPointerUp={stop}
+          onPointerDown={() => {
+            isHoldingRef.current = true;
+            increment();
+          }}
+          onPointerUp={() => {
+            if (!isHoldingRef.current) return;
+            isHoldingRef.current = false;
+
+            stop();
+            saveBudgetConfig();
+          }}
           onPointerLeave={stop}
           onPointerCancel={stop}
         >
@@ -69,6 +106,7 @@ function CategoryBudgetEditor({
   categoryLimits,
   allCategories,
   updateCategoryLimit,
+  saveBudgetConfig,
 }) {
   return (
     <section className="category-budget-editor">
@@ -80,10 +118,11 @@ function CategoryBudgetEditor({
           category={category}
           limit={categoryLimits[category] ?? 0}
           updateCategoryLimit={updateCategoryLimit}
+          saveBudgetConfig={saveBudgetConfig}
         />
       ))}
     </section>
   );
 }
 
-export default memo(CategoryBudgetEditor);
+export default CategoryBudgetEditor;
