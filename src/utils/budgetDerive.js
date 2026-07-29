@@ -35,8 +35,6 @@ export function getBudgetStatus(totalSpent, limit) {
       limit: 0,
       remaining: 0,
       percentUsed: 0,
-      overspendRatio: 0,
-      riskScore: 0,
       status: NOT_SET_STATUS,
     };
   }
@@ -58,8 +56,6 @@ export function getBudgetStatus(totalSpent, limit) {
     limit: safeLimit,
     remaining: safeLimit - safeSpent,
     percentUsed,
-    overspendRatio: safeSpent / safeLimit,
-    riskScore: Math.round(Math.min(percentUsed, 100)),
     status,
   };
 }

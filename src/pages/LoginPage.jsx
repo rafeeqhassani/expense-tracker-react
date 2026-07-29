@@ -2,6 +2,7 @@ import { useState } from "react";
 import useAppContext from "../providers/useAppContext";
 import { useNavigate } from "react-router-dom";
 import { validateLoginForm } from "../utils/validation";
+import { normalizeAuthData } from "../utils/authTransform";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -28,10 +29,12 @@ function LoginPage() {
     setError("");
 
     try {
-      await auth.login({
-        email,
-        password,
-      });
+      await auth.login(
+        normalizeAuthData({
+          email,
+          password,
+        }),
+      );
 
       navigate("/dashboard");
     } catch (error) {

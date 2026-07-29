@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 import useAppContext from "../providers/useAppContext";
 import { validateRegisterForm } from "../utils/validation";
+import { normalizeAuthData } from "../utils/authTransform";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ function RegisterPage() {
     setError("");
 
     try {
-      await auth.register(formData);
+      await auth.register(normalizeAuthData(formData));
 
       navigate("/dashboard");
     } catch (error) {
