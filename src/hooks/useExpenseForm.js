@@ -1,7 +1,7 @@
 import { useReducer, useRef } from "react";
 
-import { validateForm, editExpense } from "../utils/expenseFormState";
 import { normalizeExpenseData, isSameData } from "../utils/expenseTransform";
+import { validateExpenseForm } from "../utils/validation";
 
 const CATEGORY_FIELD_NAMES = ["category", "customCategory"];
 
@@ -12,7 +12,6 @@ const createInitialFormData = () => ({
   customCategory: "",
   date: "",
   recurring: "none",
-  lastGeneratedDate: "",
 });
 
 const getInitialState = () => ({
@@ -116,7 +115,6 @@ function reducer(state, action) {
           customCategory: action.payload.customCategory ?? "",
           date: action.payload.date ?? "",
           recurring: action.payload.recurring ?? "none",
-          lastGeneratedDate: action.payload.lastGeneratedDate ?? "",
         },
         mode: "edit",
         editingId: action.payload.id,
@@ -182,7 +180,7 @@ function useExpenseForm({
       dispatch({ type: "SET_SUBMIT_ATTEMPTED", payload: true });
 
       const formSnapshot = { ...formData };
-      const formErrors = validateForm(formSnapshot);
+      const formErrors = validateExpenseForm(formSnapshot);
 
       if (Object.keys(formErrors).length > 0) {
         dispatch({ type: "SET_ERRORS", payload: formErrors });
@@ -198,12 +196,7 @@ function useExpenseForm({
       );
 
       if (mode === "add") {
-        const finalData = {
-          ...normalizedData,
-          lastGeneratedDate:
-            normalizedData.recurring !== "none" ? normalizedData.date : "",
-        };
-        handleAddExpense(finalData);
+        handleAddExpense(normalizedData);
       } else {
         const existingExpense = expenses.find(
           (expense) => expense.id === editingId,
@@ -229,7 +222,9 @@ function useExpenseForm({
   }
 
   function handleEditExpense(id) {
-    const expense = editExpense(expenses, id);
+    const expense = expenses.find(
+      (expense) => expense.id === id && !expense.deleted,
+    );
 
     if (!expense) {
       showToastMessage("No expenses found", "info");

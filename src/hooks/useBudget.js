@@ -7,7 +7,7 @@ import {
   getCategoryBudgetSummary,
   getMonthlyBudgetSummary,
 } from "../utils/budgetDerive";
-import { formatBudget } from "../utils/expenseTransform";
+import { formatBudget } from "../utils/formatters";
 
 function useBudget(expenses, budgetConfig) {
   const totalSpent = useMemo(() => calculateTotalSpent(expenses), [expenses]);

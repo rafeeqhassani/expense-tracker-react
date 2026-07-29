@@ -1,4 +1,4 @@
-import { formatCurrency } from "../../utils/expenseTransform";
+import { formatCurrency } from "../../utils/formatters";
 
 const STATS_CONFIG = [
   {

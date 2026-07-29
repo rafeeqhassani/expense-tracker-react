@@ -1,5 +1,5 @@
 import useAppContext from "../../providers/useAppContext";
-import { formatCurrency } from "../../utils/expenseTransform";
+import { formatCurrency } from "../../utils/formatters";
 
 const HIGH_AMOUNT_THRESHOLD = 50000;
 const MEDIUM_AMOUNT_THRESHOLD = 20000;

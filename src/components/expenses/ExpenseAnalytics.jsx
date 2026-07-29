@@ -1,4 +1,4 @@
-import { formatCurrency } from "../../utils/expenseTransform";
+import { formatCurrency } from "../../utils/formatters";
 
 function SummaryCard({ label, value = 0, className = "", type = "number" }) {
   const displayValue = type === "currency" ? formatCurrency(value) : value;
