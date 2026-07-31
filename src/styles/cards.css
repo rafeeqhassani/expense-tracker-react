@@ -219,7 +219,8 @@
 /* -------------------------------------------------------------------- 
    RECENT ACTIVITY
    -------------------------------------------------------------------- */
-.recent-activity {
+.recent-activity,
+.activity-page {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);

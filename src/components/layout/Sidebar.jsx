@@ -7,6 +7,8 @@ import {
   FaReceipt,
   FaPiggyBank,
   FaSignOutAlt,
+  FaHistory,
+  FaTags,
 } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
@@ -65,6 +67,14 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
                 <FaReceipt />
               </span>
               <span className="nav-text">Expenses</span>
+            </NavLink>
+
+            <NavLink to="/dashboard/activities" onClick={closeSidebar}>
+              <span className="nav-icon">
+                <FaHistory />
+              </span>
+
+              <span className="nav-text">Activities</span>
             </NavLink>
 
             <NavLink to="/dashboard/budget" onClick={closeSidebar}>

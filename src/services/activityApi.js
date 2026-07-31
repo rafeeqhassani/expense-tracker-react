@@ -6,8 +6,25 @@ const JSON_HEADERS = {
   "Content-Type": "application/json",
 };
 
-export async function getActivities() {
-  return request(`${API_URL}/activities`);
+function buildQueryString(filters) {
+  const params = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) {
+      params.append(key, value);
+    }
+  });
+
+  return params.toString();
+}
+
+export async function getActivities(filters = {}) {
+  const query = buildQueryString(filters);
+  const url = query
+    ? `${API_URL}/activities?${query}`
+    : `${API_URL}/activities`;
+
+  return request(url, { cache: "no-store" });
 }
 
 export async function createActivity(activity) {

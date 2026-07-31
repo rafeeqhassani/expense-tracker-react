@@ -16,13 +16,14 @@ function useAuth() {
   const [token, setToken] = useState(getFromLocalStorage("token"));
   const [loading, setLoading] = useState(true);
   const [initializing, setInitializing] = useState(true);
+  const [error, setError] = useState(null);
 
   const login = useCallback(async (credentials) => {
     setLoading(true);
 
     try {
       const response = await loginUser(credentials);
-
+      setError(null);
       const { token, user } = response;
 
       saveToLocalStorage("token", token);
@@ -41,7 +42,7 @@ function useAuth() {
 
     try {
       const response = await registerUser(userData);
-
+      setError(null);
       const { token, user } = response;
 
       saveToLocalStorage("token", token);
@@ -60,7 +61,7 @@ function useAuth() {
 
     try {
       const response = await demoLoginUser();
-
+      setError(null);
       const { token, user } = response;
 
       saveToLocalStorage("token", token);
@@ -84,6 +85,7 @@ function useAuth() {
     }
 
     setLoading(true);
+    setError(null);
 
     try {
       const data = await getCurrentUser(storedToken);
@@ -91,9 +93,14 @@ function useAuth() {
       setToken(storedToken);
       setUser(data.user);
     } catch (error) {
-      removeFromLocalStorage("token");
-      setToken(null);
-      setUser(null);
+      console.error("Load current user failed:", error);
+      setError(error.message);
+
+      if (error.status === 401) {
+        removeFromLocalStorage("token");
+        setToken(null);
+        setUser(null);
+      }
     } finally {
       setLoading(false);
       setInitializing(false);
@@ -109,6 +116,7 @@ function useAuth() {
 
     setToken(null);
     setUser(null);
+    setError(null);
   }, []);
 
   return {
@@ -116,6 +124,7 @@ function useAuth() {
     token,
     loading,
     initializing,
+    error,
     login,
     register,
     demoLogin,

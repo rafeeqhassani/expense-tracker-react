@@ -8,6 +8,8 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import LandingPage from "../pages/LandingPage";
 import DemoLoginPage from "../pages/DemoLoginPage";
+import ActivitiesPage from "../pages/ActivitiesPage";
+import CategoryAnalyticsPage from "../pages/CategoryAnalyticsPage";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -32,6 +34,8 @@ function AppRoutes() {
         <Route index element={<DashboardPage />} />
         <Route path="budget" element={<BudgetPage />} />
         <Route path="expenses" element={<ExpensePage />} />
+        <Route path="activities" element={<ActivitiesPage />} />
+        <Route path="categories" element={<CategoryAnalyticsPage />} />
       </Route>
     </Routes>
   );

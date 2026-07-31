@@ -10,12 +10,6 @@ import {
 } from "../utils/expenseState";
 
 import {
-  getActivities,
-  createActivity,
-  clearActivities as clearActivitiesApi,
-} from "../services/activityApi";
-
-import {
   getExpenses,
   createExpense,
   deleteExpense,
@@ -25,17 +19,24 @@ import {
   deleteSelectedExpenses,
 } from "../services/expenseApi";
 
-const MAX_ACTIVITIES = 10;
 const EXPENSES_PER_PAGE = 20;
 
 /**
- * Manages expenses, their pagination, selection state, and the
- * related activity feed for the expense tracker.
+ *
+ * Manages expenses, their pagination, selection state,
+ * and expense-related actions.
+ *
  *
  * @param {(message: string, type: "success" | "error") => void} showToastMessage
  * @param {object} filters - Active filter/sort criteria to apply when fetching expenses.
  */
-function useExpenses(showToastMessage, filters, authLoading, token) {
+function useExpenses(
+  showToastMessage,
+  filters,
+  authLoading,
+  token,
+  addActivity,
+) {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -52,25 +53,6 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
       setLastDeletedExpense(null);
     }
   }, [token]);
-  // --- Activity feed state ---
-  const [activities, setActivities] = useState([]);
-
-  // Load the activity feed once on mount.
-  useEffect(() => {
-    if (authLoading || !token) return;
-
-    async function loadActivities() {
-      try {
-        const data = await getActivities();
-
-        setActivities(data);
-      } catch (error) {
-        console.error("Failed to load activities", error);
-      }
-    }
-
-    loadActivities();
-  }, [authLoading, token]);
 
   /**
    * Fetches the first page of expenses matching the current filters,
@@ -134,26 +116,13 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
     }
   };
 
-  /**
-   * Records a new activity in the feed, keeping only the most
-   * recent `MAX_ACTIVITIES` entries.
-   */
-  const addActivity = async (type, message) => {
-    try {
-      const activity = await createActivity({ type, message });
-
-      setActivities((prev) => [activity, ...prev].slice(0, MAX_ACTIVITIES));
-    } catch (error) {
-      console.error("Failed to create activity", error);
-    }
-  };
-
   const handleAddExpense = async (newExpense) => {
     try {
       const savedExpense = await createExpense(newExpense);
 
       setExpenses((prev) => [...prev, savedExpense]);
-      addActivity("ADD_EXPENSE", `Added ${savedExpense.title}`);
+
+      await addActivity("ADD_EXPENSE", `Added ${savedExpense.title}`);
 
       showToastMessage("Expense added", "success");
     } catch (error) {
@@ -171,7 +140,7 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
           expense.id === id ? { ...expense, ...updatedData } : expense,
         ),
       );
-      addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
+      await addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
 
       showToastMessage("Expense updated", "success");
     } catch (error) {
@@ -195,7 +164,7 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
 
       if (deletedExpense) {
         setLastDeletedExpense(deletedExpense);
-        addActivity("DELETE_EXPENSE", `Deleted ${deletedExpense.title}`);
+        await addActivity("DELETE_EXPENSE", `Deleted ${deletedExpense.title}`);
       }
 
       setSelectedIds((prev) => {
@@ -223,7 +192,7 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
         ),
       );
 
-      addActivity("RESTORE_EXPENSE", `Restored ${restoredExpense.title}`);
+      await addActivity("RESTORE_EXPENSE", `Restored ${restoredExpense.title}`);
       setLastDeletedExpense(null);
 
       showToastMessage("Expense restored", "success");
@@ -271,15 +240,6 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
     }
   };
 
-  const handleClearActivities = async () => {
-    try {
-      await clearActivitiesApi();
-      setActivities([]);
-    } catch (error) {
-      console.error("Failed to clear activities", error);
-    }
-  };
-
   const handleToggleSelected = (id) => {
     setSelectedIds((prev) => toggleSelectedExpense(prev, id));
   };
@@ -305,7 +265,6 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
 
   return {
     expenses,
-    activities,
     loading,
     error,
 
@@ -322,7 +281,6 @@ function useExpenses(showToastMessage, filters, authLoading, token) {
     handleRemoveSelected,
     handleClearSelection,
     handleClearAllExpenses,
-    handleClearActivities,
 
     handleAddExpense,
     handleUndoDelete,

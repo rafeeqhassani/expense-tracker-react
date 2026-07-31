@@ -1,25 +1,20 @@
-function RecentActivity({ activities }) {
+import { useNavigate } from "react-router-dom";
+
+import ActivityList from "./ActivityList";
+
+function RecentActivity({ activities, hasMore }) {
+  const navigate = useNavigate();
+
   return (
     <section className="recent-activity">
       <h2>Recent Activity</h2>
 
-      {activities.length === 0 ? (
-        <p className="empty-activity-message">No recent activity yet</p>
-      ) : (
-        <div className="activity-list">
-          {activities.map((activity) => (
-            <div className="activity-item" key={activity.id}>
-              <p className="activity-message">{activity.message}</p>
-              <small className="activity-date">
-                {new Date(activity.createdAt).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </small>
-            </div>
-          ))}
-        </div>
+      <ActivityList activities={activities} />
+
+      {hasMore && (
+        <button type="button" onClick={() => navigate("/dashboard/activities")}>
+          View All Activities
+        </button>
       )}
     </section>
   );

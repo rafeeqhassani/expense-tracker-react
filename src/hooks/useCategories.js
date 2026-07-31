@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCategories } from "../services/categoryApi";
 
-function useCategories(authLoading, token) {
+function useCategories(refreshKey, authLoading, token) {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ function useCategories(authLoading, token) {
     }
 
     loadCategories();
-  }, [authLoading, token]);
+  }, [refreshKey, authLoading, token]);
 
   return categories;
 }

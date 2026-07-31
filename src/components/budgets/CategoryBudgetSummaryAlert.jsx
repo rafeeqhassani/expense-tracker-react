@@ -20,7 +20,7 @@ function CategoryBudgetSummaryAlert({ summary }) {
   };
 
   const handleManageBudget = () => {
-    navigate("/budget?tab=category");
+    navigate("/dashboard/budget?tab=category");
   };
 
   return (

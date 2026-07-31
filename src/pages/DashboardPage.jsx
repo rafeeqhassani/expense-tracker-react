@@ -11,7 +11,7 @@ import LoadingState from "../components/ui/LoadingState";
 import ErrorState from "../components/ui/ErrorState";
 
 function DashboardPage() {
-  const { analytics, budget, activities } = useAppContext();
+  const { analytics, budget, activityPreview } = useAppContext();
 
   if (analytics.loading) {
     return <LoadingState message="Loading analytics..." />;
@@ -43,8 +43,10 @@ function DashboardPage() {
           <ExpenseCharts charts={analytics.charts} />
         </div>
       </section>
-
-      <RecentActivity activities={activities} />
+      <RecentActivity
+        activities={activityPreview.activities}
+        hasMore={activityPreview.hasMore}
+      />
     </>
   );
 }

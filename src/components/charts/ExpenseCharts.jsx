@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import ChartRenderer from "./ChartRenderer";
 
@@ -50,6 +51,7 @@ function ExpenseCharts({ charts = {} }) {
       <div className="chart-content">
         <ChartRenderer type={chartType} data={chartData} />
       </div>
+      <Link to="/dashboard/categories">View All Categories</Link>
     </section>
   );
 }

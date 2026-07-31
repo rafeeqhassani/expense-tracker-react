@@ -15,7 +15,7 @@ function MonthlyBudgetSummaryAlert({ summary }) {
   };
 
   const handleManageBudget = () => {
-    navigate("/budget?tab=monthly");
+    navigate("/dashboard/budget?tab=monthly");
   };
 
   return (

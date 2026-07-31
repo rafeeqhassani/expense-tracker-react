@@ -9,17 +9,25 @@ import { getFromLocalStorage } from "../utils/storage";
  * @throws {Error} With the server's message (if present) or an
  *   `HTTP <status>` fallback.
  */
+
 async function handleResponse(response) {
   let data;
 
   try {
     data = await response.json();
+    
   } catch {
-    throw new Error(`HTTP ${response.status}`);
+    const error = new Error(`HTTP ${response.status}`);
+    error.status = response.status;
+    throw error;
   }
 
   if (!response.ok) {
-    throw new Error(data.message || `HTTP ${response.status}`);
+    const error = new Error(data.message || `HTTP ${response.status}`);
+
+    error.status = response.status;
+
+    throw error;
   }
 
   return data;
@@ -40,10 +48,17 @@ async function request(url, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  let response;
+
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+    });
+  } catch (error) {
+    console.error("API request failed:", error);
+    throw new Error("Unable to connect to the server.");
+  }
 
   const data = await handleResponse(response);
 

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useMemo, useState } from "react";
+import { createContext, useCallback, useMemo } from "react";
 
 import useExpenses from "../hooks/useExpenses";
 import useFilters from "../hooks/useFilters";
@@ -10,6 +10,13 @@ import useBudgetConfig from "../hooks/useBudgetConfig";
 import useCategories from "../hooks/useCategories";
 import useAuth from "../hooks/useAuth";
 import useDebounce from "../hooks/useDebounce";
+import useActivities from "../hooks/useActivities";
+import useActivityPreview from "../hooks/useActivityPreview";
+import useAnalyticsRefresh from "../hooks/refresh/useAnalyticsRefresh";
+import useExpenseActions from "../hooks/useExpenseActions";
+import useActivityRefresh from "../hooks/refresh/useActivityRefresh";
+import useCategoryAnalytics from "../hooks/useCategoryAnalytics";
+import useCategoriesRefresh from "../hooks/refresh/useCategoriesRefresh";
 
 export const AppContext = createContext(null);
 
@@ -19,16 +26,24 @@ export const AppContext = createContext(null);
  * throughout the app.
  */
 function AppProviders({ children }) {
-  const [analyticsRefreshKey, setAnalyticsRefreshKey] = useState(0);
   const auth = useAuth();
 
   const { toast, showToastMessage } = useToast();
   const filters = useFilters([]);
   const debouncedFilters = useDebounce(filters.filters, 400);
 
+  const { refreshKey: activityRefreshKey, refreshActivities } =
+    useActivityRefresh();
+
+  const activities = useActivities(
+    activityRefreshKey,
+    auth.loading,
+    auth.token,
+  );
+  const { handleClearActivities } = activities;
+
   const {
     expenses,
-    activities,
     loading,
     error,
 
@@ -49,41 +64,16 @@ function AppProviders({ children }) {
     handleRemoveSelected,
     handleClearSelection,
     handleClearAllExpenses,
-    handleClearActivities,
+
     allSelected,
     someSelected,
     selectedCount,
-  } = useExpenses(showToastMessage, debouncedFilters, auth.loading, auth.token);
-
-  // --- Analytics refresh wiring ---
-  // Certain expense mutations should trigger an analytics refetch;
-  // these wrappers run the original handler, then bump the refresh key.
-  const refreshAnalytics = useCallback(() => {
-    setAnalyticsRefreshKey((prev) => prev + 1);
-  }, []);
-
-  const addExpenseWithRefresh = useCallback(
-    async (...args) => {
-      await handleAddExpense(...args);
-      refreshAnalytics();
-    },
-    [handleAddExpense, refreshAnalytics],
-  );
-
-  const updateExpenseWithRefresh = useCallback(
-    async (...args) => {
-      await handleUpdateExpense(...args);
-      refreshAnalytics();
-    },
-    [handleUpdateExpense, refreshAnalytics],
-  );
-
-  const deleteExpenseWithRefresh = useCallback(
-    async (...args) => {
-      await handleDeleteExpense(...args);
-      refreshAnalytics();
-    },
-    [handleDeleteExpense, refreshAnalytics],
+  } = useExpenses(
+    showToastMessage,
+    debouncedFilters,
+    auth.loading,
+    auth.token,
+    activities.addActivity,
   );
 
   const activeExpenses = useMemo(
@@ -94,15 +84,50 @@ function AppProviders({ children }) {
     [expenses],
   );
 
-  // --- Form ---
+  const activityPreview = useActivityPreview(
+    activityRefreshKey,
+    auth.loading,
+    auth.token,
+  );
+
+  const { refreshKey: analyticsRefreshKey, refreshAnalytics } =
+    useAnalyticsRefresh();
+
+  const analytics = useAnalytics(analyticsRefreshKey, auth.loading, auth.token);
+
+  const { refreshKey: categoriesRefreshKey, refreshCategories } =
+    useCategoriesRefresh();
+
+  const categories = useCategories(
+    categoriesRefreshKey,
+    auth.loading,
+    auth.token,
+  );
+  const categoryAnalytics = useCategoryAnalytics(
+    categoriesRefreshKey,
+    auth.loading,
+    auth.token,
+  );
+
+  const {
+    addExpenseWithRefresh,
+    updateExpenseWithRefresh,
+    deleteExpenseWithRefresh,
+  } = useExpenseActions({
+    handleAddExpense,
+    handleUpdateExpense,
+    handleDeleteExpense,
+    refreshAnalytics,
+    refreshActivities,
+    refreshCategories,
+  });
+
   const form = useExpenseForm({
     expenses: activeExpenses,
     handleAddExpense: addExpenseWithRefresh,
     handleUpdateExpense: updateExpenseWithRefresh,
     showToastMessage,
   });
-
-  const analytics = useAnalytics(analyticsRefreshKey, auth.loading, auth.token);
 
   // --- Budget ---
   const {
@@ -125,7 +150,6 @@ function AppProviders({ children }) {
     loadBudget,
   };
 
-  const categories = useCategories(auth.loading, auth.token);
   const clearAll = useCallback(async () => {
     await handleClearSelection();
 
@@ -136,6 +160,8 @@ function AppProviders({ children }) {
     resetBudgetConfig();
 
     refreshAnalytics();
+    refreshActivities();
+    refreshCategories();
 
     showToastMessage("All data cleared", "success");
   }, [
@@ -144,6 +170,7 @@ function AppProviders({ children }) {
     handleClearActivities,
     resetBudgetConfig,
     refreshAnalytics,
+    refreshActivities,
     showToastMessage,
   ]);
 
@@ -155,6 +182,8 @@ function AppProviders({ children }) {
         token: auth.token,
         loading: auth.loading,
         initializing: auth.initializing,
+        error: auth.error,
+
         login: auth.login,
         register: auth.register,
         demoLogin: auth.demoLogin,
@@ -172,11 +201,13 @@ function AppProviders({ children }) {
         loadExpenses,
       },
 
-      activities,
+      activity: activities,
+      activityPreview,
       categories,
       filters: filters.filters,
 
       analytics,
+      categoryAnalytics,
       budget: budgetDomain,
       budgetConfig,
       updateMonthlyLimit,
@@ -227,18 +258,28 @@ function AppProviders({ children }) {
       filters,
       activities,
       analytics,
+      categoryAnalytics,
+      categories,
       budget,
       budgetConfig,
       updateMonthlyLimit,
       updateCategoryLimit,
       form,
       toast,
-      handleAddExpense,
-      handleUpdateExpense,
+      activityPreview,
+      refreshActivities,
+      deleteExpenseWithRefresh,
       handleUndoDelete,
-      handleDeleteExpense,
+
       selectedIds,
       lastDeletedExpense,
+
+      loadingMore,
+      loading,
+      error,
+      pagination,
+      loadExpenses,
+      loadMoreExpenses,
       handleToggleSelected,
       handleSelectAll,
       handleDeselectAll,
