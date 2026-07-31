@@ -129,10 +129,18 @@ function useBudgetConfig(showToastMessage, authLoading, token) {
   /**
    * Resets the budget config back to its default (unsaved) state.
    */
-  const resetBudgetConfig = useCallback(() => {
-    setBudgetConfig(DEFAULT_BUDGET_CONFIG);
-    showToastMessage("Budget reset", "success");
-  }, [showToastMessage]);
+  const resetBudgetConfig = useCallback(async () => {
+    try {
+      const defaultConfig = DEFAULT_BUDGET_CONFIG;
+
+      await saveBudget(defaultConfig);
+
+      setBudgetConfig(defaultConfig);
+    } catch (error) {
+      console.error("Failed to reset budget", error);
+      throw error;
+    }
+  }, []);
 
   return {
     budgetConfig,

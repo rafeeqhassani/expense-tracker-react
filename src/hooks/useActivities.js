@@ -82,12 +82,13 @@ function useActivities(refreshKey, authLoading, token) {
   const handleClearActivities = async () => {
     try {
       await clearActivitiesApi();
+
       setActivities([]);
       setPagination(null);
       setPage(1);
     } catch (error) {
       console.error("Failed to clear activities", error);
-      setError(error.message);
+      throw error;
     }
   };
 

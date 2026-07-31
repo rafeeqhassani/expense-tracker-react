@@ -6,7 +6,7 @@ function useCategoryAnalytics(refreshKey, authLoading, token) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const loadCategories = useCallback(async () => {
+  const loadCategoryAnalytics = useCallback(async () => {
     try {
       setError(null);
       setLoading(true);
@@ -26,14 +26,14 @@ function useCategoryAnalytics(refreshKey, authLoading, token) {
   useEffect(() => {
     if (authLoading || !token) return;
 
-    loadCategories();
-  }, [loadCategories, refreshKey, authLoading, token]);
+    loadCategoryAnalytics();
+  }, [loadCategoryAnalytics, refreshKey, authLoading, token]);
 
   return {
     categories,
     loading,
     error,
-    loadCategories,
+    loadCategoryAnalytics,
   };
 }
 

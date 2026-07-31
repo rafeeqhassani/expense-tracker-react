@@ -222,7 +222,6 @@ function useExpenses(
       showToastMessage(error.message, "error");
     }
   };
-
   const handleClearAllExpenses = async () => {
     try {
       await clearAllExpenses();
@@ -232,11 +231,9 @@ function useExpenses(
       );
 
       setSelectedIds(new Set());
-
-      showToastMessage("All expenses cleared", "success");
     } catch (error) {
       console.error("Failed to clear all expenses", error);
-      showToastMessage(error.message, "error");
+      throw error;
     }
   };
 

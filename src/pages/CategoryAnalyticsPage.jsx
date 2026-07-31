@@ -3,7 +3,7 @@ import useAppContext from "../providers/useAppContext";
 import LoadingState from "../components/ui/LoadingState";
 import ErrorState from "../components/ui/ErrorState";
 
-function CategoriesPage() {
+function CategoryAnalyticsPage() {
   const { categoryAnalytics } = useAppContext();
 
   if (categoryAnalytics.loading) {
@@ -20,18 +20,33 @@ function CategoriesPage() {
   }
 
   return (
-    <section>
-      <h1>Categories</h1>
+    <section className="category-analytics-page">
+      <header className="category-page-header">
+        <h2>Categories</h2>
+        <p>Analyze your spending distribution across categories.</p>
+      </header>
 
-      {categoryAnalytics.categories.map((item) => (
-        <div key={item.category}>
-          <h3>{item.category}</h3>
-          <p>Total: {item.total}</p>
-          <p>Expenses: {item.count}</p>
-        </div>
-      ))}
+      <div className="category-analytics-grid">
+        {categoryAnalytics.categories.map((item) => (
+          <article className="category-analytics-card" key={item.category}>
+            <h3>{item.category}</h3>
+
+            <div className="category-metrics">
+              <div>
+                <span>Total Spent</span>
+                <strong className="u-tabular-nums">{item.total}</strong>
+              </div>
+
+              <div>
+                <span>Transactions</span>
+                <strong>{item.count}</strong>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
 
-export default CategoriesPage;
+export default CategoryAnalyticsPage;

@@ -209,6 +209,17 @@
   border-color: var(--color-primary-500);
 }
 
+/* Activity actions */
+.activity-action {
+  background: var(--color-primary-500);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.activity-action:hover {
+  background: var(--color-primary-600);
+}
+
 /* -------------------------------------------------------------------- 
    RESPONSIVE
    -------------------------------------------------------------------- */

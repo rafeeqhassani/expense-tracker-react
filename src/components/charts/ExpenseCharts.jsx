@@ -51,7 +51,9 @@ function ExpenseCharts({ charts = {} }) {
       <div className="chart-content">
         <ChartRenderer type={chartType} data={chartData} />
       </div>
-      <Link to="/dashboard/categories">View All Categories</Link>
+      <Link to="/dashboard/categories" className="action-link">
+        View All Categories
+      </Link>
     </section>
   );
 }

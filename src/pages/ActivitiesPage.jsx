@@ -33,6 +33,7 @@ function ActivitiesPage() {
       {pagination?.hasMore && (
         <button
           type="button"
+          className="activity-action"
           onClick={loadMoreActivities}
           disabled={loadingMore}
         >

@@ -12,7 +12,11 @@ function RecentActivity({ activities, hasMore }) {
       <ActivityList activities={activities} />
 
       {hasMore && (
-        <button type="button" onClick={() => navigate("/dashboard/activities")}>
+        <button
+          type="button"
+          className="activity-action"
+          onClick={() => navigate("/dashboard/activities")}
+        >
           View All Activities
         </button>
       )}

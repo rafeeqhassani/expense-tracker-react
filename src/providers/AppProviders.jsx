@@ -129,7 +129,6 @@ function AppProviders({ children }) {
     showToastMessage,
   });
 
-  // --- Budget ---
   const {
     budgetConfig,
     loading: budgetLoading,
@@ -151,19 +150,24 @@ function AppProviders({ children }) {
   };
 
   const clearAll = useCallback(async () => {
-    await handleClearSelection();
+    try {
+      handleClearSelection();
 
-    await handleClearAllExpenses();
+      await handleClearAllExpenses();
 
-    await handleClearActivities();
+      await handleClearActivities();
 
-    resetBudgetConfig();
+      await resetBudgetConfig();
 
-    refreshAnalytics();
-    refreshActivities();
-    refreshCategories();
+      refreshAnalytics();
+      refreshActivities();
+      refreshCategories();
 
-    showToastMessage("All data cleared", "success");
+      showToastMessage("All data cleared", "success");
+    } catch (error) {
+      console.error("Failed to clear all data", error);
+      showToastMessage(error.message, "error");
+    }
   }, [
     handleClearSelection,
     handleClearAllExpenses,
@@ -171,10 +175,10 @@ function AppProviders({ children }) {
     resetBudgetConfig,
     refreshAnalytics,
     refreshActivities,
+    refreshCategories,
     showToastMessage,
   ]);
 
-  // --- Context value ---
   const value = useMemo(
     () => ({
       auth: {

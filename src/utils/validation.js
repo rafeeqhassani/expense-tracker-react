@@ -22,13 +22,17 @@ function validatePassword(password) {
   return null;
 }
 
+function isOnlyNumbers(value) {
+  return /^\d+(\.\d+)?$/.test(value.trim());
+}
+
 function validateText(value, fieldName) {
   if (!value.trim()) {
     return `${fieldName} is required`;
   }
 
-  if (!isNaN(value)) {
-    return `${fieldName} cannot be a number`;
+  if (isOnlyNumbers(value)) {
+    return `${fieldName} cannot be only numbers`;
   }
 
   return null;
@@ -41,8 +45,8 @@ function validateCategory(customCategory, category) {
     return "Please select or enter a category";
   }
 
-  if (!isNaN(finalCategory)) {
-    return "Category cannot be a number";
+  if (isOnlyNumbers(finalCategory)) {
+    return "Category cannot be only numbers";
   }
 
   return null;
@@ -84,11 +88,13 @@ export function validateLoginForm(data) {
   const errors = {};
 
   const emailError = validateEmail(data.email);
+
   if (emailError) {
     errors.email = emailError;
   }
 
   const passwordError = validatePassword(data.password);
+
   if (passwordError) {
     errors.password = passwordError;
   }
@@ -99,16 +105,20 @@ export function validateLoginForm(data) {
 export function validateRegisterForm(data) {
   const errors = {};
 
-  if (!data.name.trim()) {
-    errors.name = "Name is required";
+  const nameError = validateText(data.name, "Name");
+
+  if (nameError) {
+    errors.name = nameError;
   }
 
   const emailError = validateEmail(data.email);
+
   if (emailError) {
     errors.email = emailError;
   }
 
   const passwordError = validatePassword(data.password);
+
   if (passwordError) {
     errors.password = passwordError;
   }
