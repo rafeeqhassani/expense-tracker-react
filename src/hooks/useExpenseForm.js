@@ -19,6 +19,7 @@ const getInitialState = () => ({
   errors: {},
   touched: {},
   submitAttempted: false,
+  submitting: false,
   isFormOpen: false,
   mode: "add",
   editingId: null,
@@ -75,6 +76,12 @@ function reducer(state, action) {
         submitAttempted: action.payload,
       };
 
+    case "SET_SUBMITTING":
+      return {
+        ...state,
+        submitting: action.payload,
+      };
+
     case "SET_ERRORS":
       return {
         ...state,
@@ -100,6 +107,8 @@ function reducer(state, action) {
         errors: {},
         touched: {},
         submitAttempted: false,
+        submitting: false,
+
         isFormOpen: false,
         mode: "add",
         editingId: null,
@@ -170,11 +179,17 @@ function useExpenseForm({
     dispatch({ type: "SET_TOUCHED", payload: { name } });
   };
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e?.preventDefault();
 
     if (submitLock.current) return;
     submitLock.current = true;
+    dispatch({
+      type: "SET_SUBMITTING",
+      payload: true,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     try {
       dispatch({ type: "SET_SUBMIT_ATTEMPTED", payload: true });
@@ -196,7 +211,7 @@ function useExpenseForm({
       );
 
       if (mode === "add") {
-        handleAddExpense(normalizedData);
+        await handleAddExpense(normalizedData);
       } else {
         const existingExpense = expenses.find(
           (expense) => expense.id === editingId,
@@ -212,11 +227,17 @@ function useExpenseForm({
           return;
         }
 
-        handleUpdateExpense(editingId, normalizedData);
+        await handleUpdateExpense(editingId, normalizedData);
       }
 
       dispatch({ type: "RESET_FORM" });
+    } catch (error) {
+      console.error("Submit failed", error);
     } finally {
+      dispatch({
+        type: "SET_SUBMITTING",
+        payload: false,
+      });
       submitLock.current = false;
     }
   }

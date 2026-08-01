@@ -42,33 +42,7 @@ function AppProviders({ children }) {
   );
   const { handleClearActivities } = activities;
 
-  const {
-    expenses,
-    loading,
-    error,
-
-    loadingMore,
-    pagination,
-
-    selectedIds,
-    lastDeletedExpense,
-    loadExpenses,
-    loadMoreExpenses,
-    handleAddExpense,
-    handleUpdateExpense,
-    handleUndoDelete,
-    handleDeleteExpense,
-    handleToggleSelected,
-    handleSelectAll,
-    handleDeselectAll,
-    handleRemoveSelected,
-    handleClearSelection,
-    handleClearAllExpenses,
-
-    allSelected,
-    someSelected,
-    selectedCount,
-  } = useExpenses(
+  const expense = useExpenses(
     showToastMessage,
     debouncedFilters,
     auth.loading,
@@ -78,10 +52,10 @@ function AppProviders({ children }) {
 
   const activeExpenses = useMemo(
     () =>
-      Array.isArray(expenses)
-        ? expenses.filter((expense) => !expense.deleted)
+      Array.isArray(expense.expenses)
+        ? expense.expenses.filter((item) => !item.deleted)
         : [],
-    [expenses],
+    [expense.expenses],
   );
 
   const activityPreview = useActivityPreview(
@@ -109,14 +83,12 @@ function AppProviders({ children }) {
     auth.token,
   );
 
-  const {
-    addExpenseWithRefresh,
-    updateExpenseWithRefresh,
-    deleteExpenseWithRefresh,
-  } = useExpenseActions({
-    handleAddExpense,
-    handleUpdateExpense,
-    handleDeleteExpense,
+  const expenseActions = useExpenseActions({
+    handleAddExpense: expense.handleAddExpense,
+    handleUpdateExpense: expense.handleUpdateExpense,
+    handleDeleteExpense: expense.handleDeleteExpense,
+    loadExpenses: expense.loadExpenses,
+
     refreshAnalytics,
     refreshActivities,
     refreshCategories,
@@ -124,40 +96,35 @@ function AppProviders({ children }) {
 
   const form = useExpenseForm({
     expenses: activeExpenses,
-    handleAddExpense: addExpenseWithRefresh,
-    handleUpdateExpense: updateExpenseWithRefresh,
+    handleAddExpense: expenseActions.addExpenseWithRefresh,
+    handleUpdateExpense: expenseActions.updateExpenseWithRefresh,
     showToastMessage,
   });
 
-  const {
-    budgetConfig,
-    loading: budgetLoading,
-    error: budgetError,
-    loadBudget,
-    resetBudgetConfig,
-    updateMonthlyLimit,
-    updateCategoryLimit,
-    saveBudgetConfig,
-  } = useBudgetConfig(showToastMessage, auth.loading, auth.token);
+  const budgetConfigState = useBudgetConfig(
+    showToastMessage,
+    auth.loading,
+    auth.token,
+  );
 
-  const budget = useBudget(activeExpenses, budgetConfig);
+  const budget = useBudget(activeExpenses, budgetConfigState.budgetConfig);
 
   const budgetDomain = {
     ...budget,
-    loading: budgetLoading,
-    error: budgetError,
-    loadBudget,
+    loading: budgetConfigState.loading,
+    error: budgetConfigState.error,
+    loadBudget: budgetConfigState.loadBudget,
   };
 
   const clearAll = useCallback(async () => {
     try {
-      handleClearSelection();
+      expense.handleClearSelection();
 
-      await handleClearAllExpenses();
+      await expense.handleClearAllExpenses();
 
       await handleClearActivities();
 
-      await resetBudgetConfig();
+      await budgetConfigState.resetBudgetConfig();
 
       refreshAnalytics();
       refreshActivities();
@@ -169,10 +136,10 @@ function AppProviders({ children }) {
       showToastMessage(error.message, "error");
     }
   }, [
-    handleClearSelection,
-    handleClearAllExpenses,
+    expense.handleClearSelection,
+    expense.handleClearAllExpenses,
     handleClearActivities,
-    resetBudgetConfig,
+    budgetConfigState.resetBudgetConfig,
     refreshAnalytics,
     refreshActivities,
     refreshCategories,
@@ -197,26 +164,35 @@ function AppProviders({ children }) {
 
       expense: {
         expenses: activeExpenses,
-        pagination,
-        loadingMore,
-        loadMoreExpenses,
-        loading,
-        error,
-        loadExpenses,
+        pagination: expense.pagination,
+        loadingMore: expense.loadingMore,
+
+        loading: expense.loading,
+        error: expense.error,
       },
 
-      activity: activities,
+      activity: {
+        activities: activities.activities,
+        loading: activities.loading,
+        error: activities.error,
+        loadingMore: activities.loadingMore,
+        pagination: activities.pagination,
+      },
+
       activityPreview,
-      categories,
+
+      category: {
+        categories: categories.categories,
+        loading: categories.loading,
+        error: categories.error,
+        loadCategories: categories.loadCategories,
+      },
       filters: filters.filters,
 
       analytics,
       categoryAnalytics,
       budget: budgetDomain,
-      budgetConfig,
-      updateMonthlyLimit,
-      updateCategoryLimit,
-      saveBudgetConfig,
+      budgetConfig: budgetConfigState.budgetConfig,
 
       form: {
         formData: form.formData,
@@ -225,6 +201,7 @@ function AppProviders({ children }) {
         errors: form.errors,
         touched: form.touched,
         submitAttempted: form.submitAttempted,
+        submitting: form.submitting,
       },
 
       toast,
@@ -236,25 +213,33 @@ function AppProviders({ children }) {
         handleSubmit: form.handleSubmit,
         handleChange: form.handleChange,
 
-        handleDeleteExpense: deleteExpenseWithRefresh,
-        handleUndoDelete,
-
-        selectedIds,
-        lastDeletedExpense,
-        handleToggleSelected,
-        handleSelectAll,
-        handleDeselectAll,
-        handleRemoveSelected,
-        handleClearSelection,
-        selectedCount,
-        allSelected,
-        someSelected,
+        handleDeleteExpense: expenseActions.deleteExpenseWithRefresh,
+        handleUndoDelete: expense.handleUndoDelete,
+        loadMoreExpenses: expense.loadMoreExpenses,
+        loadExpenses: expense.loadExpenses,
+        selectedIds: expense.selectedIds,
+        lastDeletedExpense: expense.lastDeletedExpense,
+        handleToggleSelected: expense.handleToggleSelected,
+        handleSelectAll: expense.handleSelectAll,
+        handleDeselectAll: expense.handleDeselectAll,
+        handleRemoveSelected: expense.handleRemoveSelected,
+        handleClearSelection: expense.handleClearSelection,
+        selectedCount: expense.selectedCount,
+        allSelected: expense.allSelected,
+        someSelected: expense.someSelected,
         handleClearAll: clearAll,
 
-        handleFilterChange: filters.handleFilterChange,
+        handleClearActivities: activities.handleClearActivities,
+        loadActivities: activities.loadActivities,
+        loadMoreActivities: activities.loadMoreActivities,
 
+        handleFilterChange: filters.handleFilterChange,
         resetFilters: filters.resetFilters,
         hasActiveFilters: filters.hasActiveFilters,
+
+        updateMonthlyLimit: budgetConfigState.updateMonthlyLimit,
+        updateCategoryLimit: budgetConfigState.updateCategoryLimit,
+        saveBudgetConfig: budgetConfigState.saveBudgetConfig,
       },
     }),
     [
@@ -265,33 +250,12 @@ function AppProviders({ children }) {
       categoryAnalytics,
       categories,
       budget,
-      budgetConfig,
-      updateMonthlyLimit,
-      updateCategoryLimit,
+      budgetConfigState,
       form,
       toast,
       activityPreview,
-      refreshActivities,
-      deleteExpenseWithRefresh,
-      handleUndoDelete,
-
-      selectedIds,
-      lastDeletedExpense,
-
-      loadingMore,
-      loading,
-      error,
-      pagination,
-      loadExpenses,
-      loadMoreExpenses,
-      handleToggleSelected,
-      handleSelectAll,
-      handleDeselectAll,
-      handleRemoveSelected,
-      handleClearSelection,
-      selectedCount,
-      allSelected,
-      someSelected,
+      expenseActions,
+      expense,
       clearAll,
     ],
   );

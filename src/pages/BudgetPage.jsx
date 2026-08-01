@@ -18,14 +18,7 @@ const TABS = [
 const DEFAULT_TAB = "monthly";
 
 function BudgetPage() {
-  const {
-    budget,
-    budgetConfig,
-    updateMonthlyLimit,
-    updateCategoryLimit,
-    categories,
-    saveBudgetConfig,
-  } = useAppContext();
+  const { budget, budgetConfig, actions, category } = useAppContext();
 
   const [categorySearch, setCategorySearch] = useState("");
 
@@ -54,6 +47,7 @@ function BudgetPage() {
             key={id}
             className={`budget-tab-button ${activeTab === id ? "active" : ""}`}
             onClick={() => setActiveTab(id)}
+            aria-selected={activeTab === id}
           >
             {label}
           </button>
@@ -67,35 +61,50 @@ function BudgetPage() {
 
             <MonthlyBudgetEditor
               monthlyLimit={budgetConfig.monthlyLimit}
-              updateMonthlyLimit={updateMonthlyLimit}
-              saveBudgetConfig={saveBudgetConfig}
+              updateMonthlyLimit={actions.updateMonthlyLimit}
+              saveBudgetConfig={actions.saveBudgetConfig}
             />
           </div>
         )}
 
         {activeTab === "category" && (
           <div className="budget-tab-panel">
-            <div className="category-budget-header">
-              <input
-                type="text"
-                placeholder="Search category..."
-                value={categorySearch}
-                onChange={(e) => setCategorySearch(e.target.value)}
-                className="category-search"
+            {category.loading && (
+              <LoadingState message="Loading categories..." />
+            )}
+
+            {category.error && (
+              <ErrorState
+                message={category.error}
+                onRetry={category.loadCategories}
               />
-            </div>
+            )}
 
-            <CategoryBudget
-              categories={budget.categories}
-              search={categorySearch}
-            />
+            {!category.loading && !category.error && (
+              <>
+                <div className="category-budget-header">
+                  <input
+                    type="text"
+                    placeholder="Search category..."
+                    value={categorySearch}
+                    onChange={(e) => setCategorySearch(e.target.value)}
+                    className="category-search"
+                  />
+                </div>
 
-            <CategoryBudgetEditor
-              categoryLimits={budgetConfig.categoryLimits}
-              allCategories={categories}
-              updateCategoryLimit={updateCategoryLimit}
-              saveBudgetConfig={saveBudgetConfig}
-            />
+                <CategoryBudget
+                  categories={budget.categories}
+                  search={categorySearch}
+                />
+
+                <CategoryBudgetEditor
+                  categoryLimits={budgetConfig.categoryLimits}
+                  allCategories={category.categories}
+                  updateCategoryLimit={actions.updateCategoryLimit}
+                  saveBudgetConfig={actions.saveBudgetConfig}
+                />
+              </>
+            )}
           </div>
         )}
       </div>

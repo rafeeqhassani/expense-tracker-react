@@ -13,12 +13,14 @@ function useToast() {
   }, []);
 
   const showToastMessage = useCallback((message, type = "success") => {
+    if (!message) return;
     clearTimeout(toastTimerRef.current);
 
     setToast({ show: true, message, type });
 
     toastTimerRef.current = setTimeout(() => {
       setToast(HIDDEN_TOAST);
+      toastTimerRef.current = null;
     }, TOAST_DURATION_MS);
   }, []);
 

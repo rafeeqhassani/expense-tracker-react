@@ -4,6 +4,8 @@ function useExpenseActions({
   handleAddExpense,
   handleUpdateExpense,
   handleDeleteExpense,
+  loadExpenses,
+
   refreshAnalytics,
   refreshActivities,
   refreshCategories,
@@ -11,17 +13,25 @@ function useExpenseActions({
   const addExpenseWithRefresh = useCallback(
     async (...args) => {
       await handleAddExpense(...args);
+      await loadExpenses();
 
       refreshAnalytics();
       refreshActivities();
       refreshCategories();
     },
-    [handleAddExpense, refreshAnalytics, refreshActivities, refreshCategories],
+    [
+      handleAddExpense,
+      loadExpenses,
+      refreshAnalytics,
+      refreshActivities,
+      refreshCategories,
+    ],
   );
 
   const updateExpenseWithRefresh = useCallback(
     async (...args) => {
       await handleUpdateExpense(...args);
+      await loadExpenses();
 
       refreshAnalytics();
       refreshActivities();
@@ -29,6 +39,7 @@ function useExpenseActions({
     },
     [
       handleUpdateExpense,
+      loadExpenses,
       refreshAnalytics,
       refreshActivities,
       refreshCategories,
@@ -38,6 +49,7 @@ function useExpenseActions({
   const deleteExpenseWithRefresh = useCallback(
     async (...args) => {
       await handleDeleteExpense(...args);
+      await loadExpenses();
 
       refreshAnalytics();
       refreshActivities();
@@ -45,6 +57,7 @@ function useExpenseActions({
     },
     [
       handleDeleteExpense,
+      loadExpenses,
       refreshAnalytics,
       refreshActivities,
       refreshCategories,

@@ -16,7 +16,12 @@ export default function useQueryParam() {
 
   const setQueryParam = (key, value) => {
     const params = new URLSearchParams(location.search);
-    params.set(key, value);
+
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
 
     navigate(`${location.pathname}?${params.toString()}`);
   };

@@ -32,8 +32,8 @@ function useBudget(expenses, budgetConfig) {
     const statusByCategory = {};
 
     categoryNames.forEach((category) => {
-      const spent = categorySpent?.[category] ?? 0;
-      const limit = budgetConfig.categoryLimits?.[category] ?? 0;
+      const spent = categorySpent[category] ?? 0;
+      const limit = budgetConfig.categoryLimits[category] ?? 0;
       const status = getBudgetStatus(spent, limit);
 
       statusByCategory[category] = status;

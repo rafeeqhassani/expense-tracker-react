@@ -19,6 +19,7 @@ function useHoldButton() {
 
     timeoutRef.current = null;
     intervalRef.current = null;
+    actionRef.current = null;
   }, []);
 
   const start = useCallback(

@@ -5,7 +5,6 @@ function GeneralActionsBar({
   onClearAll,
 }) {
   const hasMore = pagination?.hasMore && onLoadMore;
-  console.log(pagination);
 
   return (
     <section className="actions-bar">

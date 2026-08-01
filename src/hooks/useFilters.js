@@ -9,7 +9,7 @@ const INITIAL_FILTERS = {
   sortOrder: "desc",
 };
 
-function useFilters(expenses = []) {
+function useFilters() {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
 
   const handleFilterChange = (e) => {
@@ -25,12 +25,14 @@ function useFilters(expenses = []) {
     setFilters(INITIAL_FILTERS);
   };
 
-  const hasActiveFilters =
-    filters.search !== "" ||
-    filters.month !== "" ||
-    filters.startDate !== "" ||
-    filters.endDate !== "" ||
-    filters.sortBy !== "date";
+  const hasActiveFilters = Boolean(
+    filters.search ||
+    filters.month ||
+    filters.startDate ||
+    filters.endDate ||
+    filters.sortBy !== "date" ||
+    filters.sortOrder !== "desc",
+  );
 
   return {
     filters,

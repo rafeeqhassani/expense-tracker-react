@@ -43,6 +43,9 @@ function useAnalytics(refreshKey, authLoading, token) {
     } catch (error) {
       console.error("Failed to load analytics", error);
 
+      setSummary(DEFAULT_SUMMARY);
+      setDashboard({});
+      setCharts([]);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -50,7 +53,16 @@ function useAnalytics(refreshKey, authLoading, token) {
   }, []);
 
   useEffect(() => {
-    if (authLoading || !token) return;
+    if (!token) {
+      setSummary(DEFAULT_SUMMARY);
+      setDashboard({});
+      setCharts([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    if (authLoading) return;
 
     loadAnalytics();
   }, [loadAnalytics, refreshKey, authLoading, token]);

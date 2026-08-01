@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import LoadingState from "../ui/LoadingState";
+import ErrorState from "../ui/ErrorState";
 
 const RECURRING_OPTIONS = [
   { value: "none", label: "None" },
@@ -20,6 +22,9 @@ function FormField({ label, htmlFor, error, children }) {
 
 function ExpenseForm({
   categories,
+  loading,
+  error,
+  loadCategories,
   onSubmit,
   mode,
   closeForm,
@@ -27,6 +32,7 @@ function ExpenseForm({
   handleChange,
   errors,
   submitAttempted,
+  submitting,
   touched,
   isFormOpen,
 }) {
@@ -41,13 +47,16 @@ function ExpenseForm({
   const showError = (field) =>
     (submitAttempted || touched[field]) && errors[field];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit();
-  };
+  if (loading) {
+    return <LoadingState message="Loading categories..." />;
+  }
+
+  if (error) {
+    return <ErrorState message={error} onRetry={loadCategories} />;
+  }
 
   return (
-    <form className="expense-form" onSubmit={handleSubmit}>
+    <form className="expense-form" onSubmit={onSubmit}>
       <FormField
         label="Title"
         htmlFor="title"
@@ -102,7 +111,6 @@ function ExpenseForm({
               onChange={handleChange}
             >
               <option value="">Select Category</option>
-
               {categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -166,8 +174,12 @@ function ExpenseForm({
       </FormField>
 
       <div className="form-actions">
-        <button type="submit" className="submit-button">
-          {mode === "add" ? "Add Expense" : "Update Expense"}
+        <button type="submit" className="submit-button" disabled={submitting}>
+          {submitting
+            ? "Saving..."
+            : mode === "add"
+              ? "Add Expense"
+              : "Update Expense"}
         </button>
 
         <button type="button" className="close-form" onClick={closeForm}>

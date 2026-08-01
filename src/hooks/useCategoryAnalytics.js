@@ -16,7 +16,7 @@ function useCategoryAnalytics(refreshKey, authLoading, token) {
       setCategories(data);
     } catch (error) {
       console.error("Failed to load category analytics", error);
-
+      setCategories([]);
       setError(error.message);
     } finally {
       setLoading(false);

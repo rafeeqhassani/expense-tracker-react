@@ -11,15 +11,15 @@ import ErrorState from "../components/ui/ErrorState";
 function ExpensePage() {
   const { expense, filters, actions } = useAppContext();
 
-  const { expenses, pagination, loadingMore, loadMoreExpenses } = expense;
+  const { expenses, pagination, loadingMore } = expense;
 
-  if (expense.loading && expense.length === 0) {
+  if (expense.loading && expenses.length === 0) {
     return <LoadingState message="Loading expenses..." />;
   }
 
   if (expense.error) {
     return (
-      <ErrorState message={expense.error} onRetry={expense.loadExpenses} />
+      <ErrorState message={expense.error} onRetry={actions.loadExpenses} />
     );
   }
 
@@ -58,7 +58,7 @@ function ExpensePage() {
       />
 
       <GeneralActionsBar
-        onLoadMore={expense.loadMoreExpenses}
+        onLoadMore={actions.loadMoreExpenses}
         pagination={expense.pagination}
         loadingMore={expense.loadingMore}
         onClearAll={actions.handleClearAll}

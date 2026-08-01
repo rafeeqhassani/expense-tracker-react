@@ -18,6 +18,12 @@ function useAuth() {
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState(null);
 
+  function applyAuth({ token, user }) {
+    saveToLocalStorage("token", token);
+    setToken(token);
+    setUser(user);
+  }
+
   const login = useCallback(async (credentials) => {
     setLoading(true);
 
@@ -25,13 +31,12 @@ function useAuth() {
       const response = await loginUser(credentials);
       setError(null);
       const { token, user } = response;
-
-      saveToLocalStorage("token", token);
-
-      setToken(token);
-      setUser(user);
+      applyAuth({ token, user });
 
       return response;
+    } catch (error) {
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -44,13 +49,12 @@ function useAuth() {
       const response = await registerUser(userData);
       setError(null);
       const { token, user } = response;
-
-      saveToLocalStorage("token", token);
-
-      setToken(token);
-      setUser(user);
+      applyAuth({ token, user });
 
       return response;
+    } catch (error) {
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -63,13 +67,12 @@ function useAuth() {
       const response = await demoLoginUser();
       setError(null);
       const { token, user } = response;
-
-      saveToLocalStorage("token", token);
-
-      setToken(token);
-      setUser(user);
+      applyAuth({ token, user });
 
       return response;
+    } catch (error) {
+      setError(error.message);
+      throw error;
     } finally {
       setLoading(false);
     }

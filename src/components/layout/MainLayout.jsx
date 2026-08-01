@@ -8,11 +8,17 @@ import Toast from "../ui/Toast";
 import Sidebar from "./Sidebar";
 
 function MainLayout() {
-  const { auth, expense, categories, form, toast, actions } = useAppContext();
+  const { auth, expense, category, form, toast, actions } = useAppContext();
 
-  const { loading, error, loadExpenses } = expense;
-
-  const { formData, mode, isFormOpen, errors, touched, submitAttempted } = form;
+  const {
+    formData,
+    mode,
+    isFormOpen,
+    errors,
+    touched,
+    submitAttempted,
+    submitting,
+  } = form;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -65,7 +71,10 @@ function MainLayout() {
         <div className="overlay" onClick={actions.closeForm}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <ExpenseForm
-              categories={categories}
+              categories={category.categories}
+              loading={category.loading}
+              error={category.error}
+              loadCategories={category.loadCategories}
               onSubmit={actions.handleSubmit}
               mode={mode}
               closeForm={actions.closeForm}
@@ -73,6 +82,7 @@ function MainLayout() {
               handleChange={actions.handleChange}
               errors={errors}
               submitAttempted={submitAttempted}
+              submitting={submitting}
               touched={touched}
               isFormOpen={isFormOpen}
             />

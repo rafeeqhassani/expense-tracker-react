@@ -5,23 +5,16 @@ import LoadingState from "../components/ui/LoadingState";
 import ErrorState from "../components/ui/ErrorState";
 
 function ActivitiesPage() {
-  const { activity } = useAppContext();
+  const { activity, actions } = useAppContext();
 
-  const {
-    activities,
-    loading,
-    error,
-    loadingMore,
-    pagination,
-    loadMoreActivities,
-  } = activity;
+  const { activities, loading, error, loadingMore, pagination } = activity;
 
   if (loading) {
     return <LoadingState message="Loading activities..." />;
   }
 
   if (error) {
-    return <ErrorState message={error} onRetry={loadMoreActivities} />;
+    return <ErrorState message={error} onRetry={actions.loadActivities} />;
   }
 
   return (
@@ -34,7 +27,7 @@ function ActivitiesPage() {
         <button
           type="button"
           className="activity-action"
-          onClick={loadMoreActivities}
+          onClick={actions.loadMoreActivities}
           disabled={loadingMore}
         >
           {loadingMore ? "Loading..." : "Load More"}

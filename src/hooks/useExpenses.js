@@ -45,14 +45,10 @@ function useExpenses(
   const [pagination, setPagination] = useState(null);
 
   const [selectedIds, setSelectedIds] = useState(new Set());
+  const [deletingId, setDeletingId] = useState(null);
 
   // --- Undo-delete state ---
   const [lastDeletedExpense, setLastDeletedExpense] = useState(null);
-  useEffect(() => {
-    if (!token) {
-      setLastDeletedExpense(null);
-    }
-  }, [token]);
 
   /**
    * Fetches the first page of expenses matching the current filters,
@@ -69,11 +65,15 @@ function useExpenses(
         limit: EXPENSES_PER_PAGE,
       });
 
-      setExpenses(data.expenses);
-      setPagination(data.pagination);
+      setExpenses(data.expenses ?? []);
+      setPagination(data.pagination ?? null);
       setPage(1);
+      setSelectedIds(new Set());
     } catch (error) {
       console.error("Failed to load expenses", error);
+
+      setExpenses([]);
+      setPagination(null);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -81,8 +81,23 @@ function useExpenses(
   }, [filters]);
 
   // Reload expenses whenever the filters change.
+
   useEffect(() => {
-    if (authLoading || !token) return;
+    if (!token) {
+      setExpenses([]);
+      setPagination(null);
+      setPage(1);
+      setLoading(false);
+      setLoadingMore(false);
+
+      setSelectedIds(new Set());
+      setLastDeletedExpense(null);
+      setError(null);
+
+      return;
+    }
+
+    if (authLoading) return;
 
     loadExpenses();
   }, [loadExpenses, authLoading, token]);
@@ -91,7 +106,8 @@ function useExpenses(
    * Fetches the next page of expenses (if any remain) and appends
    * them to the existing list.
    */
-  const loadMoreExpenses = async () => {
+  const loadMoreExpenses = useCallback(async () => {
+    if (loadingMore) return;
     if (!pagination) return;
     if (page >= pagination.totalPages) return;
 
@@ -106,21 +122,22 @@ function useExpenses(
         limit: EXPENSES_PER_PAGE,
       });
 
-      setExpenses((prev) => [...prev, ...data.expenses]);
-      setPagination(data.pagination);
+      setExpenses((prev) => [...prev, ...(data.expenses ?? [])]);
+      setPagination(data.pagination ?? null);
       setPage(nextPage);
     } catch (error) {
       console.error("Failed to load more expenses", error);
+      showToastMessage(error.message, "error");
     } finally {
       setLoadingMore(false);
     }
-  };
+  }, [filters, loadingMore, pagination, page, showToastMessage]);
 
   const handleAddExpense = async (newExpense) => {
     try {
       const savedExpense = await createExpense(newExpense);
 
-      setExpenses((prev) => [...prev, savedExpense]);
+      await loadExpenses();
 
       await addActivity("ADD_EXPENSE", `Added ${savedExpense.title}`);
 
@@ -128,29 +145,31 @@ function useExpenses(
     } catch (error) {
       console.error("Failed to add expense", error);
       showToastMessage(error.message, "error");
+      throw error;
     }
   };
 
   const handleUpdateExpense = async (id, updatedData) => {
     try {
       await updateExpense({ id, ...updatedData });
+      await loadExpenses();
 
-      setExpenses((prev) =>
-        prev.map((expense) =>
-          expense.id === id ? { ...expense, ...updatedData } : expense,
-        ),
-      );
       await addActivity("UPDATE_EXPENSE", `Updated ${updatedData.title}`);
 
       showToastMessage("Expense updated", "success");
     } catch (error) {
       console.error("Failed to update expense", error);
       showToastMessage(error.message, "error");
+      throw error;
     }
   };
 
   const handleDeleteExpense = async (id) => {
+    if (deletingId === id) return;
+
     try {
+      setDeletingId(id);
+
       await deleteExpense(id);
 
       setExpenses((prev) =>
@@ -177,6 +196,9 @@ function useExpenses(
     } catch (error) {
       console.error("Failed to delete expense", error);
       showToastMessage(error.message, "error");
+      throw error;
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -186,11 +208,7 @@ function useExpenses(
     try {
       const restoredExpense = await restoreExpense(lastDeletedExpense.id);
 
-      setExpenses((prev) =>
-        prev.map((expense) =>
-          expense.id === restoredExpense.id ? restoredExpense : expense,
-        ),
-      );
+      await loadExpenses();
 
       await addActivity("RESTORE_EXPENSE", `Restored ${restoredExpense.title}`);
       setLastDeletedExpense(null);
@@ -199,20 +217,18 @@ function useExpenses(
     } catch (error) {
       console.error("Failed to restore expense", error);
       showToastMessage(error.message, "error");
+      throw error;
     }
   };
 
   const handleRemoveSelected = async () => {
     try {
       const idsToDelete = [...selectedIds];
+      if (selectedIds.size === 0) return;
 
       await deleteSelectedExpenses(idsToDelete);
 
-      setExpenses((prev) =>
-        prev.map((expense) =>
-          selectedIds.has(expense.id) ? { ...expense, deleted: true } : expense,
-        ),
-      );
+      await loadExpenses();
 
       setSelectedIds(new Set());
 
@@ -220,15 +236,15 @@ function useExpenses(
     } catch (error) {
       console.error("Failed to delete selected expenses", error);
       showToastMessage(error.message, "error");
+      throw error;
     }
   };
+
   const handleClearAllExpenses = async () => {
     try {
       await clearAllExpenses();
 
-      setExpenses((prev) =>
-        prev.map((expense) => ({ ...expense, deleted: true })),
-      );
+      await loadExpenses();
 
       setSelectedIds(new Set());
     } catch (error) {
