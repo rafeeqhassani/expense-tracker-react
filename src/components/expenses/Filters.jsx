@@ -43,7 +43,9 @@ function Filters({
       <div className="filters-top">
         {/* Search */}
         <div className="filter-group">
-          <label htmlFor="searchExpenses">Search</label>
+          <label htmlFor="searchExpenses" className="filter-label">
+            Search
+          </label>
 
           <input
             type="text"
@@ -57,7 +59,9 @@ function Filters({
 
         {/* Month */}
         <div className="filter-group">
-          <label htmlFor="filterByMonth">Month</label>
+          <label htmlFor="filterByMonth" className="filter-label">
+            Month
+          </label>
 
           <select
             id="filterByMonth"
@@ -76,7 +80,9 @@ function Filters({
 
         {/* Sort */}
         <div className="filter-group">
-          <label htmlFor="sortSelection">Sort By</label>
+          <label htmlFor="sortSelection" className="filter-label">
+            Sort By
+          </label>
 
           <select
             id="sortSelection"
@@ -95,7 +101,9 @@ function Filters({
 
         {/* Sort Order */}
         <div className="filter-group">
-          <label htmlFor="sortOrder">Order</label>
+          <label htmlFor="sortOrder" className="filter-label">
+            Order
+          </label>
 
           <select
             id="sortOrder"
@@ -114,7 +122,7 @@ function Filters({
       <div className="filters-bottom">
         <div className="filter-group date-range">
           <label className="date-label">
-            <FaCalendarAlt style={{ marginRight: "6px" }} />
+            <FaCalendarAlt />
             Date Range Filter
           </label>
 

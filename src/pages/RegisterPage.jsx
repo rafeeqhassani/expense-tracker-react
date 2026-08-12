@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 import useAppContext from "../providers/useAppContext";
 import { validateRegisterForm } from "../utils/validation";
@@ -18,18 +18,20 @@ function RegisterPage() {
   const [error, setError] = useState("");
 
   if (auth.token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
-  function handleChange(e) {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  function handleChange(event) {
+    const { name, value } = event.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
 
     const errors = validateRegisterForm(formData);
 
@@ -52,40 +54,90 @@ function RegisterPage() {
   return (
     <main className="auth-page">
       <section className="auth-card">
-        <div>
+        <div className="auth-header">
+          <p className="auth-eyebrow">Get started</p>
+
           <h1>Create Account</h1>
 
-          {error && <p className="auth-error">{error}</p>}
+          <p>Create an account to start tracking your expenses and budgets.</p>
+        </div>
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+        {error && (
+          <div className="auth-error" role="alert">
+            {error}
+          </div>
+        )}
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="register-name">Name</label>
+
             <input
+              id="register-name"
               name="name"
               type="text"
-              placeholder="Name"
+              autoComplete="name"
+              placeholder="Your name"
               value={formData.name}
               onChange={handleChange}
+              disabled={auth.loading}
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="register-email">Email</label>
 
             <input
+              id="register-email"
               name="email"
-              type="text"
-              placeholder="Email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
+              disabled={auth.loading}
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="register-password">Password</label>
 
             <input
+              id="register-password"
               name="password"
               type="password"
-              placeholder="Password"
+              autoComplete="new-password"
+              placeholder="Create a password"
               value={formData.password}
               onChange={handleChange}
+              disabled={auth.loading}
             />
+          </div>
 
-            <button type="submit" disabled={auth.loading}>
-              {auth.loading ? "Creating Account..." : "Register"}
+          <button type="submit" disabled={auth.loading}>
+            {auth.loading ? "Creating Account..." : "Create Account"}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          <p>
+            Already have an account?{" "}
+            <button
+              type="button"
+              className="auth-link"
+              onClick={() => navigate("/login")}
+            >
+              Login
             </button>
-          </form>
+          </p>
+
+          <button
+            type="button"
+            className="auth-demo-link"
+            onClick={() => navigate("/demo")}
+          >
+            Try the recruiter demo
+          </button>
         </div>
       </section>
     </main>

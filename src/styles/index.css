@@ -1,13 +1,7 @@
 @import "./global.css";
 @import "./layout.css";
-@import "./buttons.css";
-@import "./cards.css";
-@import "./budget.css";
-@import "./filters.css";
-@import "./table.css";
-@import "./forms.css";
-@import "./toast.css";
-@import "./charts.css";
-@import "./states.css";
 @import "./landing.css";
+@import "./toast.css";
+@import "./demo.css";
+@import "./states.css";
 @import "./auth.css";

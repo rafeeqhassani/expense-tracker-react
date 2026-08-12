@@ -12,9 +12,16 @@ import LoadingState from "../components/ui/LoadingState";
 import ErrorState from "../components/ui/ErrorState";
 
 const TABS = [
-  { id: "monthly", label: "Monthly Budget" },
-  { id: "category", label: "Category Budget" },
+  {
+    id: "monthly",
+    label: "Monthly Budget",
+  },
+  {
+    id: "category",
+    label: "Category Budget",
+  },
 ];
+
 const DEFAULT_TAB = "monthly";
 
 function BudgetPage() {
@@ -38,23 +45,31 @@ function BudgetPage() {
   }
 
   return (
-    <section className="budget-tabs">
-      <BudgetAlertList alerts={budget.alerts} />
+    <section className="budget-page">
+      <header className="page-header">
+        <div>
+          <h2>Budget</h2>
+          <p>Set spending limits and monitor your progress.</p>
+        </div>
+      </header>
 
-      <div className="budget-tab-buttons">
+      <nav className="budget-tab-buttons" aria-label="Budget sections">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
+            type="button"
             className={`budget-tab-button ${activeTab === id ? "active" : ""}`}
             onClick={() => setActiveTab(id)}
             aria-selected={activeTab === id}
+            role="tab"
           >
             {label}
           </button>
         ))}
-      </div>
+      </nav>
 
       <div className="budget-tab-content">
+        <BudgetAlertList alerts={budget.alerts} />
         {activeTab === "monthly" && (
           <div className="budget-tab-panel">
             <MonthlyBudget budget={budget.monthly} />
@@ -83,11 +98,16 @@ function BudgetPage() {
             {!category.loading && !category.error && (
               <>
                 <div className="category-budget-header">
+                  <label htmlFor="category-budget-search">
+                    Search categories
+                  </label>
+
                   <input
-                    type="text"
+                    id="category-budget-search"
+                    type="search"
                     placeholder="Search category..."
                     value={categorySearch}
-                    onChange={(e) => setCategorySearch(e.target.value)}
+                    onChange={(event) => setCategorySearch(event.target.value)}
                     className="category-search"
                   />
                 </div>

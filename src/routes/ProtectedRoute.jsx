@@ -14,7 +14,7 @@ function ProtectedRoute({ children }) {
     return <ErrorState message={auth.error} onRetry={auth.loadCurrentUser} />;
   }
 
-  if (!auth.token) {
+  if(!auth.token) {
     return <Navigate to="/login" replace />;
   }
 

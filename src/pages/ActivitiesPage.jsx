@@ -7,7 +7,7 @@ import ErrorState from "../components/ui/ErrorState";
 function ActivitiesPage() {
   const { activity, actions } = useAppContext();
 
-  const { activities, loading, error, loadingMore, pagination } = activity;
+  const { activities = [], loading, error, loadingMore, pagination } = activity;
 
   if (loading) {
     return <LoadingState message="Loading activities..." />;
@@ -18,21 +18,28 @@ function ActivitiesPage() {
   }
 
   return (
-    <section className="activity-page">
-      <h2>All Activities</h2>
+    <section className="activities-page">
+      <header className="page-header">
+        <div>
+          <h2>All Activities</h2>
+          <p>Review your recent expense and budget activity.</p>
+        </div>
+      </header>
 
-      <ActivityList activities={activities} />
+      <div className="activities-content">
+        <ActivityList activities={activities} />
 
-      {pagination?.hasMore && (
-        <button
-          type="button"
-          className="activity-action"
-          onClick={actions.loadMoreActivities}
-          disabled={loadingMore}
-        >
-          {loadingMore ? "Loading..." : "Load More"}
-        </button>
-      )}
+        {pagination?.hasMore && (
+          <button
+            type="button"
+            className="activity-action"
+            onClick={actions.loadMoreActivities}
+            disabled={loadingMore}
+          >
+            {loadingMore ? "Loading..." : "Load More"}
+          </button>
+        )}
+      </div>
     </section>
   );
 }

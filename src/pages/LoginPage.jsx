@@ -1,20 +1,20 @@
 import { useState } from "react";
-import useAppContext from "../providers/useAppContext";
 import { useNavigate } from "react-router-dom";
+
+import useAppContext from "../providers/useAppContext";
 import { validateLoginForm } from "../utils/validation";
 import { normalizeAuthData } from "../utils/authTransform";
 
 function LoginPage() {
   const navigate = useNavigate();
-
   const { auth } = useAppContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
 
     const errors = validateLoginForm({
       email,
@@ -46,29 +46,75 @@ function LoginPage() {
   return (
     <main className="auth-page">
       <section className="auth-card">
-        <div>
+        <div className="auth-header">
+          <p className="auth-eyebrow">Welcome back</p>
+
           <h1>Login</h1>
-          {error && <p className="auth-error">{error}</p>}
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <p>Sign in to manage your expenses and budgets.</p>
+        </div>
+
+        {error && (
+          <div className="auth-error" role="alert">
+            {error}
+          </div>
+        )}
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="login-email">Email</label>
+
             <input
-              type="text"
-              placeholder="Email"
+              id="login-email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event) => setEmail(event.target.value)}
+              disabled={auth.loading}
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="login-password">Password</label>
 
             <input
+              id="login-password"
               type="password"
-              placeholder="Password"
+              name="password"
+              autoComplete="current-password"
+              placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event) => setPassword(event.target.value)}
+              disabled={auth.loading}
             />
+          </div>
 
-            <button type="submit" disabled={auth.loading}>
-              {auth.loading ? "Logging in..." : "Login"}
+          <button type="submit" disabled={auth.loading}>
+            {auth.loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          <p>
+            Don't have an account?{" "}
+            <button
+              type="button"
+              className="auth-link"
+              onClick={() => navigate("/register")}
+            >
+              Create one
             </button>
-          </form>
+          </p>
+
+          <button
+            type="button"
+            className="auth-demo-link"
+            onClick={() => navigate("/demo")}
+          >
+            Try the recruiter demo
+          </button>
         </div>
       </section>
     </main>

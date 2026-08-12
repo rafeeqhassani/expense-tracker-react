@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import ActivityList from "./ActivityList";
+import ActivityList from "../activities/ActivityList";
 
 import LoadingState from "../ui/LoadingState";
 import ErrorState from "../ui/ErrorState";
@@ -15,16 +15,16 @@ function RecentActivity({
   const navigate = useNavigate();
 
   if (loading) {
-    return <LoadingState message="Loading activities..." />;
+    return <LoadingState />;
   }
 
   if (error) {
-    return <ErrorState message={error} onRetry={loadActivityPreview} />;
+    return <ErrorState />;
   }
 
   return (
     <section className="recent-activity">
-      <h2>Recent Activity</h2>
+      <h2 className="section-title">Recent Activity</h2>
 
       <ActivityList activities={activities} />
 

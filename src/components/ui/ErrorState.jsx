@@ -1,11 +1,17 @@
 function ErrorState({ message, onRetry }) {
   return (
-    <div className="error-state">
-      <h2>Something went wrong</h2>
+    <div className="error-state" role="alert">
+      <div className="error-state-content">
+        <h3>Something went wrong</h3>
 
-      <p>{message}</p>
+        <p>{message}</p>
 
-      <button onClick={onRetry}>Retry</button>
+        {onRetry && (
+          <button type="button" onClick={onRetry} className="error-retry">
+            Try Again
+          </button>
+        )}
+      </div>
     </div>
   );
 }

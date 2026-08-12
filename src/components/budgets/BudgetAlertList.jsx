@@ -6,14 +6,14 @@ function BudgetAlertList({ alerts = [] }) {
   }
 
   return (
-    <div className="budget-alert-list">
+    <section className="budget-alert-list" aria-label="Budget alerts">
       {alerts.map((alert) => (
         <BudgetAlert
           key={`${alert.scope}-${alert.category ?? "monthly"}`}
           alert={alert}
         />
       ))}
-    </div>
+    </section>
   );
 }
 

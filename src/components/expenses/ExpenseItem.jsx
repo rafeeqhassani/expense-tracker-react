@@ -18,20 +18,23 @@ function ExpenseItem({ expense, onDelete, onEdit }) {
 
   return (
     <tr>
-      <td>
-        <label className="row-checkbox">
+      <td className="select-cell">
+        <label className="checkbox-label">
           <input
             type="checkbox"
             checked={isSelected}
             onChange={() => actions.handleToggleSelected(expense.id)}
           />
-          <span className="row-checkbox-text">Select</span>
+
+          <span>Select</span>
         </label>
       </td>
 
       <td>{expense.title}</td>
 
-      <td className="category-badge">{expense.category}</td>
+      <td>
+        <span className="category-badge">{expense.category}</span>
+      </td>
 
       <td>
         {new Date(expense.date).toLocaleDateString("en-GB", {

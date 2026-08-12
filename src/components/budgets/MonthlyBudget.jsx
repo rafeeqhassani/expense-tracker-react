@@ -19,18 +19,16 @@ function MonthlyBudget({ budget }) {
     <section className="monthly-budget">
       <div className="budget-header">
         <h2>Current Month Budget</h2>
-        <p>Monthly overview of your spending</p>
+        <p>Monthly overview of your spending.</p>
       </div>
 
       <div className="budget-grid">
         {BUDGET_CARDS.map(({ key, label }) => (
           <BudgetCard key={key} label={label} value={budget[key]} />
         ))}
-
-        <div className={`budget-status ${budget.status}`}>
-          {budget.riskLabel}
-        </div>
       </div>
+
+      <div className={`budget-status ${budget.status}`}>{budget.riskLabel}</div>
     </section>
   );
 }

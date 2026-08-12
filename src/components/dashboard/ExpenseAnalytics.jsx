@@ -11,47 +11,55 @@ function SummaryCard({ label, value = 0, className = "", type = "number" }) {
   );
 }
 
-const SUMMARY_CONFIG = [
-  { key: "totalAmount", label: "Total", className: "total", type: "currency" },
+const OVERALL_CONFIG = [
+  {
+    key: "totalAmount",
+    label: "Total Spending",
+    className: "total",
+    type: "currency",
+  },
   {
     key: "totalRecords",
-    label: "Records",
+    label: "Transactions",
     className: "records",
     type: "number",
   },
   {
-    key: "highestExpense",
-    label: "Highest",
-    className: "highest",
-    type: "currency",
-  },
-  {
-    key: "lowestExpense",
-    label: "Lowest",
-    className: "lowest",
-    type: "currency",
-  },
-  {
     key: "averageExpense",
-    label: "Average",
+    label: "Average Expense",
     className: "average",
-    type: "currency",
-  },
-  {
-    key: "averageDailySpending",
-    label: "Average Daily Spending",
-    className: "daily",
     type: "currency",
   },
 ];
 
-function SummarySection({ title, data }) {
+const MONTH_CONFIG = [
+  {
+    key: "totalAmount",
+    label: "Monthly Spending",
+    className: "total",
+    type: "currency",
+  },
+  {
+    key: "totalRecords",
+    label: "Transactions",
+    className: "records",
+    type: "number",
+  },
+  {
+    key: "averageDailySpending",
+    label: "Avg. Daily Spend",
+    className: "average",
+    type: "currency",
+  },
+];
+
+function SummarySection({ title, data, config }) {
   return (
-    <div className="summary-section">
-      <h3 className="summary-title">{title}</h3>
+    <section className="summary-section">
+      <h3>{title}</h3>
 
       <div className="summary">
-        {SUMMARY_CONFIG.map((item) => (
+        {config.map((item) => (
           <SummaryCard
             key={`${title}-${item.key}`}
             label={item.label}
@@ -61,17 +69,21 @@ function SummarySection({ title, data }) {
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
 function ExpenseAnalytics({ overall = {}, filtered = {} }) {
   return (
-    <>
-      <SummarySection title="Overall" data={overall} />
-      <SummarySection title="This Month" data={filtered} />
-    </>
+    <div className="analytics-summary">
+      <SummarySection title="All Time" data={overall} config={OVERALL_CONFIG} />
+
+      <SummarySection
+        title="This Month"
+        data={filtered}
+        config={MONTH_CONFIG}
+      />
+    </div>
   );
 }
-
 export default ExpenseAnalytics;

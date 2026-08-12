@@ -111,11 +111,15 @@ function ExpenseForm({
               onChange={handleChange}
             >
               <option value="">Select Category</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
+              {categories.length === 0 ? (
+                <option disabled>No categories available</option>
+              ) : (
+                categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 

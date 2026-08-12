@@ -1,85 +1,114 @@
-/* ==========================================================================
-   LAYOUT.CSS
-   App shell: dashboard grid, sidebar/nav, header, mobile menu.
-   Mobile-first: sidebar is an off-canvas drawer by default, becomes a
-   sticky static column at the `md` breakpoint.
-   ========================================================================== */
-
-.dashboard {
-  display: grid;
-  grid-template-columns: 1fr;
+#root {
   min-height: 100vh;
-  gap: var(--space-sm);
-  background: var(--color-surface);
-  padding: var(--space-xs);
 }
 
-/* -------------------------------------------------------------------- 
-   SIDEBAR (mobile: off-canvas drawer / desktop: sticky static column)
-   -------------------------------------------------------------------- */
 .sidebar {
-  background-color: var(--color-secondary-900);
-  color: var(--color-text-inverse);
-  padding: var(--space-md);
+  position: fixed;
+  inset: 0 auto 0 0;
+
+  width: 280px;
+  min-height: 100vh;
+
   display: flex;
   flex-direction: column;
 
-  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border-right: var(--border-width) solid var(--color-border);
 
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  width: var(--sidebar-width);
-
-  transition: transform var(--transition-slow);
-  z-index: 1000;
   transform: translateX(-100%);
+  transition: transform var(--transition-base);
 
-  overflow: hidden;
+  z-index: var(--z-sticky);
 }
 
 .sidebar.open {
   transform: translateX(0);
 }
 
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 11, 24, 0.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition-slow);
-  z-index: 999;
-}
-
-.sidebar-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
 .logo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-sm);
-  font-family: var(--font-family-display);
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-tight);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  min-height: 72px;
+  padding: var(--space-4) var(--space-5);
+
+  border-bottom: var(--border-width) solid var(--color-border);
 }
 
 .logo-left {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-3);
+
+  min-width: 0;
+
+  font-weight: var(--font-weight-semibold);
+}
+
+.logo-left > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
 }
 
 .logo-icon {
-  font-size: clamp(1rem, 1vw, 1.5rem);
-  color: var(--color-primary-100);
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  min-height: 0;
+
+  padding: var(--space-5);
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  margin-top: var(--space-5);
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  min-height: 44px;
+  padding: var(--space-3) var(--space-3);
+
+  border-radius: var(--radius-md);
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  width: 1.25rem;
+}
+
+.nav-text {
+  min-width: 0;
+}
+
+.add-new-expense {
+  width: 100%;
+}
+
+.logout {
+  margin-top: auto;
+  padding-top: var(--space-5);
 }
 
 .close-btn {
@@ -88,217 +117,199 @@
   justify-content: center;
 }
 
-.close-btn button {
-  border-radius: var(--radius-sm);
-  background: transparent;
-  border: none;
-  color: var(--color-text-inverse);
-  cursor: pointer;
-  transition:
-    background var(--transition-base),
-    transform var(--transition-base);
-  font-size: clamp(1rem, 1vw, 1.5rem);
-  font-weight: var(--font-weight-semibold);
-  min-height: auto;
-  min-width: var(--min-tap-target);
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: var(--color-overlay);
+
+  z-index: calc(var(--z-sticky) - 1);
 }
 
-.close-btn button:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: scale(1.05);
-}
-
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  flex: 1;
-  min-height: 0;
-}
-
-/* --------------------------------------------------------------------
-   SIDEBAR NAVIGATION
-   -------------------------------------------------------------------- */
-
-.nav-links {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-
-  overflow-y: auto;
-  flex: 1;
-}
-
-.nav-links a {
-  display: flex;
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-4);
 
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  min-height: 72px;
+  padding: var(--space-4);
 
-  color: var(--color-text-inverse);
-  text-decoration: none;
+  background: var(--color-surface);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
 
-  border-radius: var(--radius-sm);
+.header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
 
-  font-size: var(--text-sm);
+.header-top {
+  text-align: center;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.header-user {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
+}
+
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+
+  color: var(--color-primary);
+  background: rgb(37 99 235 / 0.08);
+  border: var(--border-width) solid rgb(37 99 235 / 0.15);
+  border-radius: var(--radius-full);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.main > :not(.overlay) {
+  min-height: 100vh;
+  min-width: 0;
+}
+
+.sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
 
   transition:
-    background var(--transition-base),
-    color var(--transition-base),
-    transform var(--transition-base);
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
-.nav-links a:hover {
-  background: rgba(255, 255, 255, 0.08);
+.sidebar-toggle:hover {
+  background: var(--color-background);
+  border-color: var(--color-border-strong);
 }
 
-.nav-links a.active {
-  background: var(--color-primary-500);
-  color: var(--color-text-inverse);
-}
+.form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
 
-.nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: var(--text-md);
+  padding: var(--space-4);
+
+  background: var(--color-overlay);
 }
 
-.nav-text {
-  flex: 1;
-}
+.modal {
+  width: min(100%, 42rem);
+  max-height: calc(100vh - 2rem);
 
-.logout {
-  margin-top: auto;
-}
-
-/* -------------------------------------------------------------------- 
-   MAIN CONTENT AREA
-   Constrained to a max-width and centered so content stays readable on
-   ultra-wide monitors instead of stretching edge to edge.
-   -------------------------------------------------------------------- */
-.main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-md);
   overflow-y: auto;
-  background: var(--color-bg);
+
+  padding: var(--space-6);
+
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-lg);
+
+  animation: modal-enter var(--transition-base);
 }
 
-.main > * {
-  width: 100%;
-  max-width: var(--content-max-width);
-  margin-left: auto;
-  margin-right: auto;
-}
+/* ==========================================================================
+   MODAL MOTION
+   ========================================================================== */
 
-.app-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  width: 100%;
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.mobile-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-lg);
-}
-
-.menu-btn,
-.add-btn {
-  font-size: var(--text-lg);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-xs);
-  min-height: var(--min-tap-target);
-  min-width: var(--min-tap-target);
-  border-radius: var(--radius-sm);
-  transition: background var(--transition-base);
-  color: var(--color-text-primary);
-}
-
-.menu-btn:hover,
-.add-btn:hover {
-  background: var(--color-surface-muted);
-}
-
-.add-btn {
-  color: var(--color-primary-500);
-}
-
-.menu-btn:active,
-.add-btn:active {
-  transform: scale(0.95);
-}
-
-.header-top {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2xs);
-}
-
-.header-top p {
-  font-size: var(--text-md);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-}
-
-/* -------------------------------------------------------------------- 
-   RESPONSIVE: TABLET / DESKTOP (>= 768px)
-   -------------------------------------------------------------------- */
-@media (min-width: 768px) {
-  .dashboard {
-    grid-template-columns: var(--sidebar-width-desktop) 1fr;
-    gap: var(--space-md);
-    padding: var(--space-md);
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
   }
 
-  .sidebar {
-    position: sticky;
-    top: var(--space-md);
-    height: calc(100vh - var(--space-md) * 2);
-    transform: none;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   MOBILE HEADER
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .header {
+    align-items: flex-start;
   }
 
-  .menu-btn,
-  .close-btn,
+  .header-top h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .header-user {
+    max-width: 14rem;
+    overflow-wrap: anywhere;
+  }
+
   .add-btn,
+  .sidebar-toggle {
+    flex-shrink: 0;
+  }
+
+  .modal {
+    max-height: calc(100vh - 1rem);
+    padding: var(--space-5);
+  }
+}
+
+/* ==========================================================================
+   DESKTOP LAYOUT
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .sidebar {
+    transform: translateX(0);
+  }
+
   .sidebar-overlay {
     display: none;
   }
 
   .main {
-    padding: 0 var(--space-md) var(--space-lg);
+    margin-left: 280px;
   }
 
-  .app-header {
-    padding-bottom: var(--space-md);
-  }
-}
-
-/* -------------------------------------------------------------------- 
-   RESPONSIVE: LARGE DESKTOP (>= 1280px)
-   A little extra breathing room once there's space to spend.
-   -------------------------------------------------------------------- */
-@media (min-width: 1280px) {
-  .dashboard {
-    gap: var(--space-lg);
-    padding: var(--space-lg);
+  .header {
+    min-height: 80px;
+    padding: var(--space-5) var(--space-6);
   }
 
-  .main {
-    gap: var(--space-lg);
+  .close-btn,
+  .sidebar-toggle,
+  .add-btn {
+    display: none;
   }
 }

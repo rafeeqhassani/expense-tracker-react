@@ -26,11 +26,15 @@ function CategoryBudgetRow({
   }, [start, category, updateCategoryLimit]);
 
   const increment = useCallback(() => {
-    start(() => updateCategoryLimit(category, (prev) => prev + STEP_AMOUNT));
+    start(() =>
+      updateCategoryLimit(category, (prev) =>
+        Math.min(MAX_BUDGET_LIMIT, prev + STEP_AMOUNT),
+      ),
+    );
   }, [start, category, updateCategoryLimit]);
 
-  const handleChange = (e) => {
-    let value = e.target.value;
+  const handleChange = (event) => {
+    let value = event.target.value;
 
     value = value.replace(/^0+(?=\d)/, "");
 
@@ -48,52 +52,62 @@ function CategoryBudgetRow({
     updateCategoryLimit(category, numericValue);
   };
 
+  const handlePointerUp = () => {
+    if (!isHoldingRef.current) {
+      return;
+    }
+
+    isHoldingRef.current = false;
+    stop();
+    saveBudgetConfig();
+  };
+
+  const handlePointerCancel = () => {
+    isHoldingRef.current = false;
+    stop();
+  };
+
   return (
-    <div>
-      <label>{category}</label>
+    <div className="category-budget-row">
+      <div className="category-budget-row-info">
+        <span className="category-budget-name">{category}</span>
+      </div>
 
       <div className="budget-input">
         <button
           type="button"
+          aria-label={`Decrease ${category} budget`}
           onPointerDown={() => {
             isHoldingRef.current = true;
             decrement();
           }}
-          onPointerUp={() => {
-            if (!isHoldingRef.current) return;
-            isHoldingRef.current = false;
-
-            stop();
-            saveBudgetConfig();
-          }}
+          onPointerUp={handlePointerUp}
           onPointerLeave={stop}
-          onPointerCancel={stop}
+          onPointerCancel={handlePointerCancel}
         >
           −
         </button>
 
         <input
           type="number"
+          min="0"
+          max={MAX_BUDGET_LIMIT}
           step={STEP_AMOUNT}
           value={inputValue}
+          aria-label={`${category} budget limit`}
           onChange={handleChange}
         />
 
         <button
           type="button"
+          aria-label={`Increase ${category} budget`}
           onPointerDown={() => {
             isHoldingRef.current = true;
             increment();
           }}
-          onPointerUp={() => {
-            if (!isHoldingRef.current) return;
-            isHoldingRef.current = false;
-
-            stop();
-            saveBudgetConfig();
-          }}
+          onPointerUp={handlePointerUp}
           onPointerLeave={stop}
-          onPointerCancel={stop}
+          onPointerCancel={handlePointerCancel}
         >
           +
         </button>
@@ -110,17 +124,22 @@ function CategoryBudgetEditor({
 }) {
   return (
     <section className="category-budget-editor">
-      <h3>Category Budget Settings</h3>
+      <header className="category-budget-editor-header">
+        <h2>Category Budget Settings</h2>
+        <p>Set spending limits for individual categories.</p>
+      </header>
 
-      {allCategories.map((category) => (
-        <CategoryBudgetRow
-          key={category}
-          category={category}
-          limit={categoryLimits[category] ?? 0}
-          updateCategoryLimit={updateCategoryLimit}
-          saveBudgetConfig={saveBudgetConfig}
-        />
-      ))}
+      <div className="category-budget-list">
+        {allCategories.map((category) => (
+          <CategoryBudgetRow
+            key={category}
+            category={category}
+            limit={categoryLimits[category] ?? 0}
+            updateCategoryLimit={updateCategoryLimit}
+            saveBudgetConfig={saveBudgetConfig}
+          />
+        ))}
+      </div>
     </section>
   );
 }

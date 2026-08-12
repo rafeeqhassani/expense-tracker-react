@@ -25,45 +25,54 @@ function ExpensePage() {
 
   return (
     <>
-      <Filters
-        filters={filters}
-        handleFilterChange={actions.handleFilterChange}
-        hasActiveFilters={actions.hasActiveFilters}
-        resetFilters={actions.resetFilters}
-      />
+      <section className="expense-page">
+        <header className="expense-page-header">
+          <h2>Manage your expenses</h2>
+          <p>Review, filter, and manage your expenses.</p>
+        </header>
 
-      <BulkActionsBar
-        onClearSelected={actions.handleRemoveSelected}
-        selectedCount={actions.selectedCount}
-        selection={{
-          allSelected: actions.allSelected,
-          someSelected: actions.someSelected,
-          handleSelectAll: actions.handleSelectAll,
-          handleDeselectAll: actions.handleDeselectAll,
-        }}
-      />
+        <section className="expense-content">
+          <Filters
+            filters={filters}
+            handleFilterChange={actions.handleFilterChange}
+            hasActiveFilters={actions.hasActiveFilters}
+            resetFilters={actions.resetFilters}
+          />
 
-      {actions.lastDeletedExpense && (
-        <div className="undo-bar">
-          <span>Expense deleted</span>
-          <button onClick={actions.handleUndoDelete}>Undo</button>
-        </div>
-      )}
+          <BulkActionsBar
+            onClearSelected={actions.handleRemoveSelected}
+            selectedCount={actions.selectedCount}
+            selection={{
+              allSelected: actions.allSelected,
+              someSelected: actions.someSelected,
+              handleSelectAll: actions.handleSelectAll,
+              handleDeselectAll: actions.handleDeselectAll,
+            }}
+          />
 
-      <ExpenseList
-        expenses={expenses}
-        searchQuery={filters?.search || ""}
-        onDelete={actions.handleDeleteExpense}
-        onEdit={actions.handleEditExpense}
-      />
+          {actions.lastDeletedExpense && (
+            <div className="undo-bar">
+              <span>Expense deleted</span>
+              <button onClick={actions.handleUndoDelete}>Undo</button>
+            </div>
+          )}
 
-      <GeneralActionsBar
-        onLoadMore={actions.loadMoreExpenses}
-        pagination={expense.pagination}
-        loadingMore={expense.loadingMore}
-        onClearAll={actions.handleClearAll}
-        hasActiveFilters={actions.hasActiveFilters}
-      />
+          <ExpenseList
+            expenses={expenses}
+            searchQuery={filters?.search || ""}
+            onDelete={actions.handleDeleteExpense}
+            onEdit={actions.handleEditExpense}
+          />
+
+          <GeneralActionsBar
+            onLoadMore={actions.loadMoreExpenses}
+            pagination={expense.pagination}
+            loadingMore={expense.loadingMore}
+            onClearAll={actions.handleClearAll}
+            hasActiveFilters={actions.hasActiveFilters}
+          />
+        </section>
+      </section>
     </>
   );
 }

@@ -11,8 +11,8 @@ function BulkActionsBar({ selection, onClearSelected, selectedCount }) {
   };
 
   return (
-    <div className="bulk-actions-wrapper">
-      <div className="bulk-action">
+    <div className="bulk-actions-bar">
+      <div className="selection-info">
         <span className="selected-count">{selectedCount} selected</span>
 
         <button

@@ -8,10 +8,33 @@ import {
   FaPiggyBank,
   FaSignOutAlt,
   FaHistory,
-  FaTags,
 } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
+
+const NAV_ITEMS = [
+  {
+    path: "/dashboard",
+    label: "Dashboard",
+    icon: <FaChartLine />,
+    end: true,
+  },
+  {
+    path: "/dashboard/expenses",
+    label: "Records",
+    icon: <FaReceipt />,
+  },
+  {
+    path: "/dashboard/activities",
+    label: "Activities",
+    icon: <FaHistory />,
+  },
+  {
+    path: "/dashboard/budget",
+    label: "Budget Management",
+    icon: <FaPiggyBank />,
+  },
+];
 
 function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
   const { auth } = useAppContext();
@@ -24,7 +47,11 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
   return (
     <>
       {sidebarOpen && (
-        <div className="sidebar-overlay active" onClick={closeSidebar} />
+        <div
+          className="sidebar-overlay active"
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
       )}
 
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
@@ -37,7 +64,7 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
           </div>
 
           <div className="close-btn">
-            <button onClick={closeSidebar}>
+            <button onClick={closeSidebar} aria-label="Close sidebar">
               <FaXmark />
             </button>
           </div>
@@ -55,38 +82,21 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
           </div>
 
           <div className="nav-links">
-            <NavLink to="/dashboard" end onClick={closeSidebar}>
-              <span className="nav-icon">
-                <FaChartLine />
-              </span>
-              <span className="nav-text">Dashboard</span>
-            </NavLink>
-
-            <NavLink to="/dashboard/expenses" onClick={closeSidebar}>
-              <span className="nav-icon">
-                <FaReceipt />
-              </span>
-              <span className="nav-text">Expenses</span>
-            </NavLink>
-
-            <NavLink to="/dashboard/activities" onClick={closeSidebar}>
-              <span className="nav-icon">
-                <FaHistory />
-              </span>
-
-              <span className="nav-text">Activities</span>
-            </NavLink>
-
-            <NavLink to="/dashboard/budget" onClick={closeSidebar}>
-              <span className="nav-icon">
-                <FaPiggyBank />
-              </span>
-              <span className="nav-text">Budget Management</span>
-            </NavLink>
+            {NAV_ITEMS.map(({ path, label, icon, end }) => (
+              <NavLink key={path} to={path} end={end} onClick={closeSidebar}>
+                <span className="nav-icon">{icon}</span>
+                <span className="nav-text">{label}</span>
+              </NavLink>
+            ))}
           </div>
 
           <div className="logout">
-            <button onClick={auth.logout}>
+            <button
+              onClick={() => {
+                auth.logout();
+                closeSidebar();
+              }}
+            >
               <FaSignOutAlt />
               <span>Logout</span>
             </button>

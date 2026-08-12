@@ -2,7 +2,7 @@ function ActivityList({ activities = [] }) {
   return (
     <>
       {activities.length === 0 ? (
-        <p className="empty-activity-message">No recent activity yet</p>
+        <p className="activity-empty">No recent activity yet</p>
       ) : (
         <div className="activity-list">
           {activities.map((activity) => (
@@ -23,5 +23,4 @@ function ActivityList({ activities = [] }) {
     </>
   );
 }
-
 export default ActivityList;

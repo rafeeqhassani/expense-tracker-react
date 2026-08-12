@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import useAppContext from "../../providers/useAppContext";
 import { Outlet } from "react-router-dom";
 
-import Header from "../expenses/Header";
-import ExpenseForm from "../modal/ExpenseForm";
-import Toast from "../ui/Toast";
+import Header from "./Header";
+import ExpenseForm from "./ExpenseForm";
+import Toast from "./Toast";
 import Sidebar from "./Sidebar";
 
 function MainLayout() {
-  const { auth, expense, category, form, toast, actions } = useAppContext();
+  const { category, form, toast, actions } = useAppContext();
 
   const {
     formData,
@@ -40,6 +40,8 @@ function MainLayout() {
   }, [isFormOpen, sidebarOpen]);
 
   useEffect(() => {
+    if (!isFormOpen) return;
+
     const handleEscapeKey = (e) => {
       if (e.key === "Escape") {
         actions.closeForm();
@@ -51,7 +53,7 @@ function MainLayout() {
     return () => {
       window.removeEventListener("keydown", handleEscapeKey);
     };
-  }, [actions]);
+  }, [isFormOpen, actions.closeForm]);
 
   return (
     <div className="dashboard">
@@ -68,8 +70,14 @@ function MainLayout() {
       </main>
 
       {isFormOpen && (
-        <div className="overlay" onClick={actions.closeForm}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="form-overlay" onClick={actions.closeForm}>
+          <div
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Expense form"
+            onClick={(e) => e.stopPropagation()}
+          >
             <ExpenseForm
               categories={category.categories}
               loading={category.loading}

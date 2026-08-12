@@ -7,7 +7,7 @@ function GeneralActionsBar({
   const hasMore = pagination?.hasMore && onLoadMore;
 
   return (
-    <section className="actions-bar">
+    <section className="general-actions-bar">
       <div className="left">
         {hasMore && (
           <button

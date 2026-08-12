@@ -5,7 +5,7 @@ const CATEGORY_STAT_FIELDS = [
   { key: "displayPercent", label: "Usage" },
 ];
 
-function CategoryBudget({ categories, search }) {
+function CategoryBudget({ categories = {}, search = "" }) {
   const searchTerm = search.toLowerCase();
 
   const categoryEntries = Object.entries(categories);
@@ -21,26 +21,31 @@ function CategoryBudget({ categories, search }) {
 
   return (
     <section className="category-budget">
-      <div className="budget-header">
-        <h2>Category Budget</h2>
-        <p>Spending breakdown by category</p>
-      </div>
+      <header className="category-budget-header">
+        <div className="category-budget-heading">
+          <h2>Category Budget</h2>
+          <p>Spending breakdown by category</p>
+        </div>
+      </header>
 
       <div className="category-grid">
         {filteredCategories.map(([category, budget]) => (
-          <div key={category} className={`category-card ${budget.status}`}>
-            <h4>{category}</h4>
+          <article key={category} className={`category-card ${budget.status}`}>
+            <header className="category-card-header">
+              <h3>{category}</h3>
+            </header>
 
             <div className="category-stats">
               {CATEGORY_STAT_FIELDS.map(({ key, label }) => (
                 <p key={key}>
-                  {label}: {budget[key]}
+                  <span>{label}</span>
+                  <strong>{budget[key]}</strong>
                 </p>
               ))}
             </div>
 
             <div className="status-label">{budget.riskLabel}</div>
-          </div>
+          </article>
         ))}
 
         {noCategories && (
