@@ -103,6 +103,31 @@
   transform: translateY(1px);
 }
 
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  width: 100%;
+  min-height: 12rem;
+  padding: var(--space-8);
+
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0;
+  color: inherit;
+  font-size: var(--font-size-sm);
+}
+
 @keyframes state-spinner {
   to {
     transform: rotate(360deg);
