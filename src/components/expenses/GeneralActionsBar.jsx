@@ -12,7 +12,7 @@ function GeneralActionsBar({
         {hasMore && (
           <button
             type="button"
-            className="load-more"
+            className="btn btn-primary load-more"
             onClick={onLoadMore}
             disabled={loadingMore}
           >
@@ -22,7 +22,11 @@ function GeneralActionsBar({
       </div>
 
       <div className="right">
-        <button type="button" className="clear-all" onClick={onClearAll}>
+        <button
+          type="button"
+          className="btn btn-danger clear-all"
+          onClick={onClearAll}
+        >
           Clear All
         </button>
       </div>

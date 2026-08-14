@@ -51,7 +51,7 @@ function ExpenseItem({ expense, onDelete, onEdit }) {
       <td className="actions">
         <button
           type="button"
-          className="edit-btn"
+          className="btn btn-primary edit-btn"
           onClick={() => onEdit(expense.id)}
         >
           Edit
@@ -59,7 +59,7 @@ function ExpenseItem({ expense, onDelete, onEdit }) {
 
         <button
           type="button"
-          className="delete-btn"
+          className="btn btn-danger delete-btn"
           onClick={() => onDelete(expense.id)}
         >
           Delete

@@ -20,15 +20,14 @@ function ExpenseList({ expenses, searchQuery, onDelete, onEdit }) {
           <table className="expense-table">
             <thead>
               <tr>
-                <th>Select</th>
+                <th className="select-cell">Select</th>
                 <th>Title</th>
                 <th>Category</th>
                 <th>Date</th>
-                <th>Amount</th>
+                <th className="amount">Amount</th>
                 <th>Actions</th>
               </tr>
             </thead>
-
             <tbody>
               {expenses.map((expense) => (
                 <ExpenseItem

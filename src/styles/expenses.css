@@ -31,6 +31,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
 
 .filters-top {
@@ -48,6 +54,7 @@
 .filter-label {
   font-size: var(--font-size-sm);
   font-weight: 600;
+  color: var(--color-text);
 }
 
 .filters input,
@@ -55,6 +62,17 @@
   width: 100%;
   min-height: 42px;
   padding: var(--space-3);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.filters input:focus,
+.filters select:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
 }
 
 .filters-bottom {
@@ -70,19 +88,20 @@
 }
 
 .date-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--space-2);
 
   font-size: var(--font-size-sm);
   font-weight: 600;
+  color: var(--color-text);
 }
 
 .date-inputs {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  width: 100%;
 }
 
 .date-separator {
@@ -90,6 +109,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 .date-separator svg {
@@ -101,11 +121,15 @@
 }
 
 .clear-filtered {
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-}
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
 
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
 @media (min-width: 768px) {
   .filters-top {
     display: grid;
@@ -146,28 +170,50 @@
 .expense-table {
   width: 100%;
   min-width: 700px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
 }
 
 .expense-table th {
   padding: var(--space-3);
   text-align: left;
   white-space: nowrap;
+
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .expense-table td {
   padding: var(--space-3);
   white-space: nowrap;
+
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.expense-table thead th {
+  border-bottom: 2px solid var(--color-border-strong);
+}
+
+.expense-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.expense-table tbody tr:hover {
+  background: var(--color-surface);
+}
+
+.expense-table tbody tr:not(:last-child) td {
+  border-bottom: 1px solid var(--color-border);
 }
 
 .expense-table th,
 .expense-table td {
   vertical-align: middle;
-}
-
-.expense-list .empty-state {
-  padding: var(--space-8);
-  text-align: center;
 }
 
 .select-cell {
@@ -181,6 +227,15 @@
   cursor: pointer;
 }
 
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
 .checkbox-label span {
   display: none;
 }
@@ -189,11 +244,18 @@
   display: inline-block;
   padding: var(--space-1) var(--space-2);
   white-space: nowrap;
+
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
 }
 
 .expense-table .amount {
   text-align: right;
   white-space: nowrap;
+  font-weight: 600;
 }
 
 .expense-table .actions {
@@ -208,12 +270,18 @@
   padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-sm);
   white-space: nowrap;
+  border-radius: var(--radius-sm);
 }
 
 .bulk-actions-bar {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
 
 .selection-info {
@@ -226,12 +294,19 @@
 .selected-count {
   font-size: var(--font-size-sm);
   font-weight: 600;
+  color: var(--color-text);
 }
 
 .clear-selected {
   padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-sm);
   white-space: nowrap;
+
+  color: var(--color-danger);
+  background: transparent;
+  border: var(--border-width) solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
 }
 
 .global-checkbox {
@@ -247,6 +322,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
 
 .general-actions-bar .left {
@@ -258,9 +339,7 @@
 }
 
 .load-more {
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--font-size-sm);
-  white-space: nowrap;
+  width: 100%;
 }
 
 .clear-all {
@@ -277,4 +356,14 @@
 .general-actions-bar .left .load-more,
 .general-actions-bar .right .clear-all {
   width: 100%;
+}
+
+.clear-filtered:focus-visible,
+.clear-selected:focus-visible,
+.load-more:focus-visible,
+.clear-all:focus-visible,
+.edit-btn:focus-visible,
+.delete-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
