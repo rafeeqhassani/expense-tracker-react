@@ -6,7 +6,7 @@ function ExpenseList({ expenses, searchQuery, onDelete, onEdit }) {
   if (expenses.length === 0) {
     return (
       <section className="expense-list">
-        <div className="expense-list-empty">
+        <div className="empty-state">
           {isSearching ? "No transactions found" : "No transactions yet"}
         </div>
       </section>

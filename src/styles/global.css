@@ -121,12 +121,6 @@ input,
 select,
 textarea {
   font: inherit;
-}
-
-button,
-input,
-select,
-textarea {
   margin: 0;
 }
 
@@ -182,6 +176,8 @@ h4,
 h5,
 h6 {
   color: var(--color-text);
+  font-family: var(--font-family-heading);
+
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
 }
@@ -207,6 +203,7 @@ p {
 }
 
 small {
+  color: var(--color-text-muted);
   font-size: var(--font-size-sm);
 }
 

@@ -2,7 +2,7 @@ function ActivityList({ activities = [] }) {
   return (
     <>
       {activities.length === 0 ? (
-        <p className="activity-empty">No recent activity yet</p>
+        <p className="empty-state">No recent activity yet</p>
       ) : (
         <div className="activity-list">
           {activities.map((activity) => (
