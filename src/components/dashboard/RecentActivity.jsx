@@ -31,7 +31,7 @@ function RecentActivity({
       {hasMore && (
         <button
           type="button"
-          className="activity-action"
+          className="btn btn-primary activity-action"
           onClick={() => navigate("/dashboard/activities")}
         >
           View All Activities

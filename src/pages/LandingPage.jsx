@@ -19,7 +19,7 @@ function LandingPage() {
           <div className="landing-actions">
             <button
               type="button"
-              className="landing-primary-btn"
+              className="btn btn-primary landing-primary-btn"
               onClick={() => navigate("/register")}
             >
               Create Account

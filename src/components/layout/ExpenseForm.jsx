@@ -178,7 +178,11 @@ function ExpenseForm({
       </FormField>
 
       <div className="form-actions">
-        <button type="submit" className="submit-button" disabled={submitting}>
+        <button
+          type="submit"
+          className="btn btn-primary submit-btn"
+          disabled={submitting}
+        >
           {submitting
             ? "Saving..."
             : mode === "add"

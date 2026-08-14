@@ -32,7 +32,7 @@ function Header({ toggleSidebar, openForm }) {
       <div className="header-actions">
         <button
           type="button"
-          className="add-btn"
+          className="btn btn-primary add-btn"
           onClick={openForm}
           aria-label="Add new expense"
         >

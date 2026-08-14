@@ -22,7 +22,7 @@ function DashboardBudget({ budget, categorySummary }) {
 
         {!hasBudget && (
           <button
-            className="btn btn-primary"
+            className="btn btn-primary create-budget"
             onClick={() => navigate("/dashboard/budget?tab=monthly")}
           >
             Create Budget

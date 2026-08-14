@@ -72,7 +72,10 @@ function Sidebar({ openForm, closeSidebar, sidebarOpen }) {
 
         <nav className="nav">
           <div className="add-new-expense">
-            <button className="open-form" onClick={handleOpenForm}>
+            <button
+              className="btn btn-primary open-form"
+              onClick={handleOpenForm}
+            >
               <span className="add-expense-icon">
                 <FaPlusCircle />
               </span>
