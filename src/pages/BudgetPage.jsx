@@ -58,7 +58,8 @@ function BudgetPage() {
           <button
             key={id}
             type="button"
-            className={`budget-tab-button ${activeTab === id ? "active" : ""}`}
+            className={`
+             btn budget-tab-button ${activeTab === id ? "active" : ""}`}
             onClick={() => setActiveTab(id)}
             aria-selected={activeTab === id}
             role="tab"

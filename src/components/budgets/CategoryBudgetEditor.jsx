@@ -76,6 +76,7 @@ function CategoryBudgetRow({
       <div className="budget-input">
         <button
           type="button"
+          className="btn btn-primary"
           aria-label={`Decrease ${category} budget`}
           onPointerDown={() => {
             isHoldingRef.current = true;
@@ -100,6 +101,7 @@ function CategoryBudgetRow({
 
         <button
           type="button"
+          className="btn btn-primary"
           aria-label={`Increase ${category} budget`}
           onPointerDown={() => {
             isHoldingRef.current = true;

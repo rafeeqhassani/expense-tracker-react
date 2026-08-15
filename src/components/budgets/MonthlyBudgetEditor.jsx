@@ -52,6 +52,7 @@ function MonthlyBudgetEditor({
       <div className="budget-input">
         <button
           type="button"
+          className="btn btn-primary"
           onPointerDown={() => {
             isHoldingRef.current = true;
             decrement();
@@ -78,6 +79,7 @@ function MonthlyBudgetEditor({
 
         <button
           type="button"
+          className="btn btn-primary"
           onPointerDown={() => {
             isHoldingRef.current = true;
             increment();
