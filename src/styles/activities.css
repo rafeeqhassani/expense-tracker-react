@@ -27,4 +27,24 @@
 
   width: 100%;
   min-width: 0;
+
+  padding: var(--space-5);
+
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.activity-action {
+  align-self: flex-start;
+}
+
+@media (min-width: 768px) {
+  .activities-page {
+    padding: var(--space-6);
+  }
+
+  .activities-content {
+    max-width: 48rem;
+  }
 }
