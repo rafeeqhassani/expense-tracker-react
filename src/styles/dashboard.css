@@ -217,3 +217,65 @@
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
 }
+
+@media (min-width: 480px) {
+  .activity-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .activity-message {
+    min-width: 0;
+  }
+
+  .activity-date {
+    flex-shrink: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .dashboard-page {
+    padding: var(--space-6);
+  }
+
+  .dashboard-header {
+    gap: var(--space-3);
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-card {
+    padding: var(--space-5);
+  }
+
+  .budget-section-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .create-budget {
+    width: auto;
+  }
+
+  .analytics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    align-items: stretch;
+  }
+
+  .analytics-summary {
+    height: 100%;
+  }
+
+  .summary-section {
+    flex: 1;
+  }
+
+  .summary {
+    gap: var(--space-5);
+  }
+}

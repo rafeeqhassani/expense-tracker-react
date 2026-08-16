@@ -60,7 +60,7 @@
 .filters input,
 .filters select {
   width: 100%;
-  min-height: 42px;
+  min-height: 44px;
   padding: var(--space-3);
 
   border: 1px solid var(--color-border);
@@ -130,27 +130,92 @@
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
 }
-@media (min-width: 768px) {
-  .filters-top {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-4);
-  }
 
-  .filters-bottom {
-    flex-direction: row;
-    align-items: end;
-    justify-content: space-between;
-  }
+/* EXPENSE FORM */
 
-  .date-inputs {
-    flex-direction: row;
-    align-items: center;
-  }
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 
-  .date-separator svg {
-    transform: none;
-  }
+  width: 100%;
+  min-width: 0;
+}
+
+.field,
+.category-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  width: 100%;
+}
+
+.field label,
+.category-field label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.expense-form input,
+.expense-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-3);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  width: 100%;
+
+  margin-top: var(--space-2);
+}
+
+.submit-btn,
+.close-form {
+  width: 100%;
+  min-height: 44px;
+}
+
+.expense-form small {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+}
+
+.expense-form input,
+.expense-form select {
+  border-color: var(--color-border-strong);
+}
+
+.close-form {
+  color: var(--color-text);
+  background: transparent;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.close-form:hover {
+  background: var(--color-background);
+  border-color: var(--color-border-strong);
 }
 
 .expense-list {
@@ -172,6 +237,7 @@
   min-width: 700px;
   border-collapse: separate;
   border-spacing: 0;
+  overflow: hidden;
 
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
@@ -211,13 +277,21 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.expense-table tbody tr:last-child:hover td:first-child {
+  border-bottom-left-radius: var(--radius-md);
+}
+
+.expense-table tbody tr:last-child:hover td:last-child {
+  border-bottom-right-radius: var(--radius-md);
+}
+
 .expense-table th,
 .expense-table td {
   vertical-align: middle;
 }
 
 .select-cell {
-  text-align: center;
+  justify-content: center;
 }
 
 .checkbox-label {
@@ -366,4 +440,85 @@
 .delete-btn:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .filters-top {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .filters-bottom {
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .date-range {
+    width: 100%;
+  }
+
+  .date-inputs {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .date-inputs input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .date-separator svg {
+    transform: none;
+  }
+
+  .filter-group {
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .expense-page {
+    padding: var(--space-6);
+  }
+
+  .expense-content {
+    gap: var(--space-6);
+  }
+
+  .filters {
+    padding: var(--space-5);
+  }
+
+  .expense-table th,
+  .expense-table td {
+    padding: var(--space-4);
+  }
+
+  .expense-table tbody tr {
+    min-height: 48px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding-inline: var(--space-4);
+  }
+
+  .bulk-actions-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .general-actions-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .general-actions-bar .left,
+  .general-actions-bar .right {
+    width: auto;
+  }
 }

@@ -83,6 +83,7 @@
 .category-search {
   width: 100%;
   min-width: 0;
+  padding: var(--space-3);
 }
 
 .monthly-budget {
@@ -434,6 +435,11 @@
   color: var(--color-text-inverse);
   background: var(--color-danger);
   border-color: var(--color-danger);
+}
+
+.alert-over .alert-message,
+.alert-over .alert-category {
+  color: var(--color-text-inverse);
 }
 
 .alert-info {
